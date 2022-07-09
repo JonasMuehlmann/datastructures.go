@@ -1,4 +1,4 @@
-# GoDS (Go Data Structures)
+# Dastructures.go (Based on https://github.com/emirpasic/gods)
 
 Implementation of various data structures and algorithms in Go.
 
