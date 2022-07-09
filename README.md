@@ -1728,8 +1728,6 @@ This takes a while, so test within sub-packages:
 
 `go test -run=NO_TEST -bench . -benchmem  -benchtime 1s ./...`
 
-<p align="center"><img src="https://cloud.githubusercontent.com/assets/3115942/16892979/5e698d46-4b27-11e6-864b-cb2b865327b6.png" /></p>
-
 ### Contributing
 
 Biggest contribution towards this library is to use it and give us feedback for further improvements and additions.
@@ -1758,8 +1756,3 @@ errcheck ./...
 ### License
 
 This library is distributed under the BSD-style license found in the [LICENSE](https://github.com/emirpasic/gods/blob/master/LICENSE) file.
-
-### Sponsors
-
-## <a href="https://www.browserstack.com/?ref=gods"><img src="http://www.hajdarevic.net/browserstack.svg" alt="BrowserStack" width="250"/></a>
-[BrowserStack](https://www.browserstack.com/?ref=webhook) is a cloud-based cross-browser testing tool that enables developers to test their websites across various browsers on different operating systems and mobile devices, without requiring users to install virtual machines, devices or emulators.
