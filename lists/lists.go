@@ -27,7 +27,7 @@ type List interface {
 	Insert(index int, values ...interface{})
 	Set(index int, value interface{})
 
-	containers.Container
+	ds.Container
 	// IsEmpty() bool
 	// Size() int
 	// Clear()

@@ -18,7 +18,7 @@ import (
 //    negative , if a < b
 //    zero     , if a == b
 //    positive , if a > b
-type Comparator[T constraints.Ordered] func(a, b T) int
+type Comparator[T any] func(a, b T) int
 
 func BasicComparator[T constraints.Ordered](a, b T) int {
 	switch {
