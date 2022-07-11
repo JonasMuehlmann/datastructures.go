@@ -18,10 +18,13 @@ import (
 	"github.com/emirpasic/gods/utils"
 )
 
-// Assert List implementation
+// Assert List implementation.
 var _ lists.List = (*List)(nil)
 
-// List holds the elements in a slice
+// TODO: Try and reimplement methods through iterator
+// TODO: Allow access to underlying slice
+// TODO: Rename to DynamicArray
+// List holds the elements in a slice.
 type List struct {
 	elements []interface{}
 	size     int
@@ -32,7 +35,8 @@ const (
 	shrinkFactor = float32(0.25) // shrink when size is 25% of capacity (0 means never shrink)
 )
 
-// New instantiates a new list and adds the passed values, if any, to the list
+// TODO: Implement NewFromSlice() method which only copies slice header and not items
+// New instantiates a new list and adds the passed values, if any, to the list.
 func New(values ...interface{}) *List {
 	list := &List{}
 	if len(values) > 0 {
@@ -41,7 +45,7 @@ func New(values ...interface{}) *List {
 	return list
 }
 
-// Add appends a value at the end of the list
+// Add appends a value at the end of the list.
 func (list *List) Add(values ...interface{}) {
 	list.growBy(len(values))
 	for _, value := range values {
@@ -53,7 +57,6 @@ func (list *List) Add(values ...interface{}) {
 // Get returns the element at index.
 // Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
 func (list *List) Get(index int) (interface{}, bool) {
-
 	if !list.withinRange(index) {
 		return nil, false
 	}
@@ -61,9 +64,9 @@ func (list *List) Get(index int) (interface{}, bool) {
 	return list.elements[index], true
 }
 
+// TODO: Implement RemoveStable which does a swap and shrink
 // Remove removes the element at the given index from the list.
 func (list *List) Remove(index int) {
-
 	if !list.withinRange(index) {
 		return
 	}
@@ -75,12 +78,12 @@ func (list *List) Remove(index int) {
 	list.shrink()
 }
 
+// PERF: Iterate over elements only once and keep counter of found values
 // Contains checks if elements (one or more) are present in the set.
 // All elements have to be present in the set for the method to return true.
 // Performance time complexity of n^2.
 // Returns true if no arguments are passed at all, i.e. set is always super-set of empty set.
 func (list *List) Contains(values ...interface{}) bool {
-
 	for _, searchValue := range values {
 		found := false
 		for index := 0; index < list.size; index++ {
@@ -103,7 +106,6 @@ func (list *List) Values() []interface{} {
 	return newElements
 }
 
-//IndexOf returns index of provided element
 func (list *List) IndexOf(value interface{}) int {
 	if list.size == 0 {
 		return -1
@@ -151,7 +153,6 @@ func (list *List) Swap(i, j int) {
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
 func (list *List) Insert(index int, values ...interface{}) {
-
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
@@ -171,7 +172,6 @@ func (list *List) Insert(index int, values ...interface{}) {
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
 func (list *List) Set(index int, value interface{}) {
-
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
@@ -183,7 +183,7 @@ func (list *List) Set(index int, value interface{}) {
 	list.elements[index] = value
 }
 
-// String returns a string representation of container
+// String returns a string representation of container.
 func (list *List) String() string {
 	str := "ArrayList\n"
 	values := []string{}
@@ -194,7 +194,7 @@ func (list *List) String() string {
 	return str
 }
 
-// Check that the index is within bounds of the list
+// Check that the index is within bounds of the list.
 func (list *List) withinRange(index int) bool {
 	return index >= 0 && index < list.size
 }
@@ -205,7 +205,7 @@ func (list *List) resize(cap int) {
 	list.elements = newElements
 }
 
-// Expand the array if necessary, i.e. capacity will be reached if we add n elements
+// Expand the array if necessary, i.e. capacity will be reached if we add n elements.
 func (list *List) growBy(n int) {
 	// When capacity is reached, grow by a factor of growthFactor and add number of elements
 	currentCapacity := cap(list.elements)
@@ -215,7 +215,7 @@ func (list *List) growBy(n int) {
 	}
 }
 
-// Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity
+// Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity.
 func (list *List) shrink() {
 	if shrinkFactor == 0.0 {
 		return

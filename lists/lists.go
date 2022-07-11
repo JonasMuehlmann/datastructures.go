@@ -15,7 +15,8 @@ import (
 	"github.com/emirpasic/gods/utils"
 )
 
-// List interface that all lists implement
+// TODO: Implement PushBack, PopBack, PushFront PopFront, Reverse
+// List interface that all lists implement.
 type List interface {
 	Get(index int) (interface{}, bool)
 	Remove(index int)

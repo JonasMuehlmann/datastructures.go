@@ -14,17 +14,21 @@ package hashmap
 
 import (
 	"fmt"
+
 	"github.com/emirpasic/gods/maps"
 )
 
-// Assert Map implementation
+// Assert Map implementation.
 var _ maps.Map = (*Map)(nil)
 
-// Map holds the elements in go's native map
+// TODO: Allow access to underlying map
+
+// Map holds the elements in go's native map.
 type Map struct {
 	m map[interface{}]interface{}
 }
 
+// TODO: Implement NewFromMap() method which only copies map and not items
 // New instantiates a hash map.
 func New() *Map {
 	return &Map{m: make(map[interface{}]interface{})}
@@ -47,7 +51,7 @@ func (m *Map) Remove(key interface{}) {
 	delete(m.m, key)
 }
 
-// Empty returns true if map does not contain any elements
+// Empty returns true if map does not contain any elements.
 func (m *Map) Empty() bool {
 	return m.Size() == 0
 }
@@ -84,7 +88,7 @@ func (m *Map) Clear() {
 	m.m = make(map[interface{}]interface{})
 }
 
-// String returns a string representation of container
+// String returns a string representation of container.
 func (m *Map) String() string {
 	str := "HashMap\n"
 	str += fmt.Sprintf("%v", m.m)

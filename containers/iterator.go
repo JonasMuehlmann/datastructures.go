@@ -3,132 +3,230 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package containers
+package ds
 
-// IteratorWithIndex is stateful iterator for ordered containers whose values can be fetched by an index.
-type IteratorWithIndex interface {
-	// Next moves the iterator to the next element and returns true if there was a next element in the container.
-	// If Next() returns true, then next element's index and value can be retrieved by Index() and Value().
-	// If Next() was called for the first time, then it will point the iterator to the first element if it exists.
-	// Modifies the state of the iterator.
-	Next() bool
+// TODO: Implement Constructors for types, which take iterators to materialize
 
-	// Value returns the current element's value.
-	// Does not modify the state of the iterator.
-	Value() interface{}
+// Iterator defines the minimum functionality required for all other iterators.
+type Iterator interface {
+	// Begin returns an initialized iterator, which points to one element before it's first.
+	// Unless Next() is called, the iterator is in an invalid state.
+	Begin() Iterator
+	// End returns an initialized iterator, which points to one element afrer it's last.
+	// Unless Previous() is called, the iterator is in an invalid state.
+	End() Iterator
 
-	// Index returns the current element's index.
-	// Does not modify the state of the iterator.
-	Index() int
+	// IsBegin checks if the iterator is pointing to one element before it's first element, unless Next() is called, the iterator is in an invalid state.
+	IsBegin() bool
+	// IsEnd checks if the iterator is pointing to one element past it's last element, unless Previous() is called, the iterator is in an invalid state.
+	IsEnd() bool
 
-	// Begin resets the iterator to its initial state (one-before-first)
-	// Call Next() to fetch the first element if any.
-	Begin()
+	// First returns an initialized iterator, which points to it's first element.
+	First() Iterator
+	// Last returns an initialized iterator, which points to it's last element.
+	Last() Iterator
 
-	// First moves the iterator to the first element and returns true if there was a first element in the container.
-	// If First() returns true, then first element's index and value can be retrieved by Index() and Value().
-	// Modifies the state of the iterator.
-	First() bool
+	// IsFirst checks if the iterator is pointing to it's first element, when Next() is called, the iterator is in an invalid state.
+	IsFirst() bool
+	// IsBegin checks if the iterator is pointing to it's last element, when Previous() is called, the iterator is in an invalid state.
+	IsLast() bool
 
-	// NextTo moves the iterator to the next element from current position that satisfies the condition given by the
-	// passed function, and returns true if there was a next element in the container.
-	// If NextTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-	// Modifies the state of the iterator.
-	NextTo(func(index int, value interface{}) bool) bool
+	// IsValid checks if the iterator is in a valid position and not e.g. out of bounds.
+	IsValid() bool
 }
 
-// IteratorWithKey is a stateful iterator for ordered containers whose elements are key value pairs.
-type IteratorWithKey interface {
-	// Next moves the iterator to the next element and returns true if there was a next element in the container.
-	// If Next() returns true, then next element's key and value can be retrieved by Key() and Value().
-	// If Next() was called for the first time, then it will point the iterator to the first element if it exists.
-	// Modifies the state of the iterator.
-	Next() bool
+// OrderedIterator defines an Iterator, which can be said to be in a position before or after others's position.
+type OrderedIterator interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
 
-	// Value returns the current element's value.
-	// Does not modify the state of the iterator.
-	Value() interface{}
+	// IsBefore checks if the iterator's position is said to come before other's position.
+	IsBefore(other OrderedIterator) bool
+	// IsBefore checks if the iterator's position is said to come after other's position.
+	IsAfter(other OrderedIterator) bool
 
-	// Key returns the current element's key.
-	// Does not modify the state of the iterator.
-	Key() interface{}
-
-	// Begin resets the iterator to its initial state (one-before-first)
-	// Call Next() to fetch the first element if any.
-	Begin()
-
-	// First moves the iterator to the first element and returns true if there was a first element in the container.
-	// If First() returns true, then first element's key and value can be retrieved by Key() and Value().
-	// Modifies the state of the iterator.
-	First() bool
-
-	// NextTo moves the iterator to the next element from current position that satisfies the condition given by the
-	// passed function, and returns true if there was a next element in the container.
-	// If NextTo() returns true, then next element's key and value can be retrieved by Key() and Value().
-	// Modifies the state of the iterator.
-	NextTo(func(key interface{}, value interface{}) bool) bool
+	// DistanceTo returns the signed distance of the iterator's position to other's position.
+	DistanceTo(other OrderedIterator) int
 }
 
-// ReverseIteratorWithIndex is stateful iterator for ordered containers whose values can be fetched by an index.
-//
-// Essentially it is the same as IteratorWithIndex, but provides additional:
-//
-// Prev() function to enable traversal in reverse
-//
-// Last() function to move the iterator to the last element.
-//
-// End() function to move the iterator past the last element (one-past-the-end).
-type ReverseIteratorWithIndex interface {
-	// Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
-	// If Prev() returns true, then previous element's index and value can be retrieved by Index() and Value().
-	// Modifies the state of the iterator.
-	Prev() bool
+// ComparableIterator defines an Iterator, which can be said to be in a position equal to other's position.
+type ComparableIterator interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
 
-	// End moves the iterator past the last element (one-past-the-end).
-	// Call Prev() to fetch the last element if any.
-	End()
-
-	// Last moves the iterator to the last element and returns true if there was a last element in the container.
-	// If Last() returns true, then last element's index and value can be retrieved by Index() and Value().
-	// Modifies the state of the iterator.
-	Last() bool
-
-	// PrevTo moves the iterator to the previous element from current position that satisfies the condition given by the
-	// passed function, and returns true if there was a next element in the container.
-	// If PrevTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-	// Modifies the state of the iterator.
-	PrevTo(func(index int, value interface{}) bool) bool
-
-	IteratorWithIndex
+	// IsEqualTo checks if the iterator's position is said to be equal to other's position.
+	IsEqual(other ComparableIterator) bool
 }
 
-// ReverseIteratorWithKey is a stateful iterator for ordered containers whose elements are key value pairs.
-//
-// Essentially it is the same as IteratorWithKey, but provides additional:
-//
-// Prev() function to enable traversal in reverse
-//
-// Last() function to move the iterator to the last element.
-type ReverseIteratorWithKey interface {
-	// Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
-	// If Prev() returns true, then previous element's key and value can be retrieved by Key() and Value().
-	// Modifies the state of the iterator.
-	Prev() bool
+// SizedIterator defines an Iterator, which can be said to have a fixed size.
+type SizedIterator[T any] interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
 
-	// End moves the iterator past the last element (one-past-the-end).
-	// Call Prev() to fetch the last element if any.
-	End()
+	// Size returns the number of elements in the iterator.
+	Size() int
+}
 
-	// Last moves the iterator to the last element and returns true if there was a last element in the container.
-	// If Last() returns true, then last element's key and value can be retrieved by Key() and Value().
-	// Modifies the state of the iterator.
-	Last() bool
+// CollectionIterator defines a SizedIterator, which can be said to reference a collection of elements.
+type CollectionIterator[T any] interface {
+	// *********************    Inherited methods    ********************//
+	SizedIterator[T]
+	// ************************    Own methods    ***********************//
 
-	// PrevTo moves the iterator to the previous element from current position that satisfies the condition given by the
-	// passed function, and returns true if there was a next element in the container.
-	// If PrevTo() returns true, then next element's key and value can be retrieved by Key() and Value().
-	// Modifies the state of the iterator.
-	PrevTo(func(key interface{}, value interface{}) bool) bool
+	// Index returns the index of the iterator's position in the collection.
+	Index() T
+}
 
-	IteratorWithKey
+// WritableIterator defines an Iterator, which can be used to write to the underlying values.
+type WritableIterator[T any] interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
+
+	// Set sets the value at the iterator's position.
+	Set(value T)
+}
+
+// ReadableIterator defines an Iterator, which can be used to read the underlying values.
+type ReadableIterator[T any] interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
+
+	// Get returns the value at the iterator's position.
+	Get() T
+}
+
+// ForwardIterator defines an ordered Iterator, which can be moved forward according to the indexes ordering.
+type ForwardIterator interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
+
+	// Next moves the iterator forward by one position.
+	Next()
+
+	// NextN moves the iterator forward by n positions.
+	NextN(i int)
+
+	// Advance() bool
+	// Next() ForwardIterator
+
+	// AdvanceN(n int) bool
+	// NextN(n int) ForwardIterator
+}
+
+// UnorderedForwardIterator defines an unordered ForwardIterator, which can be moved forward according to  the indexes ordering in addition to the underlying data structure's ordering.
+// This iterator would allow you to e.g. iterate over a builtin map in the lexographical order of the keys.
+type UnorderedForwardIterator interface {
+	// *********************    Inherited methods    ********************//
+	ForwardIterator
+	// ************************    Own methods    ***********************//
+
+	// NextOrdered moves the iterator forward by one position according to the indexes lexographical ordering instead of the underlying data structure's ordering.
+	NextOrdered()
+
+	// NextOrdered moves the iterator forward by n positions according to the indexes lexographical ordering instead of the underlying data structure's ordering.
+	NextOrderedN(n int)
+
+	// AdvanceOrdered() bool
+	// NextOrdered() UnorderedForwardIterator
+
+	// AdvanceOrderedN(n int) bool
+	// NextOrderedN(n int) UnorderedForwardIterator
+}
+
+// ReversedIterator defines a a ForwardIterator, whose iteration direction is reversed.
+// This allows using ForwardIterator and ReversedIterator with the same API.
+type ReversedIterator interface {
+	// *********************    Inherited methods    ********************//
+	ForwardIterator
+	// ************************    Own methods    ***********************//
+}
+
+// BackwardIterator defines an Iterator, which can be moved backward according to the indexes ordering.
+type BackwardIterator interface {
+	// *********************    Inherited methods    ********************//
+	Iterator
+	// ************************    Own methods    ***********************//
+
+	// Next moves the iterator backward  by one position.
+	Previous()
+
+	// NextN moves the iterator backward by n positions.
+	PreviousN(n int)
+
+	// Recede() bool
+	// Previous() BackwardIterator
+
+	// RecedeN(n int) bool
+	// PreviousN(n int) BackwardIterator
+}
+
+// UnorderedBackwardIterator defines an unordered BackwardIterator, which can be moved backward according to  the indexes ordering in addition to the underlying data structure's ordering.
+// This iterator would allow you to e.g. iterate over a builtin map in the reverse lexographical order of the keys.
+type UnorderedBackwardIterator interface {
+	// *********************    Inherited methods    ********************//
+	BackwardIterator
+	// ************************    Own methods    ***********************//
+
+	// PreviousOrdered moves the iterator backward by one position according to the indexes lexographical ordering instead of the underlying data structure's ordering.
+	PreviousOrdered()
+
+	// PreviousOrdered moves the iterator backward by n positions according to the indexes lexographical ordering instead of the underlying data structure's ordering.
+	PreviousOrderedN(n int)
+
+	// RecedeOrdered() bool
+	// PreviousOrdered() UnorderedBackwardIterator
+
+	// RecedeOrderedN(n int) bool
+	// PreviousOrderedN(n int) UnorderedBackwardIterator
+}
+
+// BidirectionalIterator defines a ForwardIterator and BackwardIterator, which can be moved forward and backward according to the underlying data structure's ordering.
+type BidirectionalIterator interface {
+	// *********************    Inherited methods    ********************//
+	ForwardIterator
+	BackwardIterator
+	// ************************    Own methods    ***********************//
+
+	// Next moves the iterator forward/backward by n positions.
+	MoveBy(n int) bool
+	// Nth(n int) BidirectionalIterator
+}
+
+// RandomAccessIterator defines a BidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
+type RandomAccessIterator[T any] interface {
+	// *********************    Inherited methods    ********************//
+	BidirectionalIterator
+	CollectionIterator[T]
+	// ************************    Own methods    ***********************//
+
+	// MoveTo moves the iterator to the given index.
+	MoveTo(i T) bool
+}
+
+// RandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
+type RandomAccessReadableIterator[T any, V any] interface {
+	// *********************    Inherited methods    ********************//
+	RandomAccessIterator[T]
+	ReadableIterator[T]
+	// ************************    Own methods    ***********************//
+
+	// GetAt returns the value at the given index of the iterator.
+	GetAt(i T) V
+}
+
+// RandomAccessReadableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
+type RandomAccessWriteableIterator[T any, V any] interface {
+	// *********************    Inherited methods    ********************//
+	RandomAccessIterator[T]
+	WritableIterator[V]
+	// ************************    Own methods    ***********************//
+
+	// GetAt sets the value at the given index of the iterator.
+	SetAt(i T, value V)
 }
