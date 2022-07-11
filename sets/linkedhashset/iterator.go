@@ -6,8 +6,8 @@
 package linkedhashset
 
 import (
-	"github.com/emirpasic/gods/containers"
-	"github.com/emirpasic/gods/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
 )
 
 // Assert Iterator implementation

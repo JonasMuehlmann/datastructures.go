@@ -6,8 +6,8 @@
 package main
 
 import (
-	"github.com/emirpasic/gods/trees/binaryheap"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/trees/binaryheap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // BinaryHeapExample to demonstrate basic usage of BinaryHeap

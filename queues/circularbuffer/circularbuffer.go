@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/emirpasic/gods/queues"
+	"github.com/JonasMuehlmann/datastructures.go/queues"
 )
 
 // Assert Queue implementation

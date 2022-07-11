@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/emirpasic/gods/lists/singlylinkedlist"
-	"github.com/emirpasic/gods/queues"
+	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/queues"
 )
 
 // Assert Queue implementation

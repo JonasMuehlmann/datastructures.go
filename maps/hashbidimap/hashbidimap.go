@@ -18,8 +18,8 @@ package hashbidimap
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/maps"
-	"github.com/emirpasic/gods/maps/hashmap"
+	"github.com/JonasMuehlmann/datastructures.go/maps"
+	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 )
 
 // Assert Map implementation

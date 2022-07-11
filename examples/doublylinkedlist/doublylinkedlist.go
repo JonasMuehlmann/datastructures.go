@@ -6,8 +6,8 @@
 package main
 
 import (
-	dll "github.com/emirpasic/gods/lists/doublylinkedlist"
-	"github.com/emirpasic/gods/utils"
+	dll "github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // DoublyLinkedListExample to demonstrate basic usage of DoublyLinkedList

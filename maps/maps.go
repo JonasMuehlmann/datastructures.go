@@ -16,9 +16,9 @@
 // Reference: https://en.wikipedia.org/wiki/Associative_array
 package maps
 
-import "github.com/emirpasic/gods/containers"
+import "github.com/JonasMuehlmann/datastructures.go/ds"
 
-// Map interface that all maps implement
+// Map interface that all maps implement.
 type Map interface {
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (value interface{}, found bool)
@@ -33,7 +33,7 @@ type Map interface {
 	// ToString() string
 }
 
-// BidiMap interface that all bidirectional maps implement (extends the Map interface)
+// BidiMap interface that all bidirectional maps implement (extends the Map interface).
 type BidiMap interface {
 	GetKey(value interface{}) (key interface{}, found bool)
 

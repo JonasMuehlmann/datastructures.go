@@ -11,8 +11,8 @@ package avltree
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/trees"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/trees"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Tree implementation

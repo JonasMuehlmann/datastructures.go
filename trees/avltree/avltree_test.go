@@ -6,7 +6,7 @@ package avltree
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 	"testing"
 )

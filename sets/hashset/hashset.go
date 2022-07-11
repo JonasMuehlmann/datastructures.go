@@ -12,7 +12,7 @@ package hashset
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/sets"
+	"github.com/JonasMuehlmann/datastructures.go/sets"
 	"strings"
 )
 

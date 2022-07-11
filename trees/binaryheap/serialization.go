@@ -6,7 +6,7 @@
 package binaryheap
 
 import (
-	"github.com/emirpasic/gods/containers"
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 )
 
 // Assert Serialization implementation

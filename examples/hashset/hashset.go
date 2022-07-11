@@ -5,7 +5,7 @@
 
 package main
 
-import "github.com/emirpasic/gods/sets/hashset"
+import "github.com/JonasMuehlmann/datastructures.go/sets/hashset"
 
 // HashSetExample to demonstrate basic usage of HashSet
 func main() {

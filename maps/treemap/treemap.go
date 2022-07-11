@@ -14,9 +14,9 @@ package treemap
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/maps"
-	rbt "github.com/emirpasic/gods/trees/redblacktree"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/maps"
+	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 )
 

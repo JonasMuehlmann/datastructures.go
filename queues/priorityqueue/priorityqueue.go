@@ -18,9 +18,9 @@ package priorityqueue
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/queues"
-	"github.com/emirpasic/gods/trees/binaryheap"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/queues"
+	"github.com/JonasMuehlmann/datastructures.go/trees/binaryheap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 )
 

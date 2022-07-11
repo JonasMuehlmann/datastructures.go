@@ -5,7 +5,7 @@
 
 package main
 
-import llq "github.com/emirpasic/gods/queues/linkedlistqueue"
+import llq "github.com/JonasMuehlmann/datastructures.go/queues/linkedlistqueue"
 
 // LinkedListQueueExample to demonstrate basic usage of LinkedListQueue
 func main() {

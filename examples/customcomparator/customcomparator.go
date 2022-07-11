@@ -7,7 +7,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/sets/treeset"
+	"github.com/JonasMuehlmann/datastructures.go/sets/treeset"
 )
 
 // User model (id and name)

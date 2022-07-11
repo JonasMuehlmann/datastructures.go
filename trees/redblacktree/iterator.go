@@ -5,7 +5,7 @@
 
 package redblacktree
 
-import "github.com/emirpasic/gods/containers"
+import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
 var _ containers.ReverseIteratorWithKey = (*Iterator)(nil)

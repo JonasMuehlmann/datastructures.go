@@ -14,7 +14,7 @@
 // Serialization provides serializers (marshalers) and deserializers (unmarshalers).
 package ds
 
-// Container is base interface that all data structures implement.
+// Container defines the minimum functionality required for all other containers.
 type Container interface {
 	IsEmpty() bool
 	Size() int

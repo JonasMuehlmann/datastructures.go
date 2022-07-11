@@ -8,7 +8,7 @@ package priorityqueue
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"math/rand"
 	"strings"
 	"testing"

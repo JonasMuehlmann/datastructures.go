@@ -6,8 +6,8 @@
 package main
 
 import (
-	sll "github.com/emirpasic/gods/lists/singlylinkedlist"
-	"github.com/emirpasic/gods/utils"
+	sll "github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // SinglyLinkedListExample to demonstrate basic usage of SinglyLinkedList

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func TestListNew(t *testing.T) {

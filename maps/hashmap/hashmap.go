@@ -15,7 +15,7 @@ package hashmap
 import (
 	"fmt"
 
-	"github.com/emirpasic/gods/maps"
+	"github.com/JonasMuehlmann/datastructures.go/maps"
 )
 
 // Assert Map implementation.

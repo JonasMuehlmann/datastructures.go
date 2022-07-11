@@ -14,8 +14,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/emirpasic/gods/lists"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/lists"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert List implementation.

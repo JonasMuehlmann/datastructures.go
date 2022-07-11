@@ -6,8 +6,8 @@
 package main
 
 import (
-	"github.com/emirpasic/gods/lists/arraylist"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // ArrayListExample to demonstrate basic usage of ArrayList

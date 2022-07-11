@@ -7,7 +7,7 @@ package main
 
 import (
 	"fmt"
-	avl "github.com/emirpasic/gods/trees/avltree"
+	avl "github.com/JonasMuehlmann/datastructures.go/trees/avltree"
 )
 
 // AVLTreeExample to demonstrate basic usage of AVLTree

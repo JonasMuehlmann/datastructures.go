@@ -16,8 +16,8 @@ package linkedhashset
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/lists/doublylinkedlist"
-	"github.com/emirpasic/gods/sets"
+	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/sets"
 	"strings"
 )
 

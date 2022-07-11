@@ -10,7 +10,7 @@
 // Reference: https://en.wikipedia.org/wiki/Set_%28abstract_data_type%29
 package sets
 
-import "github.com/emirpasic/gods/containers"
+import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Set interface that all sets implement
 type Set interface {

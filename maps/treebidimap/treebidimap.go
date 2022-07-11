@@ -20,9 +20,9 @@ package treebidimap
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/maps"
-	"github.com/emirpasic/gods/trees/redblacktree"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/maps"
+	"github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 )
 

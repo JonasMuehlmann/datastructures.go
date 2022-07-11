@@ -12,9 +12,9 @@ package treeset
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/sets"
-	rbt "github.com/emirpasic/gods/trees/redblacktree"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/sets"
+	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"reflect"
 	"strings"
 )

@@ -7,7 +7,7 @@ package doublylinkedlist
 
 import (
 	"encoding/json"
-	"github.com/emirpasic/gods/containers"
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 )
 
 // Assert Serialization implementation

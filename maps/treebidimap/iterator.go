@@ -6,8 +6,8 @@
 package treebidimap
 
 import (
-	"github.com/emirpasic/gods/containers"
-	rbt "github.com/emirpasic/gods/trees/redblacktree"
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
 )
 
 // Assert Iterator implementation

@@ -5,7 +5,7 @@
 
 package main
 
-import "github.com/emirpasic/gods/utils"
+import "github.com/JonasMuehlmann/datastructures.go/utils"
 
 // SortExample to demonstrate basic usage of basic sort
 func main() {

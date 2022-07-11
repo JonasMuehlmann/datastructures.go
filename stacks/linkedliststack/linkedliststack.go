@@ -12,8 +12,8 @@ package linkedliststack
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/lists/singlylinkedlist"
-	"github.com/emirpasic/gods/stacks"
+	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/stacks"
 	"strings"
 )
 

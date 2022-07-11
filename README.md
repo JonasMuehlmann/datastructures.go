@@ -1,4 +1,4 @@
-# Dastructures.go (Based on https://github.com/emirpasic/gods)
+# Dastructures.go (Based on https://github.com/JonasMuehlmann/datastructures.go)
 
 Implementation of various data structures and algorithms in Go.
 
@@ -133,8 +133,8 @@ Implements [List](#lists), [ReverseIteratorWithIndex](#reverseiteratorwithindex)
 package main
 
 import (
-	"github.com/emirpasic/gods/lists/arraylist"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -170,8 +170,8 @@ Implements [List](#lists), [IteratorWithIndex](#iteratorwithindex), [EnumerableW
 package main
 
 import (
-	sll "github.com/emirpasic/gods/lists/singlylinkedlist"
-	"github.com/emirpasic/gods/utils"
+	sll "github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -207,8 +207,8 @@ Implements [List](#lists), [ReverseIteratorWithIndex](#reverseiteratorwithindex)
 package main
 
 import (
-	dll "github.com/emirpasic/gods/lists/doublylinkedlist"
-	"github.com/emirpasic/gods/utils"
+	dll "github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -269,7 +269,7 @@ Implements [Set](#sets), [JSONSerializer](#jsonserializer) and [JSONDeserializer
 ```go
 package main
 
-import "github.com/emirpasic/gods/sets/hashset"
+import "github.com/JonasMuehlmann/datastructures.go/sets/hashset"
 
 func main() {
 	set := hashset.New()   // empty
@@ -296,7 +296,7 @@ Implements [Set](#sets), [ReverseIteratorWithIndex](#reverseiteratorwithindex), 
 ```go
 package main
 
-import "github.com/emirpasic/gods/sets/treeset"
+import "github.com/JonasMuehlmann/datastructures.go/sets/treeset"
 
 func main() {
 	set := treeset.NewWithIntComparator() // empty (keys are of type int)
@@ -323,7 +323,7 @@ Implements [Set](#sets), [ReverseIteratorWithIndex](#reverseiteratorwithindex), 
 ```go
 package main
 
-import "github.com/emirpasic/gods/sets/linkedhashset"
+import "github.com/JonasMuehlmann/datastructures.go/sets/linkedhashset"
 
 func main() {
 	set := linkedhashset.New() // empty
@@ -372,7 +372,7 @@ Implements [Stack](#stacks), [IteratorWithIndex](#iteratorwithindex), [JSONSeria
 ```go
 package main
 
-import lls "github.com/emirpasic/gods/stacks/linkedliststack"
+import lls "github.com/JonasMuehlmann/datastructures.go/stacks/linkedliststack"
 
 func main() {
 	stack := lls.New()  // empty
@@ -399,7 +399,7 @@ Implements [Stack](#stacks), [IteratorWithIndex](#iteratorwithindex), [JSONSeria
 ```go
 package main
 
-import "github.com/emirpasic/gods/stacks/arraystack"
+import "github.com/JonasMuehlmann/datastructures.go/stacks/arraystack"
 
 func main() {
 	stack := arraystack.New() // empty
@@ -458,7 +458,7 @@ Implements [Map](#maps), [JSONSerializer](#jsonserializer) and [JSONDeserializer
 ```go
 package main
 
-import "github.com/emirpasic/gods/maps/hashmap"
+import "github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 
 func main() {
 	m := hashmap.New() // empty
@@ -485,7 +485,7 @@ Implements [Map](#maps), [ReverseIteratorWithIndex](#reverseiteratorwithindex), 
 ```go
 package main
 
-import "github.com/emirpasic/gods/maps/treemap"
+import "github.com/JonasMuehlmann/datastructures.go/maps/treemap"
 
 func main() {
 	m := treemap.NewWithIntComparator() // empty (keys are of type int)
@@ -516,7 +516,7 @@ Implements [Map](#maps), [ReverseIteratorWithIndex](#reverseiteratorwithindex), 
 ```go
 package main
 
-import "github.com/emirpasic/gods/maps/linkedhashmap"
+import "github.com/JonasMuehlmann/datastructures.go/maps/linkedhashmap"
 
 func main() {
 	m := linkedhashmap.New() // empty (keys are of type int)
@@ -544,7 +544,7 @@ Implements [BidiMap](#maps), [JSONSerializer](#jsonserializer) and [JSONDeserial
 ```go
 package main
 
-import "github.com/emirpasic/gods/maps/hashbidimap"
+import "github.com/JonasMuehlmann/datastructures.go/maps/hashbidimap"
 
 func main() {
 	m := hashbidimap.New() // empty
@@ -574,8 +574,8 @@ Implements [BidiMap](#maps), [ReverseIteratorWithIndex](#reverseiteratorwithinde
 package main
 
 import (
-	"github.com/emirpasic/gods/maps/treebidimap"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/maps/treebidimap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -628,7 +628,7 @@ package main
 
 import (
 	"fmt"
-	rbt "github.com/emirpasic/gods/trees/redblacktree"
+	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
 )
 
 func main() {
@@ -677,7 +677,7 @@ func main() {
 }
 ```
 
-Extending the red-black tree's functionality  has been demonstrated in the following [example](https://github.com/emirpasic/gods/blob/master/examples/redblacktreeextended/redblacktreeextended.go).
+Extending the red-black tree's functionality  has been demonstrated in the following [example](https://github.com/JonasMuehlmann/datastructures.go/blob/master/examples/redblacktreeextended/redblacktreeextended.go).
 
 #### AVLTree
 
@@ -694,7 +694,7 @@ package main
 
 import (
 	"fmt"
-	avl "github.com/emirpasic/gods/trees/avltree"
+	avl "github.com/JonasMuehlmann/datastructures.go/trees/avltree"
 )
 
 func main() {
@@ -761,7 +761,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/trees/btree"
+	"github.com/JonasMuehlmann/datastructures.go/trees/btree"
 )
 
 func main() {
@@ -833,8 +833,8 @@ Implements [Tree](#trees), [ReverseIteratorWithIndex](#reverseiteratorwithindex)
 package main
 
 import (
-	"github.com/emirpasic/gods/trees/binaryheap"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/trees/binaryheap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -897,7 +897,7 @@ Implements [Queue](#queues), [IteratorWithIndex](#iteratorwithindex), [JSONSeria
 ```go
 package main
 
-import llq "github.com/emirpasic/gods/queues/linkedlistqueue"
+import llq "github.com/JonasMuehlmann/datastructures.go/queues/linkedlistqueue"
 
 // LinkedListQueueExample to demonstrate basic usage of LinkedListQueue
 func main() {
@@ -925,7 +925,7 @@ Implements [Queue](#queues), [ReverseIteratorWithIndex](#iteratorwithindex), [JS
 ```go
 package main
 
-import aq "github.com/emirpasic/gods/queues/arrayqueue"
+import aq "github.com/JonasMuehlmann/datastructures.go/queues/arrayqueue"
 
 // ArrayQueueExample to demonstrate basic usage of ArrayQueue
 func main() {
@@ -955,7 +955,7 @@ Implements [Queue](#queues), [ReverseIteratorWithIndex](#iteratorwithindex), [JS
 ```go
 package main
 
-import cb "github.com/emirpasic/gods/queues/circularbuffer"
+import cb "github.com/JonasMuehlmann/datastructures.go/queues/circularbuffer"
 
 // CircularBufferExample to demonstrate basic usage of CircularBuffer
 func main() {
@@ -987,8 +987,8 @@ Implements [Queue](#queues), [ReverseIteratorWithIndex](#iteratorwithindex), [JS
 package main
 
 import (
-  pq "github.com/emirpasic/gods/queues/priorityqueue"
-  "github.com/emirpasic/gods/utils"
+  pq "github.com/JonasMuehlmann/datastructures.go/queues/priorityqueue"
+  "github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Element is an entry in the priority queue
@@ -1093,7 +1093,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/sets/treeset"
+	"github.com/JonasMuehlmann/datastructures.go/sets/treeset"
 )
 
 type User struct {
@@ -1309,7 +1309,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/maps/hashmap"
+	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 )
 
 func main() {
@@ -1334,7 +1334,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
 )
 
 func main() {
@@ -1361,7 +1361,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/maps/hashmap"
+	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 )
 
 func main() {
@@ -1384,7 +1384,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emirpasic/gods/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
 )
 
 func main() {
@@ -1410,7 +1410,7 @@ Internally these all use the _utils.Sort()_ method:
 ```go
 package main
 
-import "github.com/emirpasic/gods/utils"
+import "github.com/JonasMuehlmann/datastructures.go/utils"
 
 func main() {
 	strings := []interface{}{}                  // []
@@ -1438,8 +1438,8 @@ Usage:
 package main
 
 import (
-	"github.com/emirpasic/gods/lists/arraylist"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 func main() {
@@ -1522,4 +1522,4 @@ errcheck ./...
 
 ### License
 
-This library is distributed under the BSD-style license found in the [LICENSE](https://github.com/emirpasic/gods/blob/master/LICENSE) file.
+This library is distributed under the BSD-style license found in the [LICENSE](https://github.com/JonasMuehlmann/datastructures.go/blob/master/LICENSE) file.

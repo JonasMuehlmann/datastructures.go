@@ -14,8 +14,8 @@ package linkedhashmap
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/lists/doublylinkedlist"
-	"github.com/emirpasic/gods/maps"
+	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"strings"
 )
 

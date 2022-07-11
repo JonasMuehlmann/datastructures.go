@@ -7,7 +7,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/maps/treemap"
+	"github.com/JonasMuehlmann/datastructures.go/maps/treemap"
 	"strings"
 )
 

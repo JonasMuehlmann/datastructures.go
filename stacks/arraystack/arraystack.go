@@ -12,8 +12,8 @@ package arraystack
 
 import (
 	"fmt"
-	"github.com/emirpasic/gods/lists/arraylist"
-	"github.com/emirpasic/gods/stacks"
+	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
+	"github.com/JonasMuehlmann/datastructures.go/stacks"
 	"strings"
 )
 

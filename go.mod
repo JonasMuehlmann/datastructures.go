@@ -2,4 +2,6 @@ module github.com/JonasMuehlmann/datastructures.go
 
 go 1.18
 
-require github.com/emirpasic/gods v1.18.1
+require (
+	golang.org/x/exp v0.0.0-20220706164943-b4a6d9510983
+)

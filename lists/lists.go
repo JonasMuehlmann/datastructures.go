@@ -11,8 +11,8 @@
 package lists
 
 import (
-	"github.com/emirpasic/gods/containers"
-	"github.com/emirpasic/gods/utils"
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // TODO: Implement PushBack, PopBack, PushFront PopFront, Reverse
