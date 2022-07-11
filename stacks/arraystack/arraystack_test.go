@@ -14,17 +14,17 @@ import (
 
 func TestStackPush(t *testing.T) {
 	stack := New()
-	if actualValue := stack.Empty(); actualValue != true {
+	if actualValue := stack.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 	stack.Push(1)
 	stack.Push(2)
 	stack.Push(3)
 
-	if actualValue := stack.Values(); actualValue[0].(int) != 3 || actualValue[1].(int) != 2 || actualValue[2].(int) != 1 {
+	if actualValue := stack.GetValues(); actualValue[0].(int) != 3 || actualValue[1].(int) != 2 || actualValue[2].(int) != 1 {
 		t.Errorf("Got %v expected %v", actualValue, "[3,2,1]")
 	}
-	if actualValue := stack.Empty(); actualValue != false {
+	if actualValue := stack.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := stack.Size(); actualValue != 3 {
@@ -66,10 +66,10 @@ func TestStackPop(t *testing.T) {
 	if actualValue, ok := stack.Pop(); actualValue != nil || ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	if actualValue := stack.Empty(); actualValue != true {
+	if actualValue := stack.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
-	if actualValue := stack.Values(); len(actualValue) != 0 {
+	if actualValue := stack.GetValues(); len(actualValue) != 0 {
 		t.Errorf("Got %v expected %v", actualValue, "[]")
 	}
 }
@@ -355,7 +355,7 @@ func TestStackSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", stack.Values()...), "cba"; actualValue != expectedValue {
+		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", stack.GetValues()...), "cba"; actualValue != expectedValue {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
 		if actualValue, expectedValue := stack.Size(), 3; actualValue != expectedValue {
@@ -388,8 +388,8 @@ func TestStackSerialization(t *testing.T) {
 func TestStackString(t *testing.T) {
 	c := New()
 	c.Push(1)
-	if !strings.HasPrefix(c.String(), "ArrayStack") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "ArrayStack") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

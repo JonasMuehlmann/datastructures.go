@@ -83,7 +83,7 @@ func (set *Set) Contains(items ...interface{}) bool {
 }
 
 // Empty returns true if set does not contain any elements.
-func (set *Set) Empty() bool {
+func (set *Set) IsEmpty() bool {
 	return set.tree.Size() == 0
 }
 
@@ -98,12 +98,12 @@ func (set *Set) Clear() {
 }
 
 // Values returns all items in the set.
-func (set *Set) Values() []interface{} {
+func (set *Set) GetValues() []interface{} {
 	return set.tree.Keys()
 }
 
 // String returns a string representation of container
-func (set *Set) String() string {
+func (set *Set) ToString() string {
 	str := "TreeSet\n"
 	items := []string{}
 	for _, v := range set.tree.Keys() {

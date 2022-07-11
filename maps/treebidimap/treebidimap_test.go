@@ -30,7 +30,7 @@ func TestMapPut(t *testing.T) {
 	if actualValue, expectedValue := m.Keys(), []interface{}{1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d", "e", "f", "g"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetValues(), []interface{}{"a", "b", "c", "d", "e", "f", "g"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
@@ -76,7 +76,7 @@ func TestMapRemove(t *testing.T) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetValues(), []interface{}{"a", "b", "c", "d"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := m.Size(); actualValue != 4 {
@@ -111,13 +111,13 @@ func TestMapRemove(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%s", m.Keys()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Values()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetValues()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := m.Size(); actualValue != 0 {
 		t.Errorf("Got %v expected %v", actualValue, 0)
 	}
-	if actualValue := m.Empty(); actualValue != true {
+	if actualValue := m.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 }
@@ -626,8 +626,8 @@ func TestMapSerialization(t *testing.T) {
 func TestMapString(t *testing.T) {
 	c := NewWithStringComparators()
 	c.Put("a", "a")
-	if !strings.HasPrefix(c.String(), "TreeBidiMap") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "TreeBidiMap") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 
@@ -641,7 +641,7 @@ func assertSerialization(m *Map, txt string, t *testing.T) {
 		actualValue[4].(string) != "e" {
 		t.Errorf("[%s] Got %v expected %v", txt, actualValue, "[a,b,c,d,e]")
 	}
-	if actualValue := m.Values(); false ||
+	if actualValue := m.GetValues(); false ||
 		actualValue[0].(string) != "1" ||
 		actualValue[1].(string) != "2" ||
 		actualValue[2].(string) != "3" ||

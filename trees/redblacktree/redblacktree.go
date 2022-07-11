@@ -152,7 +152,7 @@ func (tree *Tree) Remove(key interface{}) {
 }
 
 // Empty returns true if tree does not contain any nodes
-func (tree *Tree) Empty() bool {
+func (tree *Tree) IsEmpty() bool {
 	return tree.size == 0
 }
 
@@ -188,7 +188,7 @@ func (tree *Tree) Keys() []interface{} {
 }
 
 // Values returns all values in-order based on the key.
-func (tree *Tree) Values() []interface{} {
+func (tree *Tree) GetValues() []interface{} {
 	values := make([]interface{}, tree.size)
 	it := tree.Iterator()
 	for i := 0; it.Next(); i++ {
@@ -284,9 +284,9 @@ func (tree *Tree) Clear() {
 }
 
 // String returns a string representation of container
-func (tree *Tree) String() string {
+func (tree *Tree) ToString() string {
 	str := "RedBlackTree\n"
-	if !tree.Empty() {
+	if !tree.IsEmpty() {
 		output(tree.Root, "", true, &str)
 	}
 	return str

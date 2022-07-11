@@ -14,17 +14,17 @@ import (
 
 func TestQueueEnqueue(t *testing.T) {
 	queue := New(3)
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 	queue.Enqueue(1)
 	queue.Enqueue(2)
 	queue.Enqueue(3)
 
-	if actualValue := queue.Values(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
+	if actualValue := queue.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
 		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 	}
-	if actualValue := queue.Empty(); actualValue != false {
+	if actualValue := queue.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := queue.Size(); actualValue != 3 {
@@ -56,8 +56,8 @@ func TestQueueDequeue(t *testing.T) {
 	}
 
 	queue := New(3)
-	assert(queue.Empty(), true)
-	assert(queue.Empty(), true)
+	assert(queue.IsEmpty(), true)
+	assert(queue.IsEmpty(), true)
 	assert(queue.Full(), false)
 	assert(queue.Size(), 0)
 	queue.Enqueue(1)
@@ -67,7 +67,7 @@ func TestQueueDequeue(t *testing.T) {
 
 	queue.Enqueue(3)
 	assert(queue.Size(), 3)
-	assert(queue.Empty(), false)
+	assert(queue.IsEmpty(), false)
 	assert(queue.Full(), true)
 
 	queue.Dequeue()
@@ -87,7 +87,7 @@ func TestQueueDequeue(t *testing.T) {
 		t.Errorf("Got %v expected %v", actualValue, 3)
 	}
 	assert(queue.Size(), 0)
-	assert(queue.Empty(), true)
+	assert(queue.IsEmpty(), true)
 	assert(queue.Full(), false)
 
 	if actualValue, ok := queue.Dequeue(); actualValue != nil || ok {
@@ -95,9 +95,9 @@ func TestQueueDequeue(t *testing.T) {
 	}
 	assert(queue.Size(), 0)
 
-	assert(queue.Empty(), true)
+	assert(queue.IsEmpty(), true)
 	assert(queue.Full(), false)
-	assert(len(queue.Values()), 0)
+	assert(len(queue.GetValues()), 0)
 }
 
 func TestQueueDequeueFull(t *testing.T) {
@@ -108,7 +108,7 @@ func TestQueueDequeueFull(t *testing.T) {
 	}
 
 	queue := New(2)
-	assert(queue.Empty(), true)
+	assert(queue.IsEmpty(), true)
 	assert(queue.Full(), false)
 	assert(queue.Size(), 0)
 
@@ -146,9 +146,9 @@ func TestQueueDequeueFull(t *testing.T) {
 	if actualValue, ok := queue.Dequeue(); actualValue != nil || ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	assert(queue.Empty(), true)
+	assert(queue.IsEmpty(), true)
 	assert(queue.Full(), false)
-	assert(len(queue.Values()), 0)
+	assert(len(queue.GetValues()), 0)
 }
 
 func TestQueueIteratorOnEmpty(t *testing.T) {
@@ -490,7 +490,7 @@ func TestQueueSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", queue.Values()...), "abc"; actualValue != expectedValue {
+		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", queue.GetValues()...), "abc"; actualValue != expectedValue {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
 		if actualValue, expectedValue := queue.Size(), 3; actualValue != expectedValue {
@@ -523,8 +523,8 @@ func TestQueueSerialization(t *testing.T) {
 func TestQueueString(t *testing.T) {
 	c := New(3)
 	c.Enqueue(1)
-	if !strings.HasPrefix(c.String(), "CircularBuffer") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "CircularBuffer") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

@@ -26,11 +26,11 @@ type Map interface {
 	Keys() []interface{}
 
 	containers.Container
-	// Empty() bool
+	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// Values() []interface{}
-	// String() string
+	// GetValues() []interface{}
+	// ToString() string
 }
 
 // BidiMap interface that all bidirectional maps implement (extends the Map interface)

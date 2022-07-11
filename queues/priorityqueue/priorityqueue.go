@@ -56,7 +56,7 @@ func (queue *Queue) Peek() (value interface{}, ok bool) {
 }
 
 // Empty returns true if queue does not contain any elements.
-func (queue *Queue) Empty() bool {
+func (queue *Queue) IsEmpty() bool {
 	return queue.heap.Empty()
 }
 
@@ -71,12 +71,12 @@ func (queue *Queue) Clear() {
 }
 
 // Values returns all elements in the queue.
-func (queue *Queue) Values() []interface{} {
+func (queue *Queue) GetValues() []interface{} {
 	return queue.heap.Values()
 }
 
 // String returns a string representation of container
-func (queue *Queue) String() string {
+func (queue *Queue) ToString() string {
 	str := "PriorityQueue\n"
 	values := make([]string, queue.heap.Size(), queue.heap.Size())
 	for index, value := range queue.heap.Values() {

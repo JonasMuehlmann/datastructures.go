@@ -29,7 +29,7 @@ func TestMapPut(t *testing.T) {
 	if actualValue, expectedValue := m.Keys(), []interface{}{1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d", "e", "f", "g"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetValues(), []interface{}{"a", "b", "c", "d", "e", "f", "g"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
@@ -75,7 +75,7 @@ func TestMapRemove(t *testing.T) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
-	if actualValue, expectedValue := m.Values(), []interface{}{"a", "b", "c", "d"}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetValues(), []interface{}{"a", "b", "c", "d"}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := m.Size(); actualValue != 4 {
@@ -110,13 +110,13 @@ func TestMapRemove(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%s", m.Keys()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Values()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetValues()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := m.Size(); actualValue != 0 {
 		t.Errorf("Got %v expected %v", actualValue, 0)
 	}
-	if actualValue := m.Empty(); actualValue != true {
+	if actualValue := m.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 }
@@ -164,7 +164,7 @@ func TestMapSerialization(t *testing.T) {
 		if actualValue, expectedValue := m.Keys(), []interface{}{"a", "b", "c"}; !sameElements(actualValue, expectedValue) {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
-		if actualValue, expectedValue := m.Values(), []interface{}{1.0, 2.0, 3.0}; !sameElements(actualValue, expectedValue) {
+		if actualValue, expectedValue := m.GetValues(), []interface{}{1.0, 2.0, 3.0}; !sameElements(actualValue, expectedValue) {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
 		if actualValue, expectedValue := m.Size(), 3; actualValue != expectedValue {
@@ -197,8 +197,8 @@ func TestMapSerialization(t *testing.T) {
 func TestMapString(t *testing.T) {
 	c := New()
 	c.Put("a", 1)
-	if !strings.HasPrefix(c.String(), "HashBidiMap") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "HashBidiMap") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

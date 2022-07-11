@@ -52,7 +52,7 @@ func (m *Map) Remove(key interface{}) {
 }
 
 // Empty returns true if map does not contain any elements.
-func (m *Map) Empty() bool {
+func (m *Map) IsEmpty() bool {
 	return m.Size() == 0
 }
 
@@ -73,7 +73,7 @@ func (m *Map) Keys() []interface{} {
 }
 
 // Values returns all values (random order).
-func (m *Map) Values() []interface{} {
+func (m *Map) GetValues() []interface{} {
 	values := make([]interface{}, m.Size())
 	count := 0
 	for _, value := range m.m {
@@ -89,7 +89,7 @@ func (m *Map) Clear() {
 }
 
 // String returns a string representation of container.
-func (m *Map) String() string {
+func (m *Map) ToString() string {
 	str := "HashMap\n"
 	str += fmt.Sprintf("%v", m.m)
 	return str

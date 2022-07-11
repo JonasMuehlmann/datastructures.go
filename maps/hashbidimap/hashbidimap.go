@@ -69,7 +69,7 @@ func (m *Map) Remove(key interface{}) {
 }
 
 // Empty returns true if map does not contain any elements
-func (m *Map) Empty() bool {
+func (m *Map) IsEmpty() bool {
 	return m.Size() == 0
 }
 
@@ -84,7 +84,7 @@ func (m *Map) Keys() []interface{} {
 }
 
 // Values returns all values (random order).
-func (m *Map) Values() []interface{} {
+func (m *Map) GetValues() []interface{} {
 	return m.inverseMap.Keys()
 }
 
@@ -95,7 +95,7 @@ func (m *Map) Clear() {
 }
 
 // String returns a string representation of container
-func (m *Map) String() string {
+func (m *Map) ToString() string {
 	str := "HashBidiMap\n"
 	str += fmt.Sprintf("%v", m.forwardMap)
 	return str

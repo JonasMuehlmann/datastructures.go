@@ -12,26 +12,12 @@
 // Enumerable provides Ruby inspired (each, select, map, find, any?, etc.) container functions.
 //
 // Serialization provides serializers (marshalers) and deserializers (unmarshalers).
-package containers
-
-import "github.com/emirpasic/gods/utils"
+package ds
 
 // Container is base interface that all data structures implement.
 type Container interface {
-	Empty() bool
+	IsEmpty() bool
 	Size() int
 	Clear()
-	Values() []interface{}
-	String() string
-}
-
-// GetSortedValues returns sorted container's elements with respect to the passed comparator.
-// Does not affect the ordering of elements within the container.
-func GetSortedValues(container Container, comparator utils.Comparator) []interface{} {
-	values := container.Values()
-	if len(values) < 2 {
-		return values
-	}
-	utils.Sort(values, comparator)
-	return values
+	ToString() string
 }

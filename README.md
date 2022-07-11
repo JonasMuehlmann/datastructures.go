@@ -66,35 +66,35 @@ type Container interface {
 
 Containers are either ordered or unordered. All ordered containers provide [stateful iterators](#iterator) and some of them allow [enumerable functions](#enumerable).
 
-| **Data** | **Structure**                         | **Ordered** | **[Iterator](#iterator)** | **[Enumerable](#enumerable)** | **Referenced by** |
+| **Data** | **Structure**                         | **Ordered** | **[Iterator](#iterator)** | **Referenced by** |
 | :--- |:--------------------------------------| :---: | :---: | :---: | :---: |
 | [Lists](#lists) |
-|   | [ArrayList](#arraylist)               | yes | yes* | yes | index |
-|   | [SinglyLinkedList](#singlylinkedlist) | yes | yes | yes | index |
-|   | [DoublyLinkedList](#doublylinkedlist) | yes | yes* | yes | index |
+|   | [ArrayList](#arraylist)               | yes | yes* | index |
+|   | [SinglyLinkedList](#singlylinkedlist) | yes | yes | index |
+|   | [DoublyLinkedList](#doublylinkedlist) | yes | yes* | index |
 | [Sets](#sets) |
-|   | [HashSet](#hashset)                   | no | no | no | index |
-|   | [TreeSet](#treeset)                   | yes | yes* | yes | index |
-|   | [LinkedHashSet](#linkedhashset)       | yes | yes* | yes | index |
+|   | [HashSet](#hashset)                   | no | no | index |
+|   | [TreeSet](#treeset)                   | yes | yes* | index |
+|   | [LinkedHashSet](#linkedhashset)       | yes | yes* | index |
 | [Stacks](#stacks) |
-|   | [LinkedListStack](#linkedliststack)   | yes | yes | no | index |
-|   | [ArrayStack](#arraystack)             | yes | yes* | no | index |
+|   | [LinkedListStack](#linkedliststack)   | yes | yes | index |
+|   | [ArrayStack](#arraystack)             | yes | yes* | index |
 | [Maps](#maps) |
-|   | [HashMap](#hashmap)                   | no | no | no | key |
-|   | [TreeMap](#treemap)                   | yes | yes* | yes | key |
-|   | [LinkedHashMap](#linkedhashmap)       | yes | yes* | yes | key |
-|   | [HashBidiMap](#hashbidimap)           | no | no | no | key* |
-|   | [TreeBidiMap](#treebidimap)           | yes | yes* | yes | key* |
+|   | [HashMap](#hashmap)                   | no | no | key |
+|   | [TreeMap](#treemap)                   | yes | yes* | key |
+|   | [LinkedHashMap](#linkedhashmap)       | yes | yes* | key |
+|   | [HashBidiMap](#hashbidimap)           | no | no | key* |
+|   | [TreeBidiMap](#treebidimap)           | yes | yes* | key* |
 | [Trees](#trees) |
-|   | [RedBlackTree](#redblacktree)         | yes | yes* | no | key |
-|   | [AVLTree](#avltree)                   | yes | yes* | no | key |
-|   | [BTree](#btree)                       | yes | yes* | no | key |
-|   | [BinaryHeap](#binaryheap)             | yes | yes* | no | index |
+|   | [RedBlackTree](#redblacktree)         | yes | yes* | key |
+|   | [AVLTree](#avltree)                   | yes | yes* | key |
+|   | [BTree](#btree)                       | yes | yes* | key |
+|   | [BinaryHeap](#binaryheap)             | yes | yes* | index |
 | [Queues](#queues) |
-|   | [LinkedListQueue](#linkedlistqueue)   | yes | yes | no | index |
-|   | [ArrayQueue](#arrayqueue)             | yes | yes* | no | index |
-|   | [CircularBuffer](#circularbuffer)     | yes | yes* | no | index |
-|   | [PriorityQueue](#priorityqueue)       | yes | yes* | no | index |
+|   | [LinkedListQueue](#linkedlistqueue)   | yes | yes | index |
+|   | [ArrayQueue](#arrayqueue)             | yes | yes* | index |
+|   | [CircularBuffer](#circularbuffer)     | yes | yes* | index |
+|   | [PriorityQueue](#priorityqueue)       | yes | yes* | index |
 |   |                                       |  | <sub><sup>*reversible</sup></sub> |  | <sub><sup>*bidirectional</sup></sub> |
 
 ### Lists
@@ -114,7 +114,7 @@ type List interface {
 	Insert(index int, values ...interface{})
 	Set(index int, value interface{})
 
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -251,7 +251,7 @@ type Set interface {
     // Union(another *Set) *Set
     // Difference(another *Set) *Set
 	
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -354,7 +354,7 @@ type Stack interface {
 	Pop() (value interface{}, ok bool)
 	Peek() (value interface{}, ok bool)
 
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -430,7 +430,7 @@ type Map interface {
 	Remove(key interface{})
 	Keys() []interface{}
 
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -604,7 +604,7 @@ Implements [Container](#containers) interface.
 
 ```go
 type Tree interface {
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -879,7 +879,7 @@ type Queue interface {
 	Dequeue() (value interface{}, ok bool)
 	Peek() (value interface{}, ok bool)
 
-	containers.Container
+	ds.Container
 	// Empty() bool
 	// Size() int
 	// Clear()
@@ -1293,239 +1293,6 @@ for found := it.PrevTo(seek); found; found = it.Prev() {
 	...
 }
 ```
-
-### Enumerable
-
-Enumerable functions for ordered containers that implement [EnumerableWithIndex](#enumerablewithindex) or [EnumerableWithKey](#enumerablewithkey) interfaces.
-
-#### EnumerableWithIndex
-
-[Enumerable](#enumerable) functions for ordered containers whose values can be fetched by an index.
-
-**Each**
-
-Calls the given function once for each element, passing that element's index and value.
-
-```go
-Each(func(index int, value interface{}))
-```
-
-**Map**
-
-Invokes the given function once for each element and returns a container containing the values returned by the given function.
-
-```go
-Map(func(index int, value interface{}) interface{}) Container
-```
-
-**Select**
-
-Returns a new container containing all elements for which the given function returns a true value.
-
-```go
-Select(func(index int, value interface{}) bool) Container
-```
-
-**Any**
-
-Passes each element of the container to the given function and returns true if the function ever returns true for any element.
-
-```go
-Any(func(index int, value interface{}) bool) bool
-```
-
-**All**
-
-Passes each element of the container to the given function and returns true if the function returns true for all elements.
-
-```go
-All(func(index int, value interface{}) bool) bool
-```
-
-**Find**
-
-Passes each element of the container to the given function and returns the first (index,value) for which the function is true or -1,nil otherwise if no element matches the criteria.
-
-```go
-Find(func(index int, value interface{}) bool) (int, interface{})}
-```
-
-**Example:**
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/emirpasic/gods/sets/treeset"
-)
-
-func printSet(txt string, set *treeset.Set) {
-	fmt.Print(txt, "[ ")
-	set.Each(func(index int, value interface{}) {
-		fmt.Print(value, " ")
-	})
-	fmt.Println("]")
-}
-
-func main() {
-	set := treeset.NewWithIntComparator()
-	set.Add(2, 3, 4, 2, 5, 6, 7, 8)
-	printSet("Initial", set) // [ 2 3 4 5 6 7 8 ]
-
-	even := set.Select(func(index int, value interface{}) bool {
-		return value.(int)%2 == 0
-	})
-	printSet("Even numbers", even) // [ 2 4 6 8 ]
-
-	foundIndex, foundValue := set.Find(func(index int, value interface{}) bool {
-		return value.(int)%2 == 0 && value.(int)%3 == 0
-	})
-	if foundIndex != -1 {
-		fmt.Println("Number divisible by 2 and 3 found is", foundValue, "at index", foundIndex) // value: 6, index: 4
-	}
-
-	square := set.Map(func(index int, value interface{}) interface{} {
-		return value.(int) * value.(int)
-	})
-	printSet("Numbers squared", square) // [ 4 9 16 25 36 49 64 ]
-
-	bigger := set.Any(func(index int, value interface{}) bool {
-		return value.(int) > 5
-	})
-	fmt.Println("Set contains a number bigger than 5 is ", bigger) // true
-
-	positive := set.All(func(index int, value interface{}) bool {
-		return value.(int) > 0
-	})
-	fmt.Println("All numbers are positive is", positive) // true
-
-	evenNumbersSquared := set.Select(func(index int, value interface{}) bool {
-		return value.(int)%2 == 0
-	}).Map(func(index int, value interface{}) interface{} {
-		return value.(int) * value.(int)
-	})
-	printSet("Chaining", evenNumbersSquared) // [ 4 16 36 64 ]
-}
-```
-
-#### EnumerableWithKey
-
-Enumerable functions for ordered containers whose values whose elements are key/value pairs.
-
-**Each**
-
-Calls the given function once for each element, passing that element's key and value.
-
-```go
-Each(func(key interface{}, value interface{}))
-```
-
-**Map**
-
-Invokes the given function once for each element and returns a container containing the values returned by the given function as key/value pairs.
-
-```go
-Map(func(key interface{}, value interface{}) (interface{}, interface{})) Container
-```
-
-**Select**
-
-Returns a new container containing all elements for which the given function returns a true value.
-
-```go
-Select(func(key interface{}, value interface{}) bool) Container
-```
-
-**Any**
-
-Passes each element of the container to the given function and returns true if the function ever returns true for any element.
-
-```go
-Any(func(key interface{}, value interface{}) bool) bool
-```
-
-**All**
-
-Passes each element of the container to the given function and returns true if the function returns true for all elements.
-
-```go
-All(func(key interface{}, value interface{}) bool) bool
-```
-
-**Find**
-
-Passes each element of the container to the given function and returns the first (key,value) for which the function is true or nil,nil otherwise if no element matches the criteria.
-
-```go
-Find(func(key interface{}, value interface{}) bool) (interface{}, interface{})
-```
-
-**Example:**
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/emirpasic/gods/maps/treemap"
-)
-
-func printMap(txt string, m *treemap.Map) {
-	fmt.Print(txt, " { ")
-	m.Each(func(key interface{}, value interface{}) {
-		fmt.Print(key, ":", value, " ")
-	})
-	fmt.Println("}")
-}
-
-func main() {
-	m := treemap.NewWithStringComparator()
-	m.Put("g", 7)
-	m.Put("f", 6)
-	m.Put("e", 5)
-	m.Put("d", 4)
-	m.Put("c", 3)
-	m.Put("b", 2)
-	m.Put("a", 1)
-	printMap("Initial", m) // { a:1 b:2 c:3 d:4 e:5 f:6 g:7 }
-
-	even := m.Select(func(key interface{}, value interface{}) bool {
-		return value.(int) % 2 == 0
-	})
-	printMap("Elements with even values", even) // { b:2 d:4 f:6 }
-
-	foundKey, foundValue := m.Find(func(key interface{}, value interface{}) bool {
-		return value.(int) % 2 == 0 && value.(int) % 3 == 0
-	})
-	if foundKey != nil {
-		fmt.Println("Element with value divisible by 2 and 3 found is", foundValue, "with key", foundKey) // value: 6, index: 4
-	}
-
-	square := m.Map(func(key interface{}, value interface{}) (interface{}, interface{}) {
-		return key.(string) + key.(string), value.(int) * value.(int)
-	})
-	printMap("Elements' values squared and letters duplicated", square) // { aa:1 bb:4 cc:9 dd:16 ee:25 ff:36 gg:49 }
-
-	bigger := m.Any(func(key interface{}, value interface{}) bool {
-		return value.(int) > 5
-	})
-	fmt.Println("Map contains element whose value is bigger than 5 is", bigger) // true
-
-	positive := m.All(func(key interface{}, value interface{}) bool {
-		return value.(int) > 0
-	})
-	fmt.Println("All map's elements have positive values is", positive) // true
-
-	evenNumbersSquared := m.Select(func(key interface{}, value interface{}) bool {
-		return value.(int) % 2 == 0
-	}).Map(func(key interface{}, value interface{}) (interface{}, interface{}) {
-		return key, value.(int) * value.(int)
-	})
-	printMap("Chaining", evenNumbersSquared) // { b:4 d:16 f:36 }
-}
-```
-
 ### Serialization
 
 All data structures can be serialized (marshalled) and deserialized (unmarshalled). Currently, only JSON support is available.

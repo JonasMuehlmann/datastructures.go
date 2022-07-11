@@ -62,7 +62,7 @@ func (queue *Queue) Enqueue(value interface{}) {
 // Dequeue removes first element of the queue and returns it, or nil if queue is empty.
 // Second return parameter is true, unless the queue was empty and there was nothing to dequeue.
 func (queue *Queue) Dequeue() (value interface{}, ok bool) {
-	if queue.Empty() {
+	if queue.IsEmpty() {
 		return nil, false
 	}
 
@@ -85,14 +85,14 @@ func (queue *Queue) Dequeue() (value interface{}, ok bool) {
 // Peek returns first element of the queue without removing it, or nil if queue is empty.
 // Second return parameter is true, unless the queue was empty and there was nothing to peek.
 func (queue *Queue) Peek() (value interface{}, ok bool) {
-	if queue.Empty() {
+	if queue.IsEmpty() {
 		return nil, false
 	}
 	return queue.values[queue.start], true
 }
 
 // Empty returns true if queue does not contain any elements.
-func (queue *Queue) Empty() bool {
+func (queue *Queue) IsEmpty() bool {
 	return queue.Size() == 0
 }
 
@@ -116,7 +116,7 @@ func (queue *Queue) Clear() {
 }
 
 // Values returns all elements in the queue (FIFO order).
-func (queue *Queue) Values() []interface{} {
+func (queue *Queue) GetValues() []interface{} {
 	values := make([]interface{}, queue.Size(), queue.Size())
 	for i := 0; i < queue.Size(); i++ {
 		values[i] = queue.values[(queue.start+i)%queue.maxSize]
@@ -125,10 +125,10 @@ func (queue *Queue) Values() []interface{} {
 }
 
 // String returns a string representation of container
-func (queue *Queue) String() string {
+func (queue *Queue) ToString() string {
 	str := "CircularBuffer\n"
 	var values []string
-	for _, value := range queue.Values() {
+	for _, value := range queue.GetValues() {
 		values = append(values, fmt.Sprintf("%v", value))
 	}
 	str += strings.Join(values, ", ")

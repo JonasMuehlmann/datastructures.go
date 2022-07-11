@@ -91,7 +91,7 @@ func (t *Tree) Remove(key interface{}) {
 }
 
 // Empty returns true if tree does not contain any nodes.
-func (t *Tree) Empty() bool {
+func (t *Tree) IsEmpty() bool {
 	return t.size == 0
 }
 
@@ -127,7 +127,7 @@ func (t *Tree) Keys() []interface{} {
 }
 
 // Values returns all values in-order based on the key.
-func (t *Tree) Values() []interface{} {
+func (t *Tree) GetValues() []interface{} {
 	values := make([]interface{}, t.size)
 	it := t.Iterator()
 	for i := 0; it.Next(); i++ {
@@ -213,9 +213,9 @@ func (t *Tree) Clear() {
 }
 
 // String returns a string representation of container
-func (t *Tree) String() string {
+func (t *Tree) ToString() string {
 	str := "AVLTree\n"
-	if !t.Empty() {
+	if !t.IsEmpty() {
 		output(t.Root, "", true, &str)
 	}
 	return str

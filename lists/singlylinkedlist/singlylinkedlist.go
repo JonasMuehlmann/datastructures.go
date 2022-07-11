@@ -151,7 +151,7 @@ func (list *List) Contains(values ...interface{}) bool {
 }
 
 // Values returns all elements in the list.
-func (list *List) Values() []interface{} {
+func (list *List) GetValues() []interface{} {
 	values := make([]interface{}, list.size, list.size)
 	for e, element := 0, list.first; element != nil; e, element = e+1, element.next {
 		values[e] = element.value
@@ -164,7 +164,7 @@ func (list *List) IndexOf(value interface{}) int {
 	if list.size == 0 {
 		return -1
 	}
-	for index, element := range list.Values() {
+	for index, element := range list.GetValues() {
 		if element == value {
 			return index
 		}
@@ -173,7 +173,7 @@ func (list *List) IndexOf(value interface{}) int {
 }
 
 // Empty returns true if list does not contain any elements.
-func (list *List) Empty() bool {
+func (list *List) IsEmpty() bool {
 	return list.size == 0
 }
 
@@ -196,7 +196,7 @@ func (list *List) Sort(comparator utils.Comparator) {
 		return
 	}
 
-	values := list.Values()
+	values := list.GetValues()
 	utils.Sort(values, comparator)
 
 	list.Clear()
@@ -286,7 +286,7 @@ func (list *List) Set(index int, value interface{}) {
 }
 
 // String returns a string representation of container
-func (list *List) String() string {
+func (list *List) ToString() string {
 	str := "SinglyLinkedList\n"
 	values := []string{}
 	for element := list.first; element != nil; element = element.next {

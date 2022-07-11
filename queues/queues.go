@@ -19,9 +19,9 @@ type Queue interface {
 	Peek() (value interface{}, ok bool)
 
 	containers.Container
-	// Empty() bool
+	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// Values() []interface{}
-	// String() string
+	// GetValues() []interface{}
+	// ToString() string
 }

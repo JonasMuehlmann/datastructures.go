@@ -72,7 +72,7 @@ func TestAVLTreePut(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d%d%d%d", tree.Keys()...), "1234567"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.Values()...), "abcdefg"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.GetValues()...), "abcdefg"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
@@ -116,10 +116,10 @@ func TestAVLTreeRemove(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d", tree.Keys()...), "1234"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.Values()...), "abcd"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.GetValues()...), "abcd"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.Values()...), "abcd"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.GetValues()...), "abcd"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := tree.Size(); actualValue != 4 {
@@ -154,10 +154,10 @@ func TestAVLTreeRemove(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%s", tree.Keys()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", tree.Values()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s", tree.GetValues()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if empty, size := tree.Empty(), tree.Size(); empty != true || size != -0 {
+	if empty, size := tree.IsEmpty(), tree.Size(); empty != true || size != -0 {
 		t.Errorf("Got %v expected %v", empty, true)
 	}
 
@@ -669,7 +669,7 @@ func TestAVLTreeSerialization(t *testing.T) {
 		if actualValue := tree.Keys(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
 			t.Errorf("Got %v expected %v", actualValue, "[a,b,c]")
 		}
-		if actualValue := tree.Values(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {
+		if actualValue := tree.GetValues(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {
 			t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 		}
 		if err != nil {
@@ -707,8 +707,8 @@ func TestAVLTreeString(t *testing.T) {
 	c.Put(7, 1)
 	c.Put(8, 1)
 
-	if !strings.HasPrefix(c.String(), "AVLTree") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "AVLTree") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

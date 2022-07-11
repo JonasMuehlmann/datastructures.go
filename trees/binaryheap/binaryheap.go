@@ -82,7 +82,7 @@ func (heap *Heap) Peek() (value interface{}, ok bool) {
 }
 
 // Empty returns true if heap does not contain any elements.
-func (heap *Heap) Empty() bool {
+func (heap *Heap) IsEmpty() bool {
 	return heap.list.Empty()
 }
 
@@ -97,7 +97,7 @@ func (heap *Heap) Clear() {
 }
 
 // Values returns all elements in the heap.
-func (heap *Heap) Values() []interface{} {
+func (heap *Heap) GetValues() []interface{} {
 	values := make([]interface{}, heap.list.Size(), heap.list.Size())
 	for it := heap.Iterator(); it.Next(); {
 		values[it.Index()] = it.Value()
@@ -106,7 +106,7 @@ func (heap *Heap) Values() []interface{} {
 }
 
 // String returns a string representation of container
-func (heap *Heap) String() string {
+func (heap *Heap) ToString() string {
 	str := "BinaryHeap\n"
 	values := []string{}
 	for it := heap.Iterator(); it.Next(); {

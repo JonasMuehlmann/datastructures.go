@@ -16,7 +16,7 @@ var _ containers.JSONDeserializer = (*Set)(nil)
 
 // ToJSON outputs the JSON representation of the set.
 func (set *Set) ToJSON() ([]byte, error) {
-	return json.Marshal(set.Values())
+	return json.Marshal(set.GetValues())
 }
 
 // FromJSON populates the set from the input JSON representation.

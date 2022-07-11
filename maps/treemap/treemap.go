@@ -63,7 +63,7 @@ func (m *Map) Remove(key interface{}) {
 }
 
 // Empty returns true if map does not contain any elements
-func (m *Map) Empty() bool {
+func (m *Map) IsEmpty() bool {
 	return m.tree.Empty()
 }
 
@@ -78,7 +78,7 @@ func (m *Map) Keys() []interface{} {
 }
 
 // Values returns all values in-order based on the key.
-func (m *Map) Values() []interface{} {
+func (m *Map) GetValues() []interface{} {
 	return m.tree.Values()
 }
 
@@ -140,7 +140,7 @@ func (m *Map) Ceiling(key interface{}) (foundKey interface{}, foundValue interfa
 }
 
 // String returns a string representation of container
-func (m *Map) String() string {
+func (m *Map) ToString() string {
 	str := "TreeMap\nmap["
 	it := m.Iterator()
 	for it.Next() {

@@ -15,9 +15,9 @@ import "github.com/emirpasic/gods/containers"
 // Tree interface that all trees implement
 type Tree interface {
 	containers.Container
-	// Empty() bool
+	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// Values() []interface{}
-	// String() string
+	// GetValues() []interface{}
+	// ToString() string
 }

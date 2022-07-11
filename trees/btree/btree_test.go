@@ -711,7 +711,7 @@ func TestBTreeIteratorValuesAndKeys(t *testing.T) {
 	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d%d%d%d", tree.Keys()...), "1234567"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.Values()...), "xbcdefg"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.GetValues()...), "xbcdefg"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue := tree.Size(); actualValue != 7 {
@@ -1187,7 +1187,7 @@ func TestBTreeSerialization(t *testing.T) {
 		if actualValue := tree.Keys(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
 			t.Errorf("Got %v expected %v", actualValue, "[a,b,c]")
 		}
-		if actualValue := tree.Values(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {
+		if actualValue := tree.GetValues(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {
 			t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 		}
 		if err != nil {
@@ -1217,8 +1217,8 @@ func TestBTreeSerialization(t *testing.T) {
 func TestBTreeString(t *testing.T) {
 	c := NewWithStringComparator(3)
 	c.Put("a", 1)
-	if !strings.HasPrefix(c.String(), "BTree") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "BTree") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

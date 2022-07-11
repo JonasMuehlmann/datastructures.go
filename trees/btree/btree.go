@@ -113,7 +113,7 @@ func (tree *Tree) Remove(key interface{}) {
 }
 
 // Empty returns true if tree does not contain any nodes
-func (tree *Tree) Empty() bool {
+func (tree *Tree) IsEmpty() bool {
 	return tree.size == 0
 }
 
@@ -146,7 +146,7 @@ func (tree *Tree) Keys() []interface{} {
 }
 
 // Values returns all values in-order based on the key.
-func (tree *Tree) Values() []interface{} {
+func (tree *Tree) GetValues() []interface{} {
 	values := make([]interface{}, tree.size)
 	it := tree.Iterator()
 	for i := 0; it.Next(); i++ {
@@ -209,10 +209,10 @@ func (tree *Tree) RightValue() interface{} {
 }
 
 // String returns a string representation of container (for debugging purposes)
-func (tree *Tree) String() string {
+func (tree *Tree) ToString() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("BTree\n")
-	if !tree.Empty() {
+	if !tree.IsEmpty() {
 		tree.output(&buffer, tree.Root, 0, true)
 	}
 	return buffer.String()
@@ -298,7 +298,7 @@ func (tree *Tree) search(node *Node, key interface{}) (index int, found bool) {
 
 // searchRecursively searches recursively down the tree starting at the startNode
 func (tree *Tree) searchRecursively(startNode *Node, key interface{}) (node *Node, index int, found bool) {
-	if tree.Empty() {
+	if tree.IsEmpty() {
 		return nil, -1, false
 	}
 	node = startNode
@@ -422,7 +422,7 @@ func setParent(nodes []*Node, parent *Node) {
 }
 
 func (tree *Tree) left(node *Node) *Node {
-	if tree.Empty() {
+	if tree.IsEmpty() {
 		return nil
 	}
 	current := node
@@ -435,7 +435,7 @@ func (tree *Tree) left(node *Node) *Node {
 }
 
 func (tree *Tree) right(node *Node) *Node {
-	if tree.Empty() {
+	if tree.IsEmpty() {
 		return nil
 	}
 	current := node

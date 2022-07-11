@@ -17,14 +17,14 @@ type Set interface {
 	Add(elements ...interface{})
 	Remove(elements ...interface{})
 	Contains(elements ...interface{}) bool
-	// Intersection(another *Set) *Set
-	// Union(another *Set) *Set
-	// Difference(another *Set) *Set
+	MakeIntersectionWith(other *Set) *Set
+	MakeUnionWith(other *Set) *Set
+	MakeDifferenceWith(other *Set) *Set
 
 	containers.Container
-	// Empty() bool
+	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// Values() []interface{}
-	// String() string
+	// GetValues() []interface{}
+	// ToString() string
 }

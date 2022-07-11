@@ -35,7 +35,7 @@ func TestSetAdd(t *testing.T) {
 	set.Add(2)
 	set.Add(2, 3)
 	set.Add()
-	if actualValue := set.Empty(); actualValue != false {
+	if actualValue := set.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := set.Size(); actualValue != 3 {
@@ -121,8 +121,8 @@ func TestSetSerialization(t *testing.T) {
 func TestSetString(t *testing.T) {
 	c := New()
 	c.Add(1)
-	if !strings.HasPrefix(c.String(), "HashSet") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "HashSet") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

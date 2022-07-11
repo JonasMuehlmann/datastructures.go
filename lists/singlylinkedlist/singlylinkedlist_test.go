@@ -17,7 +17,7 @@ import (
 func TestListNew(t *testing.T) {
 	list1 := New()
 
-	if actualValue := list1.Empty(); actualValue != true {
+	if actualValue := list1.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
@@ -44,7 +44,7 @@ func TestListAdd(t *testing.T) {
 	list := New()
 	list.Add("a")
 	list.Add("b", "c")
-	if actualValue := list.Empty(); actualValue != false {
+	if actualValue := list.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := list.Size(); actualValue != 3 {
@@ -60,7 +60,7 @@ func TestListAppendAndPrepend(t *testing.T) {
 	list.Add("b")
 	list.Prepend("a")
 	list.Append("c")
-	if actualValue := list.Empty(); actualValue != false {
+	if actualValue := list.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := list.Size(); actualValue != 3 {
@@ -88,7 +88,7 @@ func TestListRemove(t *testing.T) {
 	list.Remove(1)
 	list.Remove(0)
 	list.Remove(0) // no effect
-	if actualValue := list.Empty(); actualValue != true {
+	if actualValue := list.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 	if actualValue := list.Size(); actualValue != 0 {
@@ -146,7 +146,7 @@ func TestListClear(t *testing.T) {
 	list := New()
 	list.Add("e", "f", "g", "a", "b", "c", "d")
 	list.Clear()
-	if actualValue := list.Empty(); actualValue != true {
+	if actualValue := list.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 	if actualValue := list.Size(); actualValue != 0 {
@@ -180,7 +180,7 @@ func TestListValues(t *testing.T) {
 	list := New()
 	list.Add("a")
 	list.Add("b", "c")
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.Values()...), "abc"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.GetValues()...), "abc"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 }
@@ -224,7 +224,7 @@ func TestListInsert(t *testing.T) {
 	if actualValue := list.Size(); actualValue != 4 {
 		t.Errorf("Got %v expected %v", actualValue, 4)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", list.Values()...), "abcd"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", list.GetValues()...), "abcd"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 }
@@ -245,7 +245,7 @@ func TestListSet(t *testing.T) {
 	if actualValue := list.Size(); actualValue != 3 {
 		t.Errorf("Got %v expected %v", actualValue, 3)
 	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.Values()...), "abbc"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.GetValues()...), "abbc"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 }
@@ -500,7 +500,7 @@ func TestListSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.Values()...), "abc"; actualValue != expectedValue {
+		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", list.GetValues()...), "abc"; actualValue != expectedValue {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
 		if actualValue, expectedValue := list.Size(), 3; actualValue != expectedValue {
@@ -533,8 +533,8 @@ func TestListSerialization(t *testing.T) {
 func TestListString(t *testing.T) {
 	c := New()
 	c.Add(1)
-	if !strings.HasPrefix(c.String(), "SinglyLinkedList") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "SinglyLinkedList") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

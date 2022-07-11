@@ -15,7 +15,7 @@ import (
 func TestBinaryHeapPush(t *testing.T) {
 	heap := NewWithIntComparator()
 
-	if actualValue := heap.Empty(); actualValue != true {
+	if actualValue := heap.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
@@ -23,10 +23,10 @@ func TestBinaryHeapPush(t *testing.T) {
 	heap.Push(2)
 	heap.Push(1)
 
-	if actualValue := heap.Values(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
+	if actualValue := heap.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
 		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 	}
-	if actualValue := heap.Empty(); actualValue != false {
+	if actualValue := heap.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := heap.Size(); actualValue != 3 {
@@ -42,7 +42,7 @@ func TestBinaryHeapPushBulk(t *testing.T) {
 
 	heap.Push(15, 20, 3, 1, 2)
 
-	if actualValue := heap.Values(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
+	if actualValue := heap.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
 		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 	}
 	if actualValue, ok := heap.Pop(); actualValue != 1 || !ok {
@@ -53,7 +53,7 @@ func TestBinaryHeapPushBulk(t *testing.T) {
 func TestBinaryHeapPop(t *testing.T) {
 	heap := NewWithIntComparator()
 
-	if actualValue := heap.Empty(); actualValue != true {
+	if actualValue := heap.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
@@ -74,10 +74,10 @@ func TestBinaryHeapPop(t *testing.T) {
 	if actualValue, ok := heap.Pop(); actualValue != nil || ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	if actualValue := heap.Empty(); actualValue != true {
+	if actualValue := heap.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
-	if actualValue := heap.Values(); len(actualValue) != 0 {
+	if actualValue := heap.GetValues(); len(actualValue) != 0 {
 		t.Errorf("Got %v expected %v", actualValue, "[]")
 	}
 }
@@ -92,7 +92,7 @@ func TestBinaryHeapRandom(t *testing.T) {
 	}
 
 	prev, _ := heap.Pop()
-	for !heap.Empty() {
+	for !heap.IsEmpty() {
 		curr, _ := heap.Pop()
 		if prev.(int) > curr.(int) {
 			t.Errorf("Heap property invalidated. prev: %v current: %v", prev, curr)
@@ -377,7 +377,7 @@ func TestBinaryHeapSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue := heap.Values(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
+		if actualValue := heap.GetValues(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
 			t.Errorf("Got %v expected %v", actualValue, "[1,3,2]")
 		}
 		if actualValue := heap.Size(); actualValue != 3 {
@@ -413,8 +413,8 @@ func TestBinaryHeapSerialization(t *testing.T) {
 func TestBTreeString(t *testing.T) {
 	c := NewWithIntComparator()
 	c.Push(1)
-	if !strings.HasPrefix(c.String(), "BinaryHeap") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "BinaryHeap") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

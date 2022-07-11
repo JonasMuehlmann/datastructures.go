@@ -34,7 +34,7 @@ func byPriority(a, b interface{}) int {
 func TestBinaryQueueEnqueue(t *testing.T) {
 	queue := NewWith(byPriority)
 
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
@@ -73,7 +73,7 @@ func TestBinaryQueueEnqueue(t *testing.T) {
 		}
 	}
 
-	if actualValue := queue.Values(); actualValue[0].(Element).name != "c" || actualValue[1].(Element).name != "b" || actualValue[2].(Element).name != "a" {
+	if actualValue := queue.GetValues(); actualValue[0].(Element).name != "c" || actualValue[1].(Element).name != "b" || actualValue[2].(Element).name != "a" {
 		t.Errorf("Got %v expected %v", actualValue, `[{3 c} {2 b} {1 a}]`)
 	}
 }
@@ -104,7 +104,7 @@ func TestBinaryQueueEnqueueBulk(t *testing.T) {
 	}
 
 	queue.Clear()
-	if actualValue := queue.Empty(); !actualValue {
+	if actualValue := queue.IsEmpty(); !actualValue {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 }
@@ -112,7 +112,7 @@ func TestBinaryQueueEnqueueBulk(t *testing.T) {
 func TestBinaryQueueDequeue(t *testing.T) {
 	queue := NewWith(utils.IntComparator)
 
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
@@ -130,10 +130,10 @@ func TestBinaryQueueDequeue(t *testing.T) {
 	if actualValue, ok := queue.Dequeue(); actualValue != nil || ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
-	if actualValue := queue.Values(); len(actualValue) != 0 {
+	if actualValue := queue.GetValues(); len(actualValue) != 0 {
 		t.Errorf("Got %v expected %v", actualValue, "[]")
 	}
 }
@@ -148,7 +148,7 @@ func TestBinaryQueueRandom(t *testing.T) {
 	}
 
 	prev, _ := queue.Dequeue()
-	for !queue.Empty() {
+	for !queue.IsEmpty() {
 		curr, _ := queue.Dequeue()
 		if prev.(int) > curr.(int) {
 			t.Errorf("Queue property invalidated. prev: %v current: %v", prev, curr)
@@ -433,7 +433,7 @@ func TestBinaryQueueSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue := queue.Values(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
+		if actualValue := queue.GetValues(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
 			t.Errorf("Got %v expected %v", actualValue, "[1,3,2]")
 		}
 		if actualValue := queue.Size(); actualValue != 3 {
@@ -469,8 +469,8 @@ func TestBinaryQueueSerialization(t *testing.T) {
 func TestBTreeString(t *testing.T) {
 	c := NewWith(byPriority)
 	c.Enqueue(1)
-	if !strings.HasPrefix(c.String(), "PriorityQueue") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "PriorityQueue") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

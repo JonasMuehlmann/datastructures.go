@@ -50,7 +50,7 @@ func (stack *Stack) Peek() (value interface{}, ok bool) {
 }
 
 // Empty returns true if stack does not contain any elements.
-func (stack *Stack) Empty() bool {
+func (stack *Stack) IsEmpty() bool {
 	return stack.list.Empty()
 }
 
@@ -65,12 +65,12 @@ func (stack *Stack) Clear() {
 }
 
 // Values returns all elements in the stack (LIFO order).
-func (stack *Stack) Values() []interface{} {
+func (stack *Stack) GetValues() []interface{} {
 	return stack.list.Values()
 }
 
 // String returns a string representation of container
-func (stack *Stack) String() string {
+func (stack *Stack) ToString() string {
 	str := "LinkedListStack\n"
 	values := []string{}
 	for _, value := range stack.list.Values() {

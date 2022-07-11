@@ -52,7 +52,7 @@ func (queue *Queue) Peek() (value interface{}, ok bool) {
 }
 
 // Empty returns true if queue does not contain any elements.
-func (queue *Queue) Empty() bool {
+func (queue *Queue) IsEmpty() bool {
 	return queue.list.Empty()
 }
 
@@ -67,12 +67,12 @@ func (queue *Queue) Clear() {
 }
 
 // Values returns all elements in the queue (FIFO order).
-func (queue *Queue) Values() []interface{} {
+func (queue *Queue) GetValues() []interface{} {
 	return queue.list.Values()
 }
 
 // String returns a string representation of container
-func (queue *Queue) String() string {
+func (queue *Queue) ToString() string {
 	str := "LinkedListQueue\n"
 	values := []string{}
 	for _, value := range queue.list.Values() {

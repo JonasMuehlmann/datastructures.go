@@ -16,7 +16,7 @@ var _ containers.JSONDeserializer = (*List)(nil)
 
 // ToJSON outputs the JSON representation of list's elements.
 func (list *List) ToJSON() ([]byte, error) {
-	return json.Marshal(list.Values())
+	return json.Marshal(list.GetValues())
 }
 
 // FromJSON populates list's elements from the input JSON representation.

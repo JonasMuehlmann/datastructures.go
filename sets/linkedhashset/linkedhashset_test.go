@@ -17,7 +17,7 @@ func TestSetNew(t *testing.T) {
 	if actualValue := set.Size(); actualValue != 2 {
 		t.Errorf("Got %v expected %v", actualValue, 2)
 	}
-	values := set.Values()
+	values := set.GetValues()
 	if actualValue := values[0]; actualValue != 2 {
 		t.Errorf("Got %v expected %v", actualValue, 2)
 	}
@@ -33,7 +33,7 @@ func TestSetAdd(t *testing.T) {
 	set.Add(2)
 	set.Add(2, 3)
 	set.Add()
-	if actualValue := set.Empty(); actualValue != false {
+	if actualValue := set.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := set.Size(); actualValue != 3 {
@@ -474,8 +474,8 @@ func TestSetSerialization(t *testing.T) {
 func TestSetString(t *testing.T) {
 	c := New()
 	c.Add(1)
-	if !strings.HasPrefix(c.String(), "LinkedHashSet") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "LinkedHashSet") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 

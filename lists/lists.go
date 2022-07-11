@@ -28,9 +28,9 @@ type List interface {
 	Set(index int, value interface{})
 
 	containers.Container
-	// Empty() bool
+	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// Values() []interface{}
-	// String() string
+	// GetValues() []interface{}
+	// ToString() string
 }

@@ -100,7 +100,7 @@ func (list *List) Contains(values ...interface{}) bool {
 }
 
 // Values returns all elements in the list.
-func (list *List) Values() []interface{} {
+func (list *List) GetValues() []interface{} {
 	newElements := make([]interface{}, list.size, list.size)
 	copy(newElements, list.elements[:list.size])
 	return newElements
@@ -119,7 +119,7 @@ func (list *List) IndexOf(value interface{}) int {
 }
 
 // Empty returns true if list does not contain any elements.
-func (list *List) Empty() bool {
+func (list *List) IsEmpty() bool {
 	return list.size == 0
 }
 
@@ -184,7 +184,7 @@ func (list *List) Set(index int, value interface{}) {
 }
 
 // String returns a string representation of container.
-func (list *List) String() string {
+func (list *List) ToString() string {
 	str := "ArrayList\n"
 	values := []string{}
 	for _, value := range list.elements[:list.size] {

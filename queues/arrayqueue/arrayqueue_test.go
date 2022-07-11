@@ -14,17 +14,17 @@ import (
 
 func TestQueueEnqueue(t *testing.T) {
 	queue := New()
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 	queue.Enqueue(1)
 	queue.Enqueue(2)
 	queue.Enqueue(3)
 
-	if actualValue := queue.Values(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
+	if actualValue := queue.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
 		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
 	}
-	if actualValue := queue.Empty(); actualValue != false {
+	if actualValue := queue.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
 	if actualValue := queue.Size(); actualValue != 3 {
@@ -66,10 +66,10 @@ func TestQueueDequeue(t *testing.T) {
 	if actualValue, ok := queue.Dequeue(); actualValue != nil || ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	if actualValue := queue.Empty(); actualValue != true {
+	if actualValue := queue.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
-	if actualValue := queue.Values(); len(actualValue) != 0 {
+	if actualValue := queue.GetValues(); len(actualValue) != 0 {
 		t.Errorf("Got %v expected %v", actualValue, "[]")
 	}
 }
@@ -355,7 +355,7 @@ func TestQueueSerialization(t *testing.T) {
 
 	var err error
 	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", queue.Values()...), "abc"; actualValue != expectedValue {
+		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", queue.GetValues()...), "abc"; actualValue != expectedValue {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
 		if actualValue, expectedValue := queue.Size(), 3; actualValue != expectedValue {
@@ -388,8 +388,8 @@ func TestQueueSerialization(t *testing.T) {
 func TestQueueString(t *testing.T) {
 	c := New()
 	c.Enqueue(1)
-	if !strings.HasPrefix(c.String(), "ArrayQueue") {
-		t.Errorf("String should start with container name")
+	if !strings.HasPrefix(c.ToString(), "ArrayQueue") {
+		t.Errorf("ToString should start with container name")
 	}
 }
 
