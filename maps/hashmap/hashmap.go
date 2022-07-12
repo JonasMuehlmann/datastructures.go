@@ -16,6 +16,7 @@ import (
 	"fmt"
 
 	"github.com/JonasMuehlmann/datastructures.go/maps"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Map implementation.
@@ -34,10 +35,15 @@ func (m *Map[TKey, TValue]) MergeWithSafe(other *maps.Map[TKey, TValue], overwri
 	panic("Not implemented")
 }
 
-// TODO: Implement NewFromMap() method which only copies map and not items
 // New instantiates a hash map.
 func New[TKey comparable, TValue any]() *Map[TKey, TValue] {
 	return &Map[TKey, TValue]{m: make(map[TKey]TValue)}
+}
+
+// NewFromMap instantiates a new  map containing the provided map.
+func NewFromMap[TKey comparable, TValue any](map_ map[TKey]TValue) *Map[TKey, TValue] {
+	m := &Map[TKey, TValue]{m: map_}
+	return m
 }
 
 // Put inserts element into the map.
@@ -53,7 +59,7 @@ func (m *Map[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
 }
 
 // Remove removes the element from the map by key.
-func (m *Map[TKey, TValue]) Remove(key TKey) {
+func (m *Map[TKey, TValue]) Remove(comparator utils.Comparator[TKey], key TKey) {
 	delete(m.m, key)
 }
 
@@ -67,7 +73,7 @@ func (m *Map[TKey, TValue]) Size() int {
 	return len(m.m)
 }
 
-// Keys returns all keys (random order).
+// GetKeys returns all keys (random order).
 func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	keys := make([]TKey, m.Size())
 	count := 0

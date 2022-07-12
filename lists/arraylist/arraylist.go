@@ -34,13 +34,18 @@ const (
 	shrinkFactor = float32(0.25) // shrink when size is 25% of capacity (0 means never shrink)
 )
 
-// TODO: Implement NewFromSlice() method which only copies slice header and not items
 // New instantiates a new list and adds the passed values, if any, to the list.
 func New[T any](values ...T) *List[T] {
 	list := &List[T]{}
 	if len(values) > 0 {
 		list.Add(values...)
 	}
+	return list
+}
+
+// NewFromSLice instantiates a new list containing the provided slice.
+func NewFromSlice[T any](slice []T) *List[T] {
+	list := &List[T]{elements: slice, size: len(slice)}
 	return list
 }
 
