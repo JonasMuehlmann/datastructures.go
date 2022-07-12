@@ -8,104 +8,164 @@ package arraylist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ containers.ReverseIteratorWithIndex = (*Iterator)(nil)
+var _ ds.RWOrdCompBidRandCollIterator[any, int] = (*Iterator[any])(nil)
 
 // Iterator holding the iterator's state
-type Iterator struct {
-	list  *List
+type Iterator[T any] struct {
+	list  *List[T]
 	index int
 }
 
-// Iterator returns a stateful iterator whose values can be fetched by an index.
-func (list *List) Iterator() Iterator {
-	return Iterator{list: list, index: -1}
+// NewIterator returns a stateful iterator whose values can be fetched by an index.
+func (list *List[T]) NewIterator(list_ *List[T], index int) *Iterator[T] {
+	return &Iterator[T]{list: list_, index: index}
 }
 
-// Next moves the iterator to the next element and returns true if there was a next element in the container.
-// If Next() returns true, then next element's index and value can be retrieved by Index() and Value().
-// If Next() was called for the first time, then it will point the iterator to the first element if it exists.
-// Modifies the state of the iterator.
-func (iterator *Iterator) Next() bool {
-	if iterator.index < iterator.list.size {
-		iterator.index++
+// IsValid implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsValid() bool {
+	return it.list.withinRange(it.index)
+}
+
+// PERF: Maybe an unsafe version is useful here
+// Get implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Get() (value T, found bool) {
+	if it.list.size == 0 || !it.IsValid() {
+		return
 	}
-	return iterator.list.withinRange(iterator.index)
+
+	return it.list.elements[it.index], true
 }
 
-// Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
-// If Prev() returns true, then previous element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Prev() bool {
-	if iterator.index >= 0 {
-		iterator.index--
+// PERF: Maybe an unsafe version is useful here
+// Set implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Set(value T) bool {
+	if it.list.size == 0 || !it.IsValid() {
+		return false
 	}
-	return iterator.list.withinRange(iterator.index)
+	it.list.elements[it.index] = value
+
+	return true
 }
 
-// Value returns the current element's value.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Value() interface{} {
-	return iterator.list.elements[iterator.index]
-}
+// DistanceTo implements ds.RWOrdCompBidRandCollIterator
+// If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
+func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
+	otherCollection, ok := other.(ds.CollectionIterator[int])
 
-// Index returns the current element's index.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Index() int {
-	return iterator.index
-}
-
-// Begin resets the iterator to its initial state (one-before-first)
-// Call Next() to fetch the first element if any.
-func (iterator *Iterator) Begin() {
-	iterator.index = -1
-}
-
-// End moves the iterator past the last element (one-past-the-end).
-// Call Prev() to fetch the last element if any.
-func (iterator *Iterator) End() {
-	iterator.index = iterator.list.size
-}
-
-// First moves the iterator to the first element and returns true if there was a first element in the container.
-// If First() returns true, then first element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) First() bool {
-	iterator.Begin()
-	return iterator.Next()
-}
-
-// Last moves the iterator to the last element and returns true if there was a last element in the container.
-// If Last() returns true, then last element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Last() bool {
-	iterator.End()
-	return iterator.Prev()
-}
-
-// NextTo moves the iterator to the next element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If NextTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) NextTo(f func(index int, value interface{}) bool) bool {
-	for iterator.Next() {
-		index, value := iterator.Index(), iterator.Value()
-		if f(index, value) {
-			return true
-		}
+	if ok {
+		return it.Index() - otherCollection.Index()
+	} else {
+		panic("Not implemented for non collection types")
 	}
-	return false
 }
 
-// PrevTo moves the iterator to the previous element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If PrevTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) PrevTo(f func(index int, value interface{}) bool) bool {
-	for iterator.Prev() {
-		index, value := iterator.Index(), iterator.Value()
-		if f(index, value) {
-			return true
-		}
+// IsAfter implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
 	}
-	return false
+
+	return it.DistanceTo(otherThis) > 0
+}
+
+// IsBefore implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.DistanceTo(otherThis) < 0
+}
+
+// IsEqual implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.DistanceTo(otherThis) == 0
+}
+
+// Next implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Next() {
+	it.index++
+}
+
+// NextN implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) NextN(i int) {
+	it.index += i
+}
+
+// Previous implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Previous() {
+	it.index--
+}
+
+// PreviousN implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) PreviousN(n int) {
+	it.index -= n
+}
+
+// MoveBy implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveBy(n int) {
+	it.index += n
+}
+
+// Size implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Size() int {
+	return it.list.size
+}
+
+// Index implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) Index() int {
+	return it.index
+}
+
+// MoveTo implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveTo(i int) {
+	it.index = i
+}
+
+// IsBegin implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsBegin() bool {
+	return it.index == -1
+}
+
+// IsEnd implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsEnd() bool {
+	return it.index == -1 || it.index == it.list.size
+}
+
+// IsFirst implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsFirst() bool {
+	return it.index == 0
+}
+
+// IsLast implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsLast() bool {
+	return it.index == it.list.size-1
+}
+
+// PERF: Maybe an unsafe version is useful here
+// GetAt implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
+	if it.list.size == 0 || !it.list.withinRange(i) {
+		return
+	}
+
+	return it.list.elements[i], true
+}
+
+// PERF: Maybe an unsafe version is useful here
+// SetAt implements ds.RWOrdCompBidRandCollIterator
+func (it *Iterator[T]) SetAt(i int, value T) bool {
+	if it.list.size == 0 || !it.list.withinRange(i) {
+		return false
+	}
+	it.list.elements[i] = value
+
+	return true
 }
