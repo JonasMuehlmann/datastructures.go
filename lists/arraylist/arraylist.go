@@ -23,8 +23,6 @@ import (
 var _ lists.List[any] = (*List[any])(nil)
 
 // TODO: Try and reimplement methods through iterator
-// TODO: Allow access to underlying slice
-// TODO: Rename to DynamicArray
 // List holds the elements in a slice.
 type List[T any] struct {
 	elements []T
@@ -122,6 +120,11 @@ func (list *List[T]) IndexOf(comparator utils.Comparator[T], value T) int {
 		}
 	}
 	return -1
+}
+
+// GetSlice returns the underlying slice.
+func (list *List[T]) GetSlice() []T {
+	return list.elements
 }
 
 // Empty returns true if list does not contain any elements.

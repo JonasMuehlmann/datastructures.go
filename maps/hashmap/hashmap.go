@@ -21,8 +21,6 @@ import (
 // Assert Map implementation.
 var _ maps.Map[string, any] = (*Map[string, any])(nil)
 
-// TODO: Allow access to underlying map
-
 // Map holds the elements in go's native map.
 type Map[TKey comparable, TValue any] struct {
 	m map[TKey]TValue
@@ -89,6 +87,11 @@ func (m *Map[TKey, TValue]) GetValues() []TValue {
 		count++
 	}
 	return values
+}
+
+// GetMap returns the underlying map.
+func (map_ *Map[TKey, TValue]) GetMap() map[TKey]TValue {
+	return map_.m
 }
 
 // Clear removes all elements from the map.
