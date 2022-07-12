@@ -13,8 +13,8 @@ import (
 )
 
 // Assert Serialization implementation
-var _ ds.JSONSerializer = (*Map[TKey, TValue])(nil)
-var _ ds.JSONDeserializer = (*Map)[TKey, TValue](nil)
+var _ ds.JSONSerializer = (*Map[string, any])(nil)
+var _ ds.JSONDeserializer = (*Map[string, any])(nil)
 
 // ToJSON outputs the JSON representation of the map.
 func (m *Map[TKey, TValue]) ToJSON() ([]byte, error) {
@@ -27,7 +27,7 @@ func (m *Map[TKey, TValue]) ToJSON() ([]byte, error) {
 
 // FromJSON populates the map from the input JSON representation.
 func (m *Map[TKey, TValue]) FromJSON(data []byte) error {
-	elements := make(map[string]TValue)
+	elements := make(map[TKey]TValue)
 	err := json.Unmarshal(data, &elements)
 	if err == nil {
 		m.Clear()
