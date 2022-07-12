@@ -88,14 +88,14 @@ func (m *Map[TKey, TValue]) Size() int {
 	return m.forwardMap.Size()
 }
 
-// Keys returns all keys (random order).
-func (m *Map[TKey, TValue]) Keys() []TKey {
-	return m.forwardMap.Keys()
+// GetKeys returns all keys (random order).
+func (m *Map[TKey, TValue]) GetKeys() []TKey {
+	return m.forwardMap.GetKeys()
 }
 
 // Values returns all values (random order).
 func (m *Map[TKey, TValue]) GetValues() []TValue {
-	return m.inverseMap.Keys()
+	return m.inverseMap.GetKeys()
 }
 
 // Clear removes all elements from the map.

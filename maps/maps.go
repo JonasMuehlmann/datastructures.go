@@ -26,7 +26,7 @@ type Map[TKey, TValue any] interface {
 	Put(key TKey, value TValue)
 	Get(key TKey) (value TValue, found bool)
 	Remove(comparator utils.Comparator[TKey], key TKey)
-	Keys() []TKey
+	GetKeys() []TKey
 	MergeWith(other *Map[TKey, TValue]) bool
 	MergeWithSafe(other *Map[TKey, TValue], overwriteOriginal bool)
 

@@ -698,7 +698,7 @@ func TestBTreeLeftAndRight(t *testing.T) {
 	}
 }
 
-func TestBTreeIteratorValuesAndKeys(t *testing.T) {
+func TestBTreeIteratorValuesAndGetKeys(t *testing.T) {
 	tree := NewWithIntComparator(4)
 	tree.Put(4, "d")
 	tree.Put(5, "e")
@@ -708,7 +708,7 @@ func TestBTreeIteratorValuesAndKeys(t *testing.T) {
 	tree.Put(7, "g")
 	tree.Put(2, "b")
 	tree.Put(1, "x") // override
-	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d%d%d%d", tree.Keys()...), "1234567"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d%d%d%d", tree.GetKeys()...), "1234567"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.GetValues()...), "xbcdefg"; actualValue != expectedValue {
@@ -1184,7 +1184,7 @@ func TestBTreeSerialization(t *testing.T) {
 		if actualValue, expectedValue := tree.Size(), 3; actualValue != expectedValue {
 			t.Errorf("Got %v expected %v", actualValue, expectedValue)
 		}
-		if actualValue := tree.Keys(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
+		if actualValue := tree.GetKeys(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
 			t.Errorf("Got %v expected %v", actualValue, "[a,b,c]")
 		}
 		if actualValue := tree.GetValues(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {

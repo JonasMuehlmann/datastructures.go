@@ -72,9 +72,9 @@ func (m *Map) Size() int {
 	return m.tree.Size()
 }
 
-// Keys returns all keys in-order
-func (m *Map) Keys() []interface{} {
-	return m.tree.Keys()
+// GetKeys returns all keys in-order
+func (m *Map) GetKeys() []interface{} {
+	return m.tree.GetKeys()
 }
 
 // Values returns all values in-order based on the key.

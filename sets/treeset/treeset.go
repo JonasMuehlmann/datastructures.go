@@ -82,14 +82,14 @@ func (set *Set[T]) Clear() {
 
 // Values returns all items in the set.
 func (set *Set[T]) GetValues() []T {
-	return set.tree.Keys()
+	return set.tree.GetKeys()
 }
 
 // String returns a string representation of container
 func (set *Set[T]) ToString() string {
 	str := "TreeSet\n"
 	items := []string{}
-	for _, v := range set.tree.Keys() {
+	for _, v := range set.tree.GetKeys() {
 		items = append(items, fmt.Sprintf("%v", v))
 	}
 	str += strings.Join(items, ", ")

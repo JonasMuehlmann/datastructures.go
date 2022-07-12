@@ -68,7 +68,7 @@ func (m *Map[TKey, TValue]) Size() int {
 }
 
 // Keys returns all keys (random order).
-func (m *Map[TKey, TValue]) Keys() []TKey {
+func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	keys := make([]TKey, m.Size())
 	count := 0
 	for key := range m.m {

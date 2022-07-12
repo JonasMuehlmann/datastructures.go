@@ -428,7 +428,7 @@ type Map interface {
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (value interface{}, found bool)
 	Remove(key interface{})
-	Keys() []interface{}
+	GetKeys() []interface{}
 
 	ds.Container
 	// Empty() bool
@@ -451,7 +451,7 @@ type BidiMap interface {
 
 #### HashMap
 
-A [map](#maps) based on hash tables. Keys are unordered.
+A [map](#maps) based on hash tables. GetKeys are unordered.
 
 Implements [Map](#maps), [JSONSerializer](#jsonserializer) and [JSONDeserializer](#jsondeserializer) interfaces.
 
@@ -468,7 +468,7 @@ func main() {
 	_, _ = m.Get(2)    // b, true
 	_, _ = m.Get(3)    // nil, false
 	_ = m.Values()     // []interface {}{"b", "a"} (random order)
-	_ = m.Keys()       // []interface {}{1, 2} (random order)
+	_ = m.GetKeys()       // []interface {}{1, 2} (random order)
 	m.Remove(1)        // 2->b
 	m.Clear()          // empty
 	m.Empty()          // true
@@ -478,7 +478,7 @@ func main() {
 
 #### TreeMap
 
-A [map](#maps) based on [red-black tree](#redblacktree). Keys are ordered with respect to the [comparator](#comparator).
+A [map](#maps) based on [red-black tree](#redblacktree). GetKeys are ordered with respect to the [comparator](#comparator).
 
 Implements [Map](#maps), [ReverseIteratorWithIndex](#reverseiteratorwithindex), [EnumerableWithKey](#enumerablewithkey), [JSONSerializer](#jsonserializer) and [JSONDeserializer](#jsondeserializer) interfaces.
 
@@ -495,7 +495,7 @@ func main() {
 	_, _ = m.Get(2)                     // b, true
 	_, _ = m.Get(3)                     // nil, false
 	_ = m.Values()                      // []interface {}{"a", "b"} (in order)
-	_ = m.Keys()                        // []interface {}{1, 2} (in order)
+	_ = m.GetKeys()                        // []interface {}{1, 2} (in order)
 	m.Remove(1)                         // 2->b
 	m.Clear()                           // empty
 	m.Empty()                           // true
@@ -526,7 +526,7 @@ func main() {
 	_, _ = m.Get(2)          // b, true
 	_, _ = m.Get(3)          // nil, false
 	_ = m.Values()           // []interface {}{"b", "a"} (insertion-order)
-	_ = m.Keys()             // []interface {}{2, 1} (insertion-order)
+	_ = m.GetKeys()             // []interface {}{2, 1} (insertion-order)
 	m.Remove(1)              // 2->b
 	m.Clear()                // empty
 	m.Empty()                // true
@@ -537,7 +537,7 @@ func main() {
 
 #### HashBidiMap
 
-A [map](#maps) based on two hashmaps. Keys are unordered.
+A [map](#maps) based on two hashmaps. GetKeys are unordered.
 
 Implements [BidiMap](#maps), [JSONSerializer](#jsonserializer) and [JSONDeserializer](#jsondeserializer) interfaces.
 
@@ -556,7 +556,7 @@ func main() {
 	_, _ = m.Get(2)        // b, true
 	_, _ = m.Get(3)        // nil, false
 	_ = m.Values()         // []interface {}{"a", "b"} (random order)
-	_ = m.Keys()           // []interface {}{1, 2} (random order)
+	_ = m.GetKeys()           // []interface {}{1, 2} (random order)
 	m.Remove(1)            // 2->b
 	m.Clear()              // empty
 	m.Empty()              // true
@@ -588,7 +588,7 @@ func main() {
 	_, _ = m.Get(2)      // b, true
 	_, _ = m.Get(3)      // nil, false
 	_ = m.Values()       // []interface {}{"a", "b"} (ordered)
-	_ = m.Keys()         // []interface {}{1, 2} (ordered)
+	_ = m.GetKeys()         // []interface {}{1, 2} (ordered)
 	m.Remove(1)          // 2->b
 	m.Clear()            // empty
 	m.Empty()            // true
@@ -653,7 +653,7 @@ func main() {
 	//		└── 1
 
 	_ = tree.Values() // []interface {}{"a", "b", "c", "d", "e", "f"} (in order)
-	_ = tree.Keys()   // []interface {}{1, 2, 3, 4, 5, 6} (in order)
+	_ = tree.GetKeys()   // []interface {}{1, 2, 3, 4, 5, 6} (in order)
 
 	tree.Remove(2) // 1->a, 3->c, 4->d, 5->e, 6->f (in order)
 	fmt.Println(tree)
@@ -720,7 +720,7 @@ func main() {
 
 
 	_ = tree.Values() // []interface {}{"a", "b", "c", "d", "e", "f"} (in order)
-	_ = tree.Keys()   // []interface {}{1, 2, 3, 4, 5, 6} (in order)
+	_ = tree.GetKeys()   // []interface {}{1, 2, 3, 4, 5, 6} (in order)
 
 	tree.Remove(2) // 1->a, 3->c, 4->d, 5->e, 6->f (in order)
 	fmt.Println(tree)
@@ -787,7 +787,7 @@ func main() {
 	//         7
 
 	_ = tree.Values() // []interface {}{"a", "b", "c", "d", "e", "f", "g"} (in order)
-	_ = tree.Keys()   // []interface {}{1, 2, 3, 4, 5, 6, 7} (in order)
+	_ = tree.GetKeys()   // []interface {}{1, 2, 3, 4, 5, 6, 7} (in order)
 
 	tree.Remove(2) // 1->a, 3->c, 4->d, 5->e, 6->f, 7->g (in order)
 	fmt.Println(tree)

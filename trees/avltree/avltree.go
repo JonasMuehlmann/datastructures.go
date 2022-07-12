@@ -107,8 +107,8 @@ func (n *Node[TKey, TValue]) Size() int {
 	return size
 }
 
-// Keys returns all keys in-order
-func (t *Tree[TKey, TValue]) Keys() []TKey {
+// GetKeys returns all keys in-order
+func (t *Tree[TKey, TValue]) GetKeys() []TKey {
 	keys := make([]TKey, t.size)
 	it := t.Iterator()
 	for i := 0; it.Next(); i++ {

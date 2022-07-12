@@ -18,7 +18,7 @@ func main() {
 	_, _ = m.Get(2)        // b, true
 	_, _ = m.Get(3)        // nil, false
 	_ = m.Values()         // []interface {}{"a", "b"} (random order)
-	_ = m.Keys()           // []interface {}{1, 2} (random order)
+	_ = m.GetKeys()           // []interface {}{1, 2} (random order)
 	m.Remove(1)            // 2->b
 	m.Clear()              // empty
 	m.Empty()              // true

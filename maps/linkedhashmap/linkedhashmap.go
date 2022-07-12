@@ -84,8 +84,8 @@ func (m *Map[TKey, TValue]) Size() int {
 	return m.ordering.Size()
 }
 
-// Keys returns all keys in-order
-func (m *Map[TKey, TValue]) Keys() []TKey {
+// GetKeys returns all keys in-order
+func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	return m.ordering.Values()
 }
 

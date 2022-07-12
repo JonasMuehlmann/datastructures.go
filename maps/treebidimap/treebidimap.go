@@ -111,14 +111,14 @@ func (m *Map) Size() int {
 	return m.forwardMap.Size()
 }
 
-// Keys returns all keys (ordered).
-func (m *Map) Keys() []interface{} {
-	return m.forwardMap.Keys()
+// GetKeys returns all keys (ordered).
+func (m *Map) GetKeys() []interface{} {
+	return m.forwardMap.GetKeys()
 }
 
 // Values returns all values (ordered).
 func (m *Map) GetValues() []interface{} {
-	return m.inverseMap.Keys()
+	return m.inverseMap.GetKeys()
 }
 
 // Clear removes all elements from the map.

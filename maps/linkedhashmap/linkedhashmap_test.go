@@ -26,7 +26,7 @@ func TestMapPut(t *testing.T) {
 	if actualValue := m.Size(); actualValue != 7 {
 		t.Errorf("Got %v expected %v", actualValue, 7)
 	}
-	if actualValue, expectedValue := m.Keys(), []interface{}{5, 6, 7, 3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetKeys(), []interface{}{5, 6, 7, 3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue, expectedValue := m.GetValues(), []interface{}{"e", "f", "g", "c", "d", "a", "b"}; !sameElements(actualValue, expectedValue) {
@@ -71,7 +71,7 @@ func TestMapRemove(t *testing.T) {
 	m.Remove(8)
 	m.Remove(5)
 
-	if actualValue, expectedValue := m.Keys(), []interface{}{3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
+	if actualValue, expectedValue := m.GetKeys(), []interface{}{3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 
@@ -107,7 +107,7 @@ func TestMapRemove(t *testing.T) {
 	m.Remove(2)
 	m.Remove(2)
 
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.Keys()), "[]"; actualValue != expectedValue {
+	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetKeys()), "[]"; actualValue != expectedValue {
 		t.Errorf("Got %v expected %v", actualValue, expectedValue)
 	}
 	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetValues()), "[]"; actualValue != expectedValue {
@@ -600,7 +600,7 @@ func TestMapString(t *testing.T) {
 
 //noinspection GoBoolExpressions
 func assertSerialization(m *Map, txt string, t *testing.T) {
-	if actualValue := m.Keys(); false ||
+	if actualValue := m.GetKeys(); false ||
 		actualValue[0].(string) != "d" ||
 		actualValue[1].(string) != "e" ||
 		actualValue[2].(string) != "c" ||
