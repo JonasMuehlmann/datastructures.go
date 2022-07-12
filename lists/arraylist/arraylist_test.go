@@ -83,17 +83,17 @@ func TestListIndexOf(t *testing.T) {
 	}
 }
 
-func TestListRemove(t *testing.T) {
+func TestListRemoveStable(t *testing.T) {
 	list := New[string]()
 	list.Add("a")
 	list.Add("b", "c")
-	list.Remove(2)
+	list.RemoveStable(2)
 	if actualValue, ok := list.Get(2); ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	list.Remove(1)
-	list.Remove(0)
-	list.Remove(0) // no effect
+	list.RemoveStable(1)
+	list.RemoveStable(0)
+	list.RemoveStable(0) // no effect
 	if actualValue := list.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
@@ -118,7 +118,7 @@ func TestListGet(t *testing.T) {
 	if actualValue, ok := list.Get(3); ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
-	list.Remove(0)
+	list.RemoveStable(0)
 	if actualValue, ok := list.Get(0); actualValue != "b" || !ok {
 		t.Errorf("Got %v expected %v", actualValue, "b")
 	}
@@ -285,10 +285,10 @@ func benchmarkAdd(b *testing.B, list *List[int], size int) {
 	}
 }
 
-func benchmarkRemove(b *testing.B, list *List[int], size int) {
+func benchmarkRemoveStable(b *testing.B, list *List[int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
-			list.Remove(n)
+			list.RemoveStable(n)
 		}
 	}
 }
@@ -378,7 +378,7 @@ func BenchmarkArrayListAdd100000(b *testing.B) {
 	benchmarkAdd(b, list, size)
 }
 
-func BenchmarkArrayListRemove100(b *testing.B) {
+func BenchmarkArrayListRemoveStable100(b *testing.B) {
 	b.StopTimer()
 	size := 100
 	list := New[int]()
@@ -386,10 +386,10 @@ func BenchmarkArrayListRemove100(b *testing.B) {
 		list.Add(n)
 	}
 	b.StartTimer()
-	benchmarkRemove(b, list, size)
+	benchmarkRemoveStable(b, list, size)
 }
 
-func BenchmarkArrayListRemove1000(b *testing.B) {
+func BenchmarkArrayListRemoveStable1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
 	list := New[int]()
@@ -397,10 +397,10 @@ func BenchmarkArrayListRemove1000(b *testing.B) {
 		list.Add(n)
 	}
 	b.StartTimer()
-	benchmarkRemove(b, list, size)
+	benchmarkRemoveStable(b, list, size)
 }
 
-func BenchmarkArrayListRemove10000(b *testing.B) {
+func BenchmarkArrayListRemoveStable10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
 	list := New[int]()
@@ -408,10 +408,10 @@ func BenchmarkArrayListRemove10000(b *testing.B) {
 		list.Add(n)
 	}
 	b.StartTimer()
-	benchmarkRemove(b, list, size)
+	benchmarkRemoveStable(b, list, size)
 }
 
-func BenchmarkArrayListRemove100000(b *testing.B) {
+func BenchmarkArrayListRemoveStable100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
 	list := New[int]()
@@ -419,5 +419,5 @@ func BenchmarkArrayListRemove100000(b *testing.B) {
 		list.Add(n)
 	}
 	b.StartTimer()
-	benchmarkRemove(b, list, size)
+	benchmarkRemoveStable(b, list, size)
 }

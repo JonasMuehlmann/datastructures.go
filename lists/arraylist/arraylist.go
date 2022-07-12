@@ -73,9 +73,22 @@ func (list *List[T]) Get(index int) (value T, wasFound bool) {
 	return list.elements[index], true
 }
 
-// TODO: Implement RemoveStable which does a swap and shrink
 // Remove removes the element at the given index from the list.
+// The order of the elements is allowed to be changed for performance reasons.
 func (list *List[T]) Remove(index int) {
+	if !list.withinRange(index) {
+		return
+	}
+
+	list.elements[index] = list.elements[list.size-1]
+	list.size--
+
+	list.shrink()
+}
+
+// RemoveStable removes the element at the given index from the list.
+// THe order of the elements is NOT allowed to be changed.
+func (list *List[T]) RemoveStable(index int) {
 	if !list.withinRange(index) {
 		return
 	}
