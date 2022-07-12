@@ -18,26 +18,36 @@ package hashbidimap
 
 import (
 	"fmt"
+
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 )
 
+// TODO: Should be implement an Equaler interface?
 // Assert Map implementation
-var _ maps.BidiMap = (*Map)(nil)
+var _ maps.BidiMap[string, string] = (*Map[string, string])(nil)
 
 // Map holds the elements in two hashmaps.
-type Map struct {
-	forwardMap hashmap.Map
-	inverseMap hashmap.Map
+type Map[TKey comparable, TValue comparable] struct {
+	forwardMap hashmap.Map[TKey, TValue]
+	inverseMap hashmap.Map[TValue, TKey]
+}
+
+func (m *Map[TKey, TValue]) MergeWith(other *maps.Map[TKey, TValue]) bool {
+	panic("Not implemented")
+}
+
+func (m *Map[TKey, TValue]) MergeWithSafe(other *maps.Map[TKey, TValue], overwriteOriginal bool) {
+	panic("Not implemented")
 }
 
 // New instantiates a bidirectional map.
-func New() *Map {
-	return &Map{*hashmap.New(), *hashmap.New()}
+func New[TKey comparable, TValue comparable]() *Map[TKey, TValue] {
+	return &Map[TKey, TValue]{*hashmap.New[TKey, TValue](), *hashmap.New[TValue, TKey]()}
 }
 
 // Put inserts element into the map.
-func (m *Map) Put(key interface{}, value interface{}) {
+func (m *Map[TKey, TValue]) Put(key TKey, value TValue) {
 	if valueByKey, ok := m.forwardMap.Get(key); ok {
 		m.inverseMap.Remove(valueByKey)
 	}
@@ -50,18 +60,18 @@ func (m *Map) Put(key interface{}, value interface{}) {
 
 // Get searches the element in the map by key and returns its value or nil if key is not found in map.
 // Second return parameter is true if key was found, otherwise false.
-func (m *Map) Get(key interface{}) (value interface{}, found bool) {
+func (m *Map[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
 	return m.forwardMap.Get(key)
 }
 
 // GetKey searches the element in the map by value and returns its key or nil if value is not found in map.
 // Second return parameter is true if value was found, otherwise false.
-func (m *Map) GetKey(value interface{}) (key interface{}, found bool) {
+func (m *Map[TKey, TValue]) GetKey(value TValue) (key TKey, found bool) {
 	return m.inverseMap.Get(value)
 }
 
 // Remove removes the element from the map by key.
-func (m *Map) Remove(key interface{}) {
+func (m *Map[TKey, TValue]) Remove(key TKey) {
 	if value, found := m.forwardMap.Get(key); found {
 		m.forwardMap.Remove(key)
 		m.inverseMap.Remove(value)
@@ -69,34 +79,34 @@ func (m *Map) Remove(key interface{}) {
 }
 
 // Empty returns true if map does not contain any elements
-func (m *Map) IsEmpty() bool {
+func (m *Map[TKey, TValue]) IsEmpty() bool {
 	return m.Size() == 0
 }
 
 // Size returns number of elements in the map.
-func (m *Map) Size() int {
+func (m *Map[TKey, TValue]) Size() int {
 	return m.forwardMap.Size()
 }
 
 // Keys returns all keys (random order).
-func (m *Map) Keys() []interface{} {
+func (m *Map[TKey, TValue]) Keys() []TKey {
 	return m.forwardMap.Keys()
 }
 
 // Values returns all values (random order).
-func (m *Map) GetValues() []interface{} {
+func (m *Map[TKey, TValue]) GetValues() []TValue {
 	return m.inverseMap.Keys()
 }
 
 // Clear removes all elements from the map.
-func (m *Map) Clear() {
+func (m *Map[TKey, TValue]) Clear() {
 	m.forwardMap.Clear()
 	m.inverseMap.Clear()
 }
 
 // String returns a string representation of container
-func (m *Map) ToString() string {
-	str := "HashBidiMap\n"
+func (m *Map[TKey, TValue]) ToString() string {
+	str := "HashBidimap\n"
 	str += fmt.Sprintf("%v", m.forwardMap)
 	return str
 }

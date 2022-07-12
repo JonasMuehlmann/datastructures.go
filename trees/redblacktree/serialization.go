@@ -7,17 +7,18 @@ package redblacktree
 
 import (
 	"encoding/json"
+
 	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Serialization implementation
-var _ containers.JSONSerializer = (*Tree)(nil)
-var _ containers.JSONDeserializer = (*Tree)(nil)
+var _ ds.JSONSerializer = (*Tree[string, any])(nil)
+var _ ds.JSONDeserializer = (*Tree[string, any])(nil)
 
 // ToJSON outputs the JSON representation of the tree.
-func (tree *Tree) ToJSON() ([]byte, error) {
-	elements := make(map[string]interface{})
+func (tree *Tree[TKey, TValue]) ToJSON() ([]byte, error) {
+	elements := make(map[string]TValue)
 	it := tree.Iterator()
 	for it.Next() {
 		elements[utils.ToString(it.Key())] = it.Value()
@@ -26,8 +27,8 @@ func (tree *Tree) ToJSON() ([]byte, error) {
 }
 
 // FromJSON populates the tree from the input JSON representation.
-func (tree *Tree) FromJSON(data []byte) error {
-	elements := make(map[string]interface{})
+func (tree *Tree[TKey, TValue]) FromJSON(data []byte) error {
+	elements := make(map[TKey]TValue)
 	err := json.Unmarshal(data, &elements)
 	if err == nil {
 		tree.Clear()
@@ -39,11 +40,11 @@ func (tree *Tree) FromJSON(data []byte) error {
 }
 
 // UnmarshalJSON @implements json.Unmarshaler
-func (tree *Tree) UnmarshalJSON(bytes []byte) error {
+func (tree *Tree[TKey, TValue]) UnmarshalJSON(bytes []byte) error {
 	return tree.FromJSON(bytes)
 }
 
 // MarshalJSON @implements json.Marshaler
-func (tree *Tree) MarshalJSON() ([]byte, error) {
+func (tree *Tree[TKey, TValue]) MarshalJSON() ([]byte, error) {
 	return tree.ToJSON()
 }

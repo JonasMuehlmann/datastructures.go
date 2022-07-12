@@ -16,27 +16,29 @@ package linkedhashset
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/sets"
-	"strings"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Set implementation
-var _ sets.Set = (*Set)(nil)
+var _ sets.Set[string] = (*Set[string])(nil)
 
 // Set holds elements in go's native map
-type Set struct {
-	table    map[interface{}]struct{}
-	ordering *doublylinkedlist.List
+type Set[T comparable] struct {
+	table    map[T]struct{}
+	ordering *doublylinkedlist.List[T]
 }
 
 var itemExists = struct{}{}
 
 // New instantiates a new empty set and adds the passed values, if any, to the set
-func New(values ...interface{}) *Set {
-	set := &Set{
-		table:    make(map[interface{}]struct{}),
-		ordering: doublylinkedlist.New(),
+func New[T comparable](values ...T) *Set[T] {
+	set := &Set[T]{
+		table:    make(map[T]struct{}),
+		ordering: doublylinkedlist.New[T](),
 	}
 	if len(values) > 0 {
 		set.Add(values...)
@@ -46,7 +48,7 @@ func New(values ...interface{}) *Set {
 
 // Add adds the items (one or more) to the set.
 // Note that insertion-order is not affected if an element is re-inserted into the set.
-func (set *Set) Add(items ...interface{}) {
+func (set *Set[T]) Add(items ...T) {
 	for _, item := range items {
 		if _, contains := set.table[item]; !contains {
 			set.table[item] = itemExists
@@ -57,11 +59,11 @@ func (set *Set) Add(items ...interface{}) {
 
 // Remove removes the items (one or more) from the set.
 // Slow operation, worst-case O(n^2).
-func (set *Set) Remove(items ...interface{}) {
+func (set *Set[T]) Remove(comparator utils.Comparator[T], items ...T) {
 	for _, item := range items {
 		if _, contains := set.table[item]; contains {
 			delete(set.table, item)
-			index := set.ordering.IndexOf(item)
+			index := set.ordering.IndexOf(comparator, item)
 			set.ordering.Remove(index)
 		}
 	}
@@ -70,7 +72,7 @@ func (set *Set) Remove(items ...interface{}) {
 // Contains check if items (one or more) are present in the set.
 // All items have to be present in the set for the method to return true.
 // Returns true if no arguments are passed at all, i.e. set is always superset of empty set.
-func (set *Set) Contains(items ...interface{}) bool {
+func (set *Set[T]) Contains(items ...T) bool {
 	for _, item := range items {
 		if _, contains := set.table[item]; !contains {
 			return false
@@ -80,24 +82,24 @@ func (set *Set) Contains(items ...interface{}) bool {
 }
 
 // Empty returns true if set does not contain any elements.
-func (set *Set) IsEmpty() bool {
+func (set *Set[T]) IsEmpty() bool {
 	return set.Size() == 0
 }
 
 // Size returns number of elements within the set.
-func (set *Set) Size() int {
+func (set *Set[T]) Size() int {
 	return set.ordering.Size()
 }
 
 // Clear clears all values in the set.
-func (set *Set) Clear() {
-	set.table = make(map[interface{}]struct{})
+func (set *Set[T]) Clear() {
+	set.table = make(map[T]struct{})
 	set.ordering.Clear()
 }
 
 // Values returns all items in the set.
-func (set *Set) GetValues() []interface{} {
-	values := make([]interface{}, set.Size())
+func (set *Set[T]) GetValues() []T {
+	values := make([]T, set.Size())
 	it := set.Iterator()
 	for it.Next() {
 		values[it.Index()] = it.Value()
@@ -106,7 +108,7 @@ func (set *Set) GetValues() []interface{} {
 }
 
 // String returns a string representation of container
-func (set *Set) ToString() string {
+func (set *Set[T]) ToString() string {
 	str := "LinkedHashSet\n"
 	items := []string{}
 	it := set.Iterator()
@@ -118,20 +120,22 @@ func (set *Set) ToString() string {
 }
 
 // Intersection returns the intersection between two sets.
-// The new set consists of all elements that are both in "set" and "another".
+// The new set consists of all elements that are both in "set" and "other".
 // Ref: https://en.wikipedia.org/wiki/Intersection_(set_theory)
-func (set *Set) Intersection(another *Set) *Set {
-	result := New()
+func (set *Set[T]) MakeIntersectionWith(other sets.Set[T]) sets.Set[T] {
+	result := New[T]()
+	// FIX: Allow making intersections with any type of set
+	concrete := other.(*Set[T])
 
 	// Iterate over smaller set (optimization)
-	if set.Size() <= another.Size() {
+	if set.Size() <= other.Size() {
 		for item := range set.table {
-			if _, contains := another.table[item]; contains {
+			if _, contains := concrete.table[item]; contains {
 				result.Add(item)
 			}
 		}
 	} else {
-		for item := range another.table {
+		for item := range concrete.table {
 			if _, contains := set.table[item]; contains {
 				result.Add(item)
 			}
@@ -142,15 +146,17 @@ func (set *Set) Intersection(another *Set) *Set {
 }
 
 // Union returns the union of two sets.
-// The new set consists of all elements that are in "set" or "another" (possibly both).
+// The new set consists of all elements that are in "set" or "other" (possibly both).
 // Ref: https://en.wikipedia.org/wiki/Union_(set_theory)
-func (set *Set) Union(another *Set) *Set {
-	result := New()
+func (set *Set[T]) MakeUnionWith(other sets.Set[T]) sets.Set[T] {
+	result := New[T]()
+	// FIX: Allow making union with any type of set
+	concrete := other.(*Set[T])
 
 	for item := range set.table {
 		result.Add(item)
 	}
-	for item := range another.table {
+	for item := range concrete.table {
 		result.Add(item)
 	}
 
@@ -158,13 +164,15 @@ func (set *Set) Union(another *Set) *Set {
 }
 
 // Difference returns the difference between two sets.
-// The new set consists of all elements that are in "set" but not in "another".
+// The new set consists of all elements that are in "set" but not in "other".
 // Ref: https://proofwiki.org/wiki/Definition:Set_Difference
-func (set *Set) Difference(another *Set) *Set {
-	result := New()
+func (set *Set[T]) MakeDifferenceWith(other sets.Set[T]) sets.Set[T] {
+	result := New[T]()
+	// FIX: Allow making difference with any type of set
+	concrete := other.(*Set[T])
 
 	for item := range set.table {
-		if _, contains := another.table[item]; !contains {
+		if _, contains := concrete.table[item]; !contains {
 			result.Add(item)
 		}
 	}

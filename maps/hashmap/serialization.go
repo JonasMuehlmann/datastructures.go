@@ -7,17 +7,18 @@ package hashmap
 
 import (
 	"encoding/json"
+
 	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Serialization implementation
-var _ containers.JSONSerializer = (*Map)(nil)
-var _ containers.JSONDeserializer = (*Map)(nil)
+var _ ds.JSONSerializer = (*Map[TKey, TValue])(nil)
+var _ ds.JSONDeserializer = (*Map)[TKey, TValue](nil)
 
 // ToJSON outputs the JSON representation of the map.
-func (m *Map) ToJSON() ([]byte, error) {
-	elements := make(map[string]interface{})
+func (m *Map[TKey, TValue]) ToJSON() ([]byte, error) {
+	elements := make(map[string]TValue)
 	for key, value := range m.m {
 		elements[utils.ToString(key)] = value
 	}
@@ -25,8 +26,8 @@ func (m *Map) ToJSON() ([]byte, error) {
 }
 
 // FromJSON populates the map from the input JSON representation.
-func (m *Map) FromJSON(data []byte) error {
-	elements := make(map[string]interface{})
+func (m *Map[TKey, TValue]) FromJSON(data []byte) error {
+	elements := make(map[string]TValue)
 	err := json.Unmarshal(data, &elements)
 	if err == nil {
 		m.Clear()
@@ -38,11 +39,11 @@ func (m *Map) FromJSON(data []byte) error {
 }
 
 // UnmarshalJSON @implements json.Unmarshaler
-func (m *Map) UnmarshalJSON(bytes []byte) error {
+func (m *Map[TKey, TValue]) UnmarshalJSON(bytes []byte) error {
 	return m.FromJSON(bytes)
 }
 
 // MarshalJSON @implements json.Marshaler
-func (m *Map) MarshalJSON() ([]byte, error) {
+func (m *Map[TKey, TValue]) MarshalJSON() ([]byte, error) {
 	return m.ToJSON()
 }

@@ -18,68 +18,69 @@ package priorityqueue
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/JonasMuehlmann/datastructures.go/queues"
 	"github.com/JonasMuehlmann/datastructures.go/trees/binaryheap"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
-	"strings"
 )
 
 // Assert Queue implementation
-var _ queues.Queue = (*Queue)(nil)
+var _ queues.Queue[any] = (*Queue[any])(nil)
 
 // Queue holds elements in an array-list
-type Queue struct {
-	heap       *binaryheap.Heap
-	Comparator utils.Comparator
+type Queue[T any] struct {
+	heap       *binaryheap.Heap[T]
+	Comparator utils.Comparator[T]
 }
 
 // NewWith instantiates a new empty queue with the custom comparator.
-func NewWith(comparator utils.Comparator) *Queue {
-	return &Queue{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+func NewWitha[T any](comparator utils.Comparator[T]) *Queue[T] {
+	return &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
 }
 
 // Enqueue adds a value to the end of the queue
-func (queue *Queue) Enqueue(value interface{}) {
+func (queue *Queue[T]) Enqueue(value T) {
 	queue.heap.Push(value)
 }
 
 // Dequeue removes first element of the queue and returns it, or nil if queue is empty.
 // Second return parameter is true, unless the queue was empty and there was nothing to dequeue.
-func (queue *Queue) Dequeue() (value interface{}, ok bool) {
+func (queue *Queue[T]) Dequeue() (value T, ok bool) {
 	return queue.heap.Pop()
 }
 
 // Peek returns top element on the queue without removing it, or nil if queue is empty.
 // Second return parameter is true, unless the queue was empty and there was nothing to peek.
-func (queue *Queue) Peek() (value interface{}, ok bool) {
+func (queue *Queue[T]) Peek() (value T, ok bool) {
 	return queue.heap.Peek()
 }
 
 // Empty returns true if queue does not contain any elements.
-func (queue *Queue) IsEmpty() bool {
-	return queue.heap.Empty()
+func (queue *Queue[T]) IsEmpty() bool {
+	return queue.heap.IsEmpty()
 }
 
 // Size returns number of elements within the queue.
-func (queue *Queue) Size() int {
+func (queue *Queue[T]) Size() int {
 	return queue.heap.Size()
 }
 
 // Clear removes all elements from the queue.
-func (queue *Queue) Clear() {
+func (queue *Queue[T]) Clear() {
 	queue.heap.Clear()
 }
 
 // Values returns all elements in the queue.
-func (queue *Queue) GetValues() []interface{} {
-	return queue.heap.Values()
+func (queue *Queue[T]) GetValues() []T {
+	return queue.heap.GetValues()
 }
 
 // String returns a string representation of container
-func (queue *Queue) ToString() string {
+func (queue *Queue[T]) ToString() string {
 	str := "PriorityQueue\n"
 	values := make([]string, queue.heap.Size(), queue.heap.Size())
-	for index, value := range queue.heap.Values() {
+	for index, value := range queue.heap.GetValues() {
 		values[index] = fmt.Sprintf("%v", value)
 	}
 	str += strings.Join(values, ", ")

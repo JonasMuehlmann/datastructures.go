@@ -12,16 +12,16 @@ package queues
 
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
-// Queue interface that all queues implement
-type Queue interface {
-	Enqueue(value interface{})
-	Dequeue() (value interface{}, ok bool)
-	Peek() (value interface{}, ok bool)
+// Queue interface that all queues implement.
+type Queue[T any] interface {
+	Enqueue(value T)
+	Dequeue() (value T, ok bool)
+	Peek() (value T, ok bool)
 
-	containers.Container
+	ds.Container
 	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// GetValues() []interface{}
+	// GetValues() []T
 	// ToString() string
 }

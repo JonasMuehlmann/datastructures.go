@@ -10,21 +10,24 @@
 // Reference: https://en.wikipedia.org/wiki/Set_%28abstract_data_type%29
 package sets
 
-import "github.com/JonasMuehlmann/datastructures.go/ds"
+import (
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+)
 
-// Set interface that all sets implement
-type Set interface {
-	Add(elements ...interface{})
-	Remove(elements ...interface{})
-	Contains(elements ...interface{}) bool
-	MakeIntersectionWith(other *Set) *Set
-	MakeUnionWith(other *Set) *Set
-	MakeDifferenceWith(other *Set) *Set
+// Set interface that all sets implement.
+type Set[T any] interface {
+	Add(elements ...T)
+	Remove(comparator utils.Comparator[T], elements ...T)
+	Contains(elements ...T) bool
+	MakeIntersectionWith(other Set[T]) Set[T]
+	MakeUnionWith(other Set[T]) Set[T]
+	MakeDifferenceWith(other Set[T]) Set[T]
 
-	containers.Container
+	ds.Container
 	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// GetValues() []interface{}
+	// GetValues() []T
 	// ToString() string
 }

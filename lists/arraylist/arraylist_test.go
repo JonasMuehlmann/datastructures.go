@@ -8,25 +8,27 @@ package arraylist
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
+// TODO: Refactor tests with testify and table tests
 func TestListNew(t *testing.T) {
-	list1 := New()
+	list1 := New[int]()
 
 	if actualValue := list1.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
 
-	list2 := New(1, "b")
+	list2 := New[string]("b")
 
 	if actualValue := list2.Size(); actualValue != 2 {
 		t.Errorf("Got %v expected %v", actualValue, 2)
 	}
 
-	if actualValue, ok := list2.Get(0); actualValue != 1 || !ok {
+	if actualValue, ok := list2.Get(0); actualValue != "a" || !ok {
 		t.Errorf("Got %v expected %v", actualValue, 1)
 	}
 
@@ -34,7 +36,7 @@ func TestListNew(t *testing.T) {
 		t.Errorf("Got %v expected %v", actualValue, "b")
 	}
 
-	if actualValue, ok := list2.Get(2); actualValue != nil || ok {
+	if actualValue, ok := list2.Get(2); || !ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
 	}
 }

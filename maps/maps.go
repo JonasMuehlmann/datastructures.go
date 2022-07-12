@@ -16,26 +16,31 @@
 // Reference: https://en.wikipedia.org/wiki/Associative_array
 package maps
 
-import "github.com/JonasMuehlmann/datastructures.go/ds"
+import (
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+)
 
 // Map interface that all maps implement.
-type Map interface {
-	Put(key interface{}, value interface{})
-	Get(key interface{}) (value interface{}, found bool)
-	Remove(key interface{})
-	Keys() []interface{}
+type Map[TKey, TValue any] interface {
+	Put(key TKey, value TValue)
+	Get(key TKey) (value TValue, found bool)
+	Remove(comparator utils.Comparator[TKey], key TKey)
+	Keys() []TKey
+	MergeWith(other *Map[TKey, TValue]) bool
+	MergeWithSafe(other *Map[TKey, TValue], overwriteOriginal bool)
 
-	containers.Container
+	ds.Container
 	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// GetValues() []interface{}
+	// GetValues() []T
 	// ToString() string
 }
 
 // BidiMap interface that all bidirectional maps implement (extends the Map interface).
-type BidiMap interface {
-	GetKey(value interface{}) (key interface{}, found bool)
+type BidiMap[TKey, TValue any] interface {
+	GetKey(value TValue) (key TKey, found bool)
 
-	Map
+	Map[TKey, TValue]
 }

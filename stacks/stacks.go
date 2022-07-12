@@ -12,16 +12,16 @@ package stacks
 
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
-// Stack interface that all stacks implement
-type Stack interface {
-	Push(value interface{})
-	Pop() (value interface{}, ok bool)
-	Peek() (value interface{}, ok bool)
+// Stack interface that all stacks implement.
+type Stack[T any] interface {
+	Push(value T)
+	Pop() (value T, ok bool)
+	Peek() (value T, ok bool)
 
-	containers.Container
+	ds.Container
 	// IsEmpty() bool
 	// Size() int
 	// Clear()
-	// GetValues() []interface{}
+	// GetValues() []T
 	// ToString() string
 }

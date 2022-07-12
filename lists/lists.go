@@ -15,17 +15,20 @@ import (
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
-// TODO: Implement PushBack, PopBack, PushFront PopFront, Reverse
 // List interface that all lists implement.
-type List interface {
-	Get(index int) (interface{}, bool)
+type List[T any] interface {
+	Get(index int) (T, bool)
 	Remove(index int)
-	Add(values ...interface{})
-	Contains(values ...interface{}) bool
-	Sort(comparator utils.Comparator)
+	Add(values ...T)
+	Contains(comparator utils.Comparator[T], value ...T) bool
+	Sort(comparator utils.Comparator[T])
 	Swap(index1, index2 int)
-	Insert(index int, values ...interface{})
-	Set(index int, value interface{})
+	Insert(index int, values ...T)
+	Set(index int, value T)
+	PushBack(value ...T)
+	PushFront(value ...T)
+	PopBack()
+	PopFront()
 
 	ds.Container
 	// IsEmpty() bool

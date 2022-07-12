@@ -12,32 +12,33 @@ package linkedliststack
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/stacks"
-	"strings"
 )
 
 // Assert Stack implementation
-var _ stacks.Stack = (*Stack)(nil)
+var _ stacks.Stack[any] = (*Stack[any])(nil)
 
 // Stack holds elements in a singly-linked-list
-type Stack struct {
-	list *singlylinkedlist.List
+type Stack[T any] struct {
+	list *singlylinkedlist.List[T]
 }
 
 // New nnstantiates a new empty stack
-func New() *Stack {
-	return &Stack{list: &singlylinkedlist.List{}}
+func New[T any]() *Stack[T] {
+	return &Stack[T]{list: &singlylinkedlist.List[T]{}}
 }
 
 // Push adds a value onto the top of the stack
-func (stack *Stack) Push(value interface{}) {
+func (stack *Stack[T]) Push(value T) {
 	stack.list.Prepend(value)
 }
 
 // Pop removes top element on stack and returns it, or nil if stack is empty.
 // Second return parameter is true, unless the stack was empty and there was nothing to pop.
-func (stack *Stack) Pop() (value interface{}, ok bool) {
+func (stack *Stack[T]) Pop() (value T, ok bool) {
 	value, ok = stack.list.Get(0)
 	stack.list.Remove(0)
 	return
@@ -45,35 +46,35 @@ func (stack *Stack) Pop() (value interface{}, ok bool) {
 
 // Peek returns top element on the stack without removing it, or nil if stack is empty.
 // Second return parameter is true, unless the stack was empty and there was nothing to peek.
-func (stack *Stack) Peek() (value interface{}, ok bool) {
+func (stack *Stack[T]) Peek() (value T, ok bool) {
 	return stack.list.Get(0)
 }
 
 // Empty returns true if stack does not contain any elements.
-func (stack *Stack) IsEmpty() bool {
-	return stack.list.Empty()
+func (stack *Stack[T]) IsEmpty() bool {
+	return stack.list.IsEmpty()
 }
 
 // Size returns number of elements within the stack.
-func (stack *Stack) Size() int {
+func (stack *Stack[T]) Size() int {
 	return stack.list.Size()
 }
 
 // Clear removes all elements from the stack.
-func (stack *Stack) Clear() {
+func (stack *Stack[T]) Clear() {
 	stack.list.Clear()
 }
 
 // Values returns all elements in the stack (LIFO order).
-func (stack *Stack) GetValues() []interface{} {
-	return stack.list.Values()
+func (stack *Stack[T]) GetValues() []T {
+	return stack.list.GetValues()
 }
 
 // String returns a string representation of container
-func (stack *Stack) ToString() string {
+func (stack *Stack[T]) ToString() string {
 	str := "LinkedListStack\n"
 	values := []string{}
-	for _, value := range stack.list.Values() {
+	for _, value := range stack.list.GetValues() {
 		values = append(values, fmt.Sprintf("%v", value))
 	}
 	str += strings.Join(values, ", ")
@@ -81,6 +82,6 @@ func (stack *Stack) ToString() string {
 }
 
 // Check that the index is within bounds of the list
-func (stack *Stack) withinRange(index int) bool {
+func (stack *Stack[T]) withinRange(index int) bool {
 	return index >= 0 && index < stack.list.Size()
 }

@@ -19,14 +19,14 @@ import (
 )
 
 // Assert List implementation.
-var _ lists.List = (*List)(nil)
+var _ lists.List[any] = (*List[any])(nil)
 
 // TODO: Try and reimplement methods through iterator
 // TODO: Allow access to underlying slice
 // TODO: Rename to DynamicArray
 // List holds the elements in a slice.
-type List struct {
-	elements []interface{}
+type List[T any] struct {
+	elements []T
 	size     int
 }
 
@@ -37,16 +37,21 @@ const (
 
 // TODO: Implement NewFromSlice() method which only copies slice header and not items
 // New instantiates a new list and adds the passed values, if any, to the list.
-func New(values ...interface{}) *List {
-	list := &List{}
+func New[T any](values ...T) *List[T] {
+	list := &List[T]{}
 	if len(values) > 0 {
 		list.Add(values...)
 	}
 	return list
 }
 
+func (list *List[T]) PushBack(values ...T)  { panic("Not implemented") }
+func (list *List[T]) PushFront(values ...T) { panic("Not implemented") }
+func (list *List[T]) PopBack()              { panic("Not implemented") }
+func (list *List[T]) PopFront()             { panic("Not implemented") }
+
 // Add appends a value at the end of the list.
-func (list *List) Add(values ...interface{}) {
+func (list *List[T]) Add(values ...T) {
 	list.growBy(len(values))
 	for _, value := range values {
 		list.elements[list.size] = value
@@ -56,9 +61,9 @@ func (list *List) Add(values ...interface{}) {
 
 // Get returns the element at index.
 // Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
-func (list *List) Get(index int) (interface{}, bool) {
+func (list *List[T]) Get(index int) (value T, wasFound bool) {
 	if !list.withinRange(index) {
-		return nil, false
+		return
 	}
 
 	return list.elements[index], true
@@ -66,28 +71,28 @@ func (list *List) Get(index int) (interface{}, bool) {
 
 // TODO: Implement RemoveStable which does a swap and shrink
 // Remove removes the element at the given index from the list.
-func (list *List) Remove(index int) {
+func (list *List[T]) Remove(index int) {
 	if !list.withinRange(index) {
 		return
 	}
 
-	list.elements[index] = nil                                    // cleanup reference
 	copy(list.elements[index:], list.elements[index+1:list.size]) // shift to the left by one (slow operation, need ways to optimize this)
 	list.size--
 
 	list.shrink()
 }
 
+// PERF: Maybe we can provide separated implementations of the data structures (e.g. BasicList) through code generation, which are constrained with comparable
 // PERF: Iterate over elements only once and keep counter of found values
 // Contains checks if elements (one or more) are present in the set.
 // All elements have to be present in the set for the method to return true.
 // Performance time complexity of n^2.
 // Returns true if no arguments are passed at all, i.e. set is always super-set of empty set.
-func (list *List) Contains(values ...interface{}) bool {
+func (list *List[T]) Contains(comparator utils.Comparator[T], values ...T) bool {
 	for _, searchValue := range values {
 		found := false
 		for index := 0; index < list.size; index++ {
-			if list.elements[index] == searchValue {
+			if comparator(list.elements[index], searchValue) == 0 {
 				found = true
 				break
 			}
@@ -100,18 +105,18 @@ func (list *List) Contains(values ...interface{}) bool {
 }
 
 // Values returns all elements in the list.
-func (list *List) GetValues() []interface{} {
-	newElements := make([]interface{}, list.size, list.size)
+func (list *List[T]) GetValues() []T {
+	newElements := make([]T, list.size, list.size)
 	copy(newElements, list.elements[:list.size])
 	return newElements
 }
 
-func (list *List) IndexOf(value interface{}) int {
+func (list *List[T]) IndexOf(comparator utils.Comparator[T], value T) int {
 	if list.size == 0 {
 		return -1
 	}
 	for index, element := range list.elements {
-		if element == value {
+		if comparator(element, value) == 0 {
 			return index
 		}
 	}
@@ -119,23 +124,23 @@ func (list *List) IndexOf(value interface{}) int {
 }
 
 // Empty returns true if list does not contain any elements.
-func (list *List) IsEmpty() bool {
+func (list *List[T]) IsEmpty() bool {
 	return list.size == 0
 }
 
 // Size returns number of elements within the list.
-func (list *List) Size() int {
+func (list *List[T]) Size() int {
 	return list.size
 }
 
 // Clear removes all elements from the list.
-func (list *List) Clear() {
+func (list *List[T]) Clear() {
 	list.size = 0
-	list.elements = []interface{}{}
+	list.elements = []T{}
 }
 
 // Sort sorts values (in-place) using.
-func (list *List) Sort(comparator utils.Comparator) {
+func (list *List[T]) Sort(comparator utils.Comparator[T]) {
 	if len(list.elements) < 2 {
 		return
 	}
@@ -143,7 +148,7 @@ func (list *List) Sort(comparator utils.Comparator) {
 }
 
 // Swap swaps the two values at the specified positions.
-func (list *List) Swap(i, j int) {
+func (list *List[T]) Swap(i, j int) {
 	if list.withinRange(i) && list.withinRange(j) {
 		list.elements[i], list.elements[j] = list.elements[j], list.elements[i]
 	}
@@ -152,7 +157,7 @@ func (list *List) Swap(i, j int) {
 // Insert inserts values at specified index position shifting the value at that position (if any) and any subsequent elements to the right.
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
-func (list *List) Insert(index int, values ...interface{}) {
+func (list *List[T]) Insert(index int, values ...T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
@@ -171,7 +176,7 @@ func (list *List) Insert(index int, values ...interface{}) {
 // Set the value at specified index
 // Does not do anything if position is negative or bigger than list's size
 // Note: position equal to list's size is valid, i.e. append.
-func (list *List) Set(index int, value interface{}) {
+func (list *List[T]) Set(index int, value T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
@@ -184,7 +189,7 @@ func (list *List) Set(index int, value interface{}) {
 }
 
 // String returns a string representation of container.
-func (list *List) ToString() string {
+func (list *List[T]) ToString() string {
 	str := "ArrayList\n"
 	values := []string{}
 	for _, value := range list.elements[:list.size] {
@@ -195,18 +200,18 @@ func (list *List) ToString() string {
 }
 
 // Check that the index is within bounds of the list.
-func (list *List) withinRange(index int) bool {
+func (list *List[T]) withinRange(index int) bool {
 	return index >= 0 && index < list.size
 }
 
-func (list *List) resize(cap int) {
-	newElements := make([]interface{}, cap, cap)
+func (list *List[T]) resize(cap int) {
+	newElements := make([]T, cap, cap)
 	copy(newElements, list.elements)
 	list.elements = newElements
 }
 
 // Expand the array if necessary, i.e. capacity will be reached if we add n elements.
-func (list *List) growBy(n int) {
+func (list *List[T]) growBy(n int) {
 	// When capacity is reached, grow by a factor of growthFactor and add number of elements
 	currentCapacity := cap(list.elements)
 	if list.size+n >= currentCapacity {
@@ -216,7 +221,7 @@ func (list *List) growBy(n int) {
 }
 
 // Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity.
-func (list *List) shrink() {
+func (list *List[T]) shrink() {
 	if shrinkFactor == 0.0 {
 		return
 	}
