@@ -9,22 +9,10 @@ package ds
 
 // Iterator defines the minimum functionality required for all other iterators.
 type Iterator interface {
-	// Begin returns an initialized iterator, which points to one element before it's first.
-	// Unless Next() is called, the iterator is in an invalid state.
-	Begin() Iterator
-	// End returns an initialized iterator, which points to one element afrer it's last.
-	// Unless Previous() is called, the iterator is in an invalid state.
-	End() Iterator
-
 	// IsBegin checks if the iterator is pointing to one element before it's first element, unless Next() is called, the iterator is in an invalid state.
 	IsBegin() bool
 	// IsEnd checks if the iterator is pointing to one element past it's last element, unless Previous() is called, the iterator is in an invalid state.
 	IsEnd() bool
-
-	// First returns an initialized iterator, which points to it's first element.
-	First() Iterator
-	// Last returns an initialized iterator, which points to it's last element.
-	Last() Iterator
 
 	// IsFirst checks if the iterator is pointing to it's first element, when Next() is called, the iterator is in an invalid state.
 	IsFirst() bool
@@ -61,7 +49,7 @@ type ComparableIterator interface {
 }
 
 // SizedIterator defines an Iterator, which can be said to have a fixed size.
-type SizedIterator[T any] interface {
+type SizedIterator interface {
 	// *********************    Inherited methods    ********************//
 	Iterator
 	// ************************    Own methods    ***********************//
@@ -71,13 +59,13 @@ type SizedIterator[T any] interface {
 }
 
 // CollectionIterator defines a SizedIterator, which can be said to reference a collection of elements.
-type CollectionIterator[T any] interface {
+type CollectionIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
-	SizedIterator[T]
+	SizedIterator
 	// ************************    Own methods    ***********************//
 
 	// Index returns the index of the iterator's position in the collection.
-	Index() T
+	Index() TIndex
 }
 
 // WritableIterator defines an Iterator, which can be used to write to the underlying values.
@@ -87,7 +75,7 @@ type WritableIterator[T any] interface {
 	// ************************    Own methods    ***********************//
 
 	// Set sets the value at the iterator's position.
-	Set(value T)
+	Set(value T) bool
 }
 
 // ReadableIterator defines an Iterator, which can be used to read the underlying values.
@@ -97,7 +85,8 @@ type ReadableIterator[T any] interface {
 	// ************************    Own methods    ***********************//
 
 	// Get returns the value at the iterator's position.
-	Get() T
+	// found will be false if the iterator is in an invalid state or the collection is empty.
+	Get() (value T, found bool)
 }
 
 // ForwardIterator defines an ordered Iterator, which can be moved forward according to the indexes ordering.
@@ -194,33 +183,33 @@ type BidirectionalIterator interface {
 	// ************************    Own methods    ***********************//
 
 	// Next moves the iterator forward/backward by n positions.
-	MoveBy(n int) bool
+	MoveBy(n int)
 	// Nth(n int) BidirectionalIterator
 }
 
 // RandomAccessIterator defines a BidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
-type RandomAccessIterator[T any] interface {
+type RandomAccessIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
 	BidirectionalIterator
-	CollectionIterator[T]
+	CollectionIterator[TIndex]
 	// ************************    Own methods    ***********************//
 
 	// MoveTo moves the iterator to the given index.
-	MoveTo(i T) bool
+	MoveTo(i TIndex)
 }
 
 // RandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
 type RandomAccessReadableIterator[T any, V any] interface {
 	// *********************    Inherited methods    ********************//
 	RandomAccessIterator[T]
-	ReadableIterator[T]
+	ReadableIterator[V]
 	// ************************    Own methods    ***********************//
 
 	// GetAt returns the value at the given index of the iterator.
-	GetAt(i T) V
+	GetAt(i T) (value V, found bool)
 }
 
-// RandomAccessReadableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
+// RandomAccessWriteableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
 type RandomAccessWriteableIterator[T any, V any] interface {
 	// *********************    Inherited methods    ********************//
 	RandomAccessIterator[T]
@@ -228,5 +217,5 @@ type RandomAccessWriteableIterator[T any, V any] interface {
 	// ************************    Own methods    ***********************//
 
 	// GetAt sets the value at the given index of the iterator.
-	SetAt(i T, value V)
+	SetAt(i T, value V) bool
 }
