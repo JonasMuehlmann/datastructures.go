@@ -7,7 +7,7 @@ package avltree
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ containers.ReverseIteratorWithKey = (*Iterator)(nil)
+var _ ds.ReverseIteratorWithKey = (*Iterator)(nil)
 
 // Iterator holding the iterator's state
 type Iterator struct {
@@ -23,7 +23,7 @@ const (
 )
 
 // Iterator returns a stateful iterator whose elements are key/value pairs.
-func (tree *Tree) Iterator() containers.ReverseIteratorWithKey {
+func (tree *Tree) Iterator() ds.ReverseIteratorWithKey {
 	return &Iterator{tree: tree, node: nil, position: begin}
 }
 

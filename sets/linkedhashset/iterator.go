@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ containers.ReverseIteratorWithIndex = (*Iterator)(nil)
+var _ ds.ReverseIteratorWithIndex = (*Iterator)(nil)
 
 // Iterator holding the iterator's state
 type Iterator struct {

@@ -8,7 +8,7 @@ package singlylinkedlist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ containers.IteratorWithIndex = (*Iterator)(nil)
+var _ ds.IteratorWithIndex = (*Iterator)(nil)
 
 // Iterator holding the iterator's state
 type Iterator struct {

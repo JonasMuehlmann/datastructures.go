@@ -1403,7 +1403,7 @@ func main() {
 
 Sort is a general purpose sort function.
 
-Lists have an in-place _Sort()_ function and all containers can return their sorted elements via _containers.GetSortedValues()_ function.
+Lists have an in-place _Sort()_ function and all containers can return their sorted elements via _ds.GetSortedValues()_ function.
 
 Internally these all use the _utils.Sort()_ method:
 

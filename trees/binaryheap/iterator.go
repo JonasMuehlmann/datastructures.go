@@ -10,7 +10,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ containers.ReverseIteratorWithIndex = (*Iterator)(nil)
+var _ ds.ReverseIteratorWithIndex = (*Iterator)(nil)
 
 // Iterator returns a stateful iterator whose values can be fetched by an index.
 type Iterator struct {

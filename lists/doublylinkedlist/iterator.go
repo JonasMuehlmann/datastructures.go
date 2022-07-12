@@ -8,7 +8,7 @@ package doublylinkedlist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ containers.ReverseIteratorWithIndex = (*Iterator)(nil)
+var _ ds.ReverseIteratorWithIndex = (*Iterator)(nil)
 
 // Iterator holding the iterator's state
 type Iterator struct {

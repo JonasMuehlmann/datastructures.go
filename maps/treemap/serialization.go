@@ -10,8 +10,8 @@ import (
 )
 
 // Assert Serialization implementation
-var _ containers.JSONSerializer = (*Map)(nil)
-var _ containers.JSONDeserializer = (*Map)(nil)
+var _ ds.JSONSerializer = (*Map)(nil)
+var _ ds.JSONDeserializer = (*Map)(nil)
 
 // ToJSON outputs the JSON representation of the map.
 func (m *Map) ToJSON() ([]byte, error) {

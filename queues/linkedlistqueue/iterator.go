@@ -8,7 +8,7 @@ package linkedlistqueue
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ containers.IteratorWithIndex = (*Iterator)(nil)
+var _ ds.IteratorWithIndex = (*Iterator)(nil)
 
 // Iterator returns a stateful iterator whose values can be fetched by an index.
 type Iterator struct {
