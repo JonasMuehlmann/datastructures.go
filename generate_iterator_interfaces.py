@@ -25,10 +25,10 @@ COMPARABLE_ITERATOR: str = "Comparable_"
 SIZED_ITERATOR: str = "Sized_"
 WRITEABLE_ITERATOR: str = "Writeable_"
 READABLE_ITERATOR: str = "Readable_"
-FORWARD_ITERATOR: str = "Forward_"
+FOReadWriteARD_ITERATOR: str = "Forward_"
 REVERSED_ITERATOR: str = "Reversed_"
 BACKWARD_ITERATOR: str = "Backward_"
-UNORDERED_FORWARD_ITERATOR: str = "UnorderedForward_"
+UNORDERED_FOReadWriteARD_ITERATOR: str = "UnorderedForward_"
 UNORDERED_REVERSED_ITERATOR: str = "UnorderedReversed_"
 UNORDERED_BACKWARD_ITERATOR: str = "UnorderedBackward_"
 BIDIRECTIONAL_ITERATOR: str = "Bidirectional_"
@@ -238,8 +238,8 @@ BASE_INTERFACES: Dict[str, Interface] = {
             ),
         ],
     ),
-    FORWARD_ITERATOR: Interface(
-        name=FORWARD_ITERATOR,
+    FOReadWriteARD_ITERATOR: Interface(
+        name=FOReadWriteARD_ITERATOR,
         inherited_interfaces=[ITERATOR],
         methods=[
             Method(
@@ -248,7 +248,7 @@ BASE_INTERFACES: Dict[str, Interface] = {
             ),
             Method(
                 name="Next",
-                return_value=FORWARD_ITERATOR,
+                return_value=FOReadWriteARD_ITERATOR,
             ),
             Method(
                 name="AdvanceN",
@@ -258,12 +258,12 @@ BASE_INTERFACES: Dict[str, Interface] = {
             Method(
                 name="NextN",
                 parameters=[Parameter("n", INT)],
-                return_value=FORWARD_ITERATOR,
+                return_value=FOReadWriteARD_ITERATOR,
             ),
         ],
     ),
     REVERSED_ITERATOR: Interface(
-        name=REVERSED_ITERATOR, inherited_interfaces=[FORWARD_ITERATOR]
+        name=REVERSED_ITERATOR, inherited_interfaces=[FOReadWriteARD_ITERATOR]
     ),
     BACKWARD_ITERATOR: Interface(
         name=BACKWARD_ITERATOR,
@@ -289,9 +289,9 @@ BASE_INTERFACES: Dict[str, Interface] = {
             ),
         ],
     ),
-    UNORDERED_FORWARD_ITERATOR: Interface(
-        name=UNORDERED_FORWARD_ITERATOR,
-        inherited_interfaces=[FORWARD_ITERATOR],
+    UNORDERED_FOReadWriteARD_ITERATOR: Interface(
+        name=UNORDERED_FOReadWriteARD_ITERATOR,
+        inherited_interfaces=[FOReadWriteARD_ITERATOR],
         methods=[
             Method(
                 name="AdvanceOrdered",
@@ -299,7 +299,7 @@ BASE_INTERFACES: Dict[str, Interface] = {
             ),
             Method(
                 name="NextOrdered",
-                return_value=UNORDERED_FORWARD_ITERATOR,
+                return_value=UNORDERED_FOReadWriteARD_ITERATOR,
             ),
             Method(
                 name="AdvanceOrderedN",
@@ -309,7 +309,7 @@ BASE_INTERFACES: Dict[str, Interface] = {
             Method(
                 name="NextOrderedN",
                 parameters=[Parameter("n", INT)],
-                return_value=UNORDERED_FORWARD_ITERATOR,
+                return_value=UNORDERED_FOReadWriteARD_ITERATOR,
             ),
         ],
     ),
@@ -343,7 +343,7 @@ BASE_INTERFACES: Dict[str, Interface] = {
     ),
     BIDIRECTIONAL_ITERATOR: Interface(
         name=BIDIRECTIONAL_ITERATOR,
-        inherited_interfaces=[FORWARD_ITERATOR, BACKWARD_ITERATOR],
+        inherited_interfaces=[FOReadWriteARD_ITERATOR, BACKWARD_ITERATOR],
         methods=[
             Method(
                 name="MoveBy",
@@ -436,13 +436,13 @@ def generate_interfaces():
                     continue
 
                 if (
-                    (FORWARD_ITERATOR[:-1] in split and BACKWARD_ITERATOR[:-1] in split)
+                    (FOReadWriteARD_ITERATOR[:-1] in split and BACKWARD_ITERATOR[:-1] in split)
                     or (
-                        FORWARD_ITERATOR[:-1] in split
+                        FOReadWriteARD_ITERATOR[:-1] in split
                         and BIDIRECTIONAL_ITERATOR[:-1] in split
                     )
                     or (
-                        FORWARD_ITERATOR[:-1] in split
+                        FOReadWriteARD_ITERATOR[:-1] in split
                         and REVERSED_ITERATOR[:-1] in split
                     )
                     or (
@@ -459,7 +459,7 @@ def generate_interfaces():
 
                 if ORDERED_ITERATOR[:-1] in split and (
                     UNORDERED_BACKWARD_ITERATOR[:-1] in split
-                    or UNORDERED_FORWARD_ITERATOR[:-1]
+                    or UNORDERED_FOReadWriteARD_ITERATOR[:-1]
                     or UNORDERED_REVERSED_ITERATOR[:-1] in split
                 ):
                     continue

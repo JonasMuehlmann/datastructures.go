@@ -13,7 +13,7 @@ func TestArrayListReverseIteratorIsValid(t *testing.T) {
 		list         *List[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*List[int]) ds.RWOrdCompBidRevRandCollIterator[int, int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -419,28 +419,28 @@ func TestArrayListReverseIteratorIsEqual(t *testing.T) {
 func TestArrayListReverseIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*List[int]) ds.RWOrdCompBidRevRandCollIterator[int, int]
-		iteratorCheck func(ds.RWOrdCompBidRevRandCollIterator[int, int]) bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Begin",
 			iteratorInit:  (*List[int]).ReverseBegin,
-			iteratorCheck: (ds.RWOrdCompBidRevRandCollIterator[int, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*List[int]).ReverseEnd,
-			iteratorCheck: (ds.RWOrdCompBidRevRandCollIterator[int, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]).IsEnd,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*List[int]).ReverseFirst,
-			iteratorCheck: (ds.RWOrdCompBidRevRandCollIterator[int, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]).IsFirst,
 		},
 		{
 			name:          "Last",
 			iteratorInit:  (*List[int]).ReverseLast,
-			iteratorCheck: (ds.RWOrdCompBidRevRandCollIterator[int, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRevRandCollIterator[int, int]).IsLast,
 		},
 	}
 

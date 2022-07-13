@@ -8,7 +8,7 @@ package arraylist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ ds.RWOrdCompBidRevRandCollIterator[any, int] = (*ReverseIterator[any])(nil)
+var _ ds.ReadWriteOrdCompBidRevRandCollIterator[any, int] = (*ReverseIterator[any])(nil)
 
 // ReverseIterator holding the iterator's state
 type ReverseIterator[T any] struct {
@@ -21,12 +21,12 @@ func (list *List[T]) NewReverseIterator(list_ *List[T], index int) *ReverseItera
 	return &ReverseIterator[T]{list: list_, index: index}
 }
 
-// IsValid implements ds.RWOrdCompBidRandCollReverseIterator
+// IsValid implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsValid() bool {
 	return it.list.withinRange(it.index)
 }
 
-// Get implements ds.RWOrdCompBidRandCollReverseIterator
+// Get implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Get() (value T, found bool) {
 	if it.list.size == 0 || !it.IsValid() {
 		return
@@ -35,7 +35,7 @@ func (it *ReverseIterator[T]) Get() (value T, found bool) {
 	return it.list.elements[it.index], true
 }
 
-// Set implements ds.RWOrdCompBidRandCollReverseIterator
+// Set implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Set(value T) bool {
 	if it.list.size == 0 || !it.IsValid() {
 		return false
@@ -45,71 +45,71 @@ func (it *ReverseIterator[T]) Set(value T) bool {
 	return true
 }
 
-// DistanceTo implements ds.RWOrdCompBidRandCollReverseIterator
+// DistanceTo implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 // If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
 func (it *ReverseIterator[T]) DistanceTo(other ds.OrderedIterator) int {
-	forwardIterator := ds.RWOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
 
 	return -forwardIterator.DistanceTo(other)
 }
 
-// IsAfter implements ds.RWOrdCompBidRandCollReverseIterator
+// IsAfter implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsAfter(other ds.OrderedIterator) bool {
-	forwardIterator := ds.RWOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
 
 	return !forwardIterator.IsAfter(other)
 }
 
-// IsBefore implements ds.RWOrdCompBidRandCollReverseIterator
+// IsBefore implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsBefore(other ds.OrderedIterator) bool {
-	forwardIterator := ds.RWOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
 
 	return !forwardIterator.IsBefore(other)
 }
 
-// IsEqual implements ds.RWOrdCompBidRandCollReverseIterator
+// IsEqual implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsEqual(other ds.ComparableIterator) bool {
-	forwardIterator := ds.RWOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
 
 	return forwardIterator.IsEqual(other)
 }
 
-// Next implements ds.RWOrdCompBidRandCollReverseIterator
+// Next implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Next() {
 	it.index--
 }
 
-// NextN implements ds.RWOrdCompBidRandCollReverseIterator
+// NextN implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) NextN(i int) {
 	it.index -= i
 }
 
-// Previous implements ds.RWOrdCompBidRandCollReverseIterator
+// Previous implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Previous() {
 	it.index++
 }
 
-// PreviousN implements ds.RWOrdCompBidRandCollReverseIterator
+// PreviousN implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) PreviousN(n int) {
 	it.index += n
 }
 
-// MoveBy implements ds.RWOrdCompBidRandCollReverseIterator
+// MoveBy implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) MoveBy(n int) {
 	it.index -= n
 }
 
-// Size implements ds.RWOrdCompBidRandCollReverseIterator
+// Size implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Size() int {
 	return it.list.size
 }
 
-// Index implements ds.RWOrdCompBidRandCollReverseIterator
+// Index implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) Index() int {
 	return it.index
 }
 
-// MoveTo implements ds.RWOrdCompBidRandCollReverseIterator
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) MoveTo(i int) {
 	it.index = i
 }
@@ -135,7 +135,7 @@ func (it *ReverseIterator[T]) IsLast() bool {
 }
 
 // PERF: Maybe an unsafe version is useful here
-// GetAt implements ds.RWOrdCompBidRandCollIterator
+// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *ReverseIterator[T]) GetAt(i int) (value T, found bool) {
 	if it.list.size == 0 || !it.list.withinRange(i) {
 		return
@@ -145,7 +145,7 @@ func (it *ReverseIterator[T]) GetAt(i int) (value T, found bool) {
 }
 
 // PERF: Maybe an unsafe version is useful here
-// SetAt implements ds.RWOrdCompBidRandCollIterator
+// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *ReverseIterator[T]) SetAt(i int, value T) bool {
 	if it.list.size == 0 || !it.list.withinRange(i) {
 		return false

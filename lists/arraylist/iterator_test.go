@@ -17,7 +17,7 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 		list         *List[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*List[int]) ds.RWOrdCompBidRandCollIterator[int, int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -423,28 +423,28 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*List[int]) ds.RWOrdCompBidRandCollIterator[int, int]
-		iteratorCheck func(ds.RWOrdCompBidRandCollIterator[int, int]) bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Begin",
 			iteratorInit:  (*List[int]).Begin,
-			iteratorCheck: (ds.RWOrdCompBidRandCollIterator[int, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*List[int]).End,
-			iteratorCheck: (ds.RWOrdCompBidRandCollIterator[int, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsEnd,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*List[int]).First,
-			iteratorCheck: (ds.RWOrdCompBidRandCollIterator[int, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsFirst,
 		},
 		{
 			name:          "Last",
 			iteratorInit:  (*List[int]).Last,
-			iteratorCheck: (ds.RWOrdCompBidRandCollIterator[int, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsLast,
 		},
 	}
 

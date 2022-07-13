@@ -10,15 +10,15 @@ package ds
 // UnorderedIterator =Unord
 // ComparableIterator = Comp
 // CollectionIterator = Coll
-// WritableIterator = W
-// ReadableIterator = R
+// WritableIterator = Write
+// ReadableIterator = Read
 // ForwardsIterator = For
 // BackwardIterator = Back
 // ReverseIterator = Rev
 // BidirectionalIterator = Bid
 // RandomAccessIterator = Rand
 
-type RWOrdCompBidRandCollIterator[T any, TIndex any] interface {
+type ReadWriteOrdCompBidRandCollIterator[T any, TIndex any] interface {
 	OrderedIterator
 	ComparableIterator
 
@@ -28,7 +28,7 @@ type RWOrdCompBidRandCollIterator[T any, TIndex any] interface {
 	RandomAccessWriteableIterator[TIndex, T]
 }
 
-type RWOrdCompBidRevRandCollIterator[T any, TIndex any] interface {
+type ReadWriteOrdCompBidRevRandCollIterator[T any, TIndex any] interface {
 	OrderedIterator
 	ComparableIterator
 
