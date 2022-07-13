@@ -61,6 +61,25 @@ func (list *List[T]) PushBack(values ...T) {
 	}
 }
 
+func (list *List[T]) PushFront(values ...T) {
+	list.elements = append(values, list.elements...)
+	list.size += len(values)
+}
+
+func (list *List[T]) PopBack() {
+	if list.size > 0 {
+
+		list.elements = list.elements[:list.size-1]
+		list.size--
+	}
+}
+func (list *List[T]) PopFront() {
+	if list.size > 0 {
+		list.elements = list.elements[1:]
+		list.size--
+	}
+}
+
 // Get returns the element at index.
 // Second return parameter is true if index is within bounds of the array and array is not empty, otherwise false.
 func (list *List[T]) Get(index int) (value T, wasFound bool) {
