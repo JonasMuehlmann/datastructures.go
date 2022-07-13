@@ -19,7 +19,6 @@ import (
 type List[T any] interface {
 	Get(index int) (T, bool)
 	Remove(index int)
-	Add(values ...T)
 	Contains(comparator utils.Comparator[T], value ...T) bool
 	Sort(comparator utils.Comparator[T])
 	Swap(index1, index2 int)

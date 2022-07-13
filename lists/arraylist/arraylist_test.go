@@ -41,10 +41,10 @@ func TestListNew(t *testing.T) {
 	}
 }
 
-func TestListAdd(t *testing.T) {
+func TestListPushBack(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	if actualValue := list.IsEmpty(); actualValue != false {
 		t.Errorf("Got %v expected %v", actualValue, false)
 	}
@@ -64,8 +64,8 @@ func TestListIndexOf(t *testing.T) {
 		t.Errorf("Got %v expected %v", index, expectedIndex)
 	}
 
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 
 	expectedIndex = 0
 	if index := list.IndexOf(utils.BasicComparator[string], "a"); index != expectedIndex {
@@ -85,8 +85,8 @@ func TestListIndexOf(t *testing.T) {
 
 func TestListRemoveStable(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	list.RemoveStable(2)
 	if actualValue, ok := list.Get(2); ok {
 		t.Errorf("Got %v expected %v", actualValue, nil)
@@ -104,8 +104,8 @@ func TestListRemoveStable(t *testing.T) {
 
 func TestListGet(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	if actualValue, ok := list.Get(0); actualValue != "a" || !ok {
 		t.Errorf("Got %v expected %v", actualValue, "a")
 	}
@@ -126,8 +126,8 @@ func TestListGet(t *testing.T) {
 
 func TestListSwap(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	list.Swap(0, 1)
 	if actualValue, ok := list.Get(0); actualValue != "b" || !ok {
 		t.Errorf("Got %v expected %v", actualValue, "b")
@@ -137,7 +137,7 @@ func TestListSwap(t *testing.T) {
 func TestListSort(t *testing.T) {
 	list := New[string]()
 	list.Sort(utils.BasicComparator[string])
-	list.Add("e", "f", "g", "a", "b", "c", "d")
+	list.PushBack("e", "f", "g", "a", "b", "c", "d")
 	list.Sort(utils.BasicComparator[string])
 	for i := 1; i < list.Size(); i++ {
 		a, _ := list.Get(i - 1)
@@ -150,7 +150,7 @@ func TestListSort(t *testing.T) {
 
 func TestListClear(t *testing.T) {
 	list := New[string]()
-	list.Add("e", "f", "g", "a", "b", "c", "d")
+	list.PushBack("e", "f", "g", "a", "b", "c", "d")
 	list.Clear()
 	if actualValue := list.IsEmpty(); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
@@ -162,8 +162,8 @@ func TestListClear(t *testing.T) {
 
 func TestListContains(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	if actualValue := list.Contains(utils.BasicComparator[string], "a"); actualValue != true {
 		t.Errorf("Got %v expected %v", actualValue, true)
 	}
@@ -184,8 +184,8 @@ func TestListContains(t *testing.T) {
 
 func TestListValues(t *testing.T) {
 	list := New[string]()
-	list.Add("a")
-	list.Add("b", "c")
+	list.PushBack("a")
+	list.PushBack("b", "c")
 	actualValue, expectedValue := list.GetValues(), []string{"a", "b", "c"}
 	assert.Equal(t, actualValue, expectedValue)
 }
@@ -228,7 +228,7 @@ func TestListSet(t *testing.T) {
 
 func TestListSerialization(t *testing.T) {
 	list := New[string]()
-	list.Add("a", "b", "c")
+	list.PushBack("a", "b", "c")
 
 	var err error
 	assert := func() {
@@ -263,7 +263,7 @@ func TestListSerialization(t *testing.T) {
 
 func TestListString(t *testing.T) {
 	c := New[int]()
-	c.Add(1)
+	c.PushBack(1)
 	if !strings.HasPrefix(c.ToString(), "ArrayList") {
 		t.Errorf("ToString should start with container name")
 	}
@@ -277,10 +277,10 @@ func benchmarkGet(b *testing.B, list *List[int], size int) {
 	}
 }
 
-func benchmarkAdd(b *testing.B, list *List[int], size int) {
+func benchmarkPushBack(b *testing.B, list *List[int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
-			list.Add(n)
+			list.PushBack(n)
 		}
 	}
 }
@@ -298,7 +298,7 @@ func BenchmarkArrayListGet100(b *testing.B) {
 	size := 100
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkGet(b, list, size)
@@ -309,7 +309,7 @@ func BenchmarkArrayListGet1000(b *testing.B) {
 	size := 1000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkGet(b, list, size)
@@ -320,7 +320,7 @@ func BenchmarkArrayListGet10000(b *testing.B) {
 	size := 10000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkGet(b, list, size)
@@ -331,51 +331,51 @@ func BenchmarkArrayListGet100000(b *testing.B) {
 	size := 100000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkGet(b, list, size)
 }
 
-func BenchmarkArrayListAdd100(b *testing.B) {
+func BenchmarkArrayListPushBack100(b *testing.B) {
 	b.StopTimer()
 	size := 100
 	list := New[int]()
 	b.StartTimer()
-	benchmarkAdd(b, list, size)
+	benchmarkPushBack(b, list, size)
 }
 
-func BenchmarkArrayListAdd1000(b *testing.B) {
+func BenchmarkArrayListPushBack1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
-	benchmarkAdd(b, list, size)
+	benchmarkPushBack(b, list, size)
 }
 
-func BenchmarkArrayListAdd10000(b *testing.B) {
+func BenchmarkArrayListPushBack10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
-	benchmarkAdd(b, list, size)
+	benchmarkPushBack(b, list, size)
 }
 
-func BenchmarkArrayListAdd100000(b *testing.B) {
+func BenchmarkArrayListPushBack100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
-	benchmarkAdd(b, list, size)
+	benchmarkPushBack(b, list, size)
 }
 
 func BenchmarkArrayListRemoveStable100(b *testing.B) {
@@ -383,7 +383,7 @@ func BenchmarkArrayListRemoveStable100(b *testing.B) {
 	size := 100
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkRemoveStable(b, list, size)
@@ -394,7 +394,7 @@ func BenchmarkArrayListRemoveStable1000(b *testing.B) {
 	size := 1000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkRemoveStable(b, list, size)
@@ -405,7 +405,7 @@ func BenchmarkArrayListRemoveStable10000(b *testing.B) {
 	size := 10000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkRemoveStable(b, list, size)
@@ -416,7 +416,7 @@ func BenchmarkArrayListRemoveStable100000(b *testing.B) {
 	size := 100000
 	list := New[int]()
 	for n := 0; n < size; n++ {
-		list.Add(n)
+		list.PushBack(n)
 	}
 	b.StartTimer()
 	benchmarkRemoveStable(b, list, size)

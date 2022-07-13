@@ -26,7 +26,8 @@ var _ lists.List[any] = (*List[any])(nil)
 // List holds the elements in a slice.
 type List[T any] struct {
 	elements []T
-	size     int
+	// TODO: Can't this be removed in favor of calls to len(list.elements)?
+	size int
 }
 
 const (
@@ -38,7 +39,7 @@ const (
 func New[T any](values ...T) *List[T] {
 	list := &List[T]{}
 	if len(values) > 0 {
-		list.Add(values...)
+		list.PushBack(values...)
 	}
 	return list
 }
@@ -49,13 +50,10 @@ func NewFromSlice[T any](slice []T) *List[T] {
 	return list
 }
 
-func (list *List[T]) PushBack(values ...T)  { panic("Not implemented") }
-func (list *List[T]) PushFront(values ...T) { panic("Not implemented") }
-func (list *List[T]) PopBack()              { panic("Not implemented") }
-func (list *List[T]) PopFront()             { panic("Not implemented") }
-
 // Add appends a value at the end of the list.
-func (list *List[T]) Add(values ...T) {
+func (list *List[T]) PushBack(values ...T) {
+	// TODO: Why not just use list.elemens = append(list.elements, ...values)?
+	// https://github.com/golang/go/blob/master/src/runtime/slice.go
 	list.growBy(len(values))
 	for _, value := range values {
 		list.elements[list.size] = value
@@ -183,7 +181,7 @@ func (list *List[T]) Insert(index int, values ...T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
-			list.Add(values...)
+			list.PushBack(values...)
 		}
 		return
 	}
@@ -202,7 +200,7 @@ func (list *List[T]) Set(index int, value T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
-			list.Add(value)
+			list.PushBack(value)
 		}
 		return
 	}
