@@ -5,40 +5,52 @@
 
 package ds
 
-// NOTE: Abbreviations:
+// NOTE: Abbreviations and order:
+// ReadableIterator = Read
+// WritableIterator = Write
+
 // OrderedIterator = Ord
 // UnorderedIterator =Unord
+
 // ComparableIterator = Comp
-// CollectionIterator = Coll
-// WritableIterator = Write
-// ReadableIterator = Read
+
 // ForwardsIterator = For
 // BackwardIterator = Back
 // ReverseIterator = Rev
 // BidirectionalIterator = Bid
-// RandomAccessIterator = Rand
 
-type ReadWriteOrdCompBidRandCollIterator[T any, TIndex any] interface {
+// RandomAccessIterator = Rand
+// CollectionIterator = Coll
+
+type ReadWriteOrdCompBidRandCollIterator[TIndex any, TValue any] interface {
 	OrderedIterator
 	ComparableIterator
 
 	BidirectionalIterator
 
-	RandomAccessReadableIterator[TIndex, T]
-	RandomAccessWriteableIterator[TIndex, T]
+	RandomAccessReadableIterator[TIndex, TValue]
+	RandomAccessWriteableIterator[TIndex, TValue]
 }
 
-type ReadWriteOrdCompBidRevRandCollIterator[T any, TIndex any] interface {
+type ReadWriteOrdCompBidRevRandCollIterator[TIndex any, TValue any] interface {
 	OrderedIterator
 	ComparableIterator
 
 	ReversedIterator
 	BackwardIterator
 
-	RandomAccessReadableIterator[TIndex, T]
-	RandomAccessWriteableIterator[TIndex, T]
+	RandomAccessReadableIterator[TIndex, TValue]
+	RandomAccessWriteableIterator[TIndex, TValue]
 }
 
 const (
 	CanOnlyCompareEqualIteratorTypes = "Can only compare iterators of equal concrete type"
 )
+
+type ReadWriteCompForRandCollIterator[TIndex any, TValue any] interface {
+	ComparableIterator
+	CollectionIterator[TIndex]
+	ForwardIterator
+	RandomAccessReadableIterator[TIndex, TValue]
+	RandomAccessWriteableIterator[TIndex, TValue]
+}

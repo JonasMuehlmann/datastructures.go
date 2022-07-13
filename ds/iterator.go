@@ -69,24 +69,24 @@ type CollectionIterator[TIndex any] interface {
 }
 
 // WritableIterator defines an Iterator, which can be used to write to the underlying values.
-type WritableIterator[T any] interface {
+type WritableIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
 	Iterator
 	// ************************    Own methods    ***********************//
 
 	// Set sets the value at the iterator's position.
-	Set(value T) bool
+	Set(value TIndex) bool
 }
 
 // ReadableIterator defines an Iterator, which can be used to read the underlying values.
-type ReadableIterator[T any] interface {
+type ReadableIterator[TValue any] interface {
 	// *********************    Inherited methods    ********************//
 	Iterator
 	// ************************    Own methods    ***********************//
 
 	// Get returns the value at the iterator's position.
 	// found will be false if the iterator is in an invalid state or the collection is empty.
-	Get() (value T, found bool)
+	Get() (value TValue, found bool)
 }
 
 // ForwardIterator defines an ordered Iterator, which can be moved forward according to the indexes ordering.
@@ -206,45 +206,45 @@ type UnorderedRandomAccessIterator[TIndex any] interface {
 }
 
 // RandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
-type RandomAccessReadableIterator[T any, V any] interface {
+type RandomAccessReadableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	RandomAccessIterator[T]
-	ReadableIterator[V]
+	RandomAccessIterator[TIndex]
+	ReadableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
 	// GetAt returns the value at the given index of the iterator.
-	GetAt(i T) (value V, found bool)
+	GetAt(i TIndex) (value TValue, found bool)
 }
 
 // RandomAccessWriteableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
-type RandomAccessWriteableIterator[T any, V any] interface {
+type RandomAccessWriteableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	RandomAccessIterator[T]
-	WritableIterator[V]
+	RandomAccessIterator[TIndex]
+	WritableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
 	// GetAt sets the value at the given index of the iterator.
-	SetAt(i T, value V) bool
+	SetAt(i TIndex, value TValue) bool
 }
 
 // UnorderedRandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
-type UnorderedRandomAccessReadableIterator[T any, V any] interface {
+type UnorderedRandomAccessReadableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	UnorderedRandomAccessIterator[T]
-	ReadableIterator[V]
+	UnorderedRandomAccessIterator[TIndex]
+	ReadableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
 	// GetAt returns the value at the given index of the iterator.
-	GetAt(i T) (value V, found bool)
+	GetAt(i TIndex) (value TValue, found bool)
 }
 
 // UnorderedRandomAccessWriteableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
-type UnorderedRandomAccessWriteableIterator[T any, V any] interface {
+type UnorderedRandomAccessWriteableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	UnorderedRandomAccessIterator[T]
-	WritableIterator[V]
+	UnorderedRandomAccessIterator[TIndex]
+	WritableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
 	// GetAt sets the value at the given index of the iterator.
-	SetAt(i T, value V) bool
+	SetAt(i TIndex, value TValue) bool
 }

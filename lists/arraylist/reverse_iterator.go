@@ -8,7 +8,7 @@ package arraylist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRevRandCollIterator[any, int] = (*ReverseIterator[any])(nil)
+var _ ds.ReadWriteOrdCompBidRevRandCollIterator[int, any] = (*ReverseIterator[any])(nil)
 
 // ReverseIterator holding the iterator's state
 type ReverseIterator[T any] struct {
@@ -48,28 +48,28 @@ func (it *ReverseIterator[T]) Set(value T) bool {
 // DistanceTo implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 // If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
 func (it *ReverseIterator[T]) DistanceTo(other ds.OrderedIterator) int {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
 
 	return -forwardIterator.DistanceTo(other)
 }
 
 // IsAfter implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsAfter(other ds.OrderedIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
 
 	return !forwardIterator.IsAfter(other)
 }
 
 // IsBefore implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsBefore(other ds.OrderedIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
 
 	return !forwardIterator.IsBefore(other)
 }
 
 // IsEqual implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsEqual(other ds.ComparableIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[T, int](it)
+	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
 
 	return forwardIterator.IsEqual(other)
 }

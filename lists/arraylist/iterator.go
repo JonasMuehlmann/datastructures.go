@@ -8,7 +8,7 @@ package arraylist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollIterator[any, int] = (*Iterator[any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
 
 // Iterator holding the iterator's state
 type Iterator[T any] struct {
