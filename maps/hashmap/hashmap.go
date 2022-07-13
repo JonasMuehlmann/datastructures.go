@@ -15,6 +15,7 @@ package hashmap
 import (
 	"fmt"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -110,4 +111,41 @@ func (m *Map[TKey, TValue]) ToString() string {
 	str := "HashMap\n"
 	str += fmt.Sprintf("%v", m.m)
 	return str
+}
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+// First returns an initialized iterator, which points to it's first element.
+func (m *Map[TKey, TValue]) First() ds.ReadWriteCompForRandCollIterator[TKey, TValue] {
+	return m.NewIterator(m)
+}
+
+//******************************************************************//
+//                         Ordered iterator                         //
+//******************************************************************//
+
+// OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedBegin(comparator utils.Comparator[TKey]) ds.ReadWriteUnordCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, len(m.m), comparator)
+}
+
+// OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedEnd(comparator utils.Comparator[TKey]) ds.ReadWriteUnordCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, -1, comparator)
+}
+
+// OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
+func (m *Map[TKey, TValue]) OrderedFirst(comparator utils.Comparator[TKey]) ds.ReadWriteUnordCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, len(m.m)-1, comparator)
+}
+
+// OrderedLast returns an initialized, reversed iterator, which points to it's last element.
+func (m *Map[TKey, TValue]) OrderedLast(comparator utils.Comparator[TKey]) ds.ReadWriteUnordCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, 0, comparator)
 }

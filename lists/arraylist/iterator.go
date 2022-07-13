@@ -50,13 +50,12 @@ func (it *Iterator[T]) Set(value T) bool {
 // DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
 // If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
-	otherCollection, ok := other.(ds.CollectionIterator[int])
-
-	if ok {
-		return it.Index() - otherCollection.Index()
-	} else {
-		panic("Not implemented for non collection types")
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
 	}
+
+	return it.index - otherThis.index
 }
 
 // IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator

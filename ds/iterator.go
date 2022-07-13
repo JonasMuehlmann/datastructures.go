@@ -6,6 +6,7 @@
 package ds
 
 // TODO: Implement Constructors for types, which take iterators to materialize
+// TODO: Can we use type parameters in interfaces to embed? This could simplify variant creation like BidirectionalIterator  vs UnorderedBidirectionalIterator
 
 // Iterator defines the minimum functionality required for all other iterators.
 type Iterator interface {
@@ -69,13 +70,13 @@ type CollectionIterator[TIndex any] interface {
 }
 
 // WritableIterator defines an Iterator, which can be used to write to the underlying values.
-type WritableIterator[TIndex any] interface {
+type WritableIterator[TValue any] interface {
 	// *********************    Inherited methods    ********************//
 	Iterator
 	// ************************    Own methods    ***********************//
 
 	// Set sets the value at the iterator's position.
-	Set(value TIndex) bool
+	Set(value TValue) bool
 }
 
 // ReadableIterator defines an Iterator, which can be used to read the underlying values.
@@ -186,7 +187,6 @@ type UnorderedBidirectionalIterator interface {
 // RandomAccessIterator defines a BidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
 type RandomAccessIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
-	BidirectionalIterator
 	CollectionIterator[TIndex]
 	// ************************    Own methods    ***********************//
 

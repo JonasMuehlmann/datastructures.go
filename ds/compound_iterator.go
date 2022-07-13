@@ -22,6 +22,10 @@ package ds
 // RandomAccessIterator = Rand
 // CollectionIterator = Coll
 
+const (
+	CanOnlyCompareEqualIteratorTypes = "Can only compare iterators of equal concrete type"
+)
+
 type ReadWriteOrdCompBidRandCollIterator[TIndex any, TValue any] interface {
 	OrderedIterator
 	ComparableIterator
@@ -42,15 +46,19 @@ type ReadWriteOrdCompBidRevRandCollIterator[TIndex any, TValue any] interface {
 	RandomAccessReadableIterator[TIndex, TValue]
 	RandomAccessWriteableIterator[TIndex, TValue]
 }
-
-const (
-	CanOnlyCompareEqualIteratorTypes = "Can only compare iterators of equal concrete type"
-)
-
 type ReadWriteCompForRandCollIterator[TIndex any, TValue any] interface {
 	ComparableIterator
 	CollectionIterator[TIndex]
 	ForwardIterator
 	RandomAccessReadableIterator[TIndex, TValue]
 	RandomAccessWriteableIterator[TIndex, TValue]
+}
+
+type ReadWriteUnordCompBidRandCollIterator[TIndex any, TValue any] interface {
+	ComparableIterator
+	OrderedIterator
+	CollectionIterator[TIndex]
+	UnorderedBidirectionalIterator
+	UnorderedRandomAccessReadableIterator[TIndex, TValue]
+	UnorderedRandomAccessWriteableIterator[TIndex, TValue]
 }
