@@ -74,6 +74,7 @@ func (m *Map[TKey, TValue]) Size() int {
 	return len(m.m)
 }
 
+// PERF: Could maps.Keys() from golang.org/x/exp be faster?
 // GetKeys returns all keys (random order).
 func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	keys := make([]TKey, m.Size())
@@ -85,6 +86,7 @@ func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	return keys
 }
 
+// PERF: Could maps.Values() from golang.org/x/exp be faster?
 // Values returns all values (random order).
 func (m *Map[TKey, TValue]) GetValues() []TValue {
 	values := make([]TValue, m.Size())

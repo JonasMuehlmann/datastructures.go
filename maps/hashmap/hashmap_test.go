@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -164,182 +165,125 @@ func TestMapSerialization(t *testing.T) {
 	}
 }
 
-func TestMapString(t *testing.T) {
+func TestMapstring(t *testing.T) {
 	c := New[string, int]()
 	c.Put("a", 1)
 	if !strings.HasPrefix(c.ToString(), "HashMap") {
-		t.Errorf("ToString should start with container name")
+		t.Errorf("Tostring should start with container name")
 	}
 }
 
-func sameElements(a []interface{}, b []interface{}) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for _, av := range a {
-		found := false
-		for _, bv := range b {
-			if av == bv {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-	return true
-}
-
-func benchmarkGet(b *testing.B, m *Map[int, struct{}], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Get(n)
-		}
-	}
-}
-
-func benchmarkPut(b *testing.B, m *Map[int, struct{}], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Put(n, struct{}{})
-		}
-	}
-}
-
-func benchmarkRemove(b *testing.B, m *Map[int, struct{}], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Remove(utils.BasicComparator[int], n)
-		}
-	}
-}
-
-func BenchmarkHashMapGet100(b *testing.B) {
+func BenchmarkHashMapRemove(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Remove(utils.BasicComparator[int], i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make(map[int]string)
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					delete(m, i)
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkHashMapGet1000(b *testing.B) {
+func BenchmarkHashMapGet(b *testing.B) {
 	b.StopTimer()
-	size := 1000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_, _ = m.Get(i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make(map[int]string)
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_, _ = m[i]
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkHashMapGet10000(b *testing.B) {
+func BenchmarkHashMapSet(b *testing.B) {
 	b.StopTimer()
-	size := 10000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[int, string]()
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make(map[int]string)
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
-}
-
-func BenchmarkHashMapGet100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
-}
-
-func BenchmarkHashMapPut100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	m := New[int, struct{}]()
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkHashMapPut1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkHashMapPut10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkHashMapPut100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkHashMapRemove100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkHashMapRemove1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkHashMapRemove10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkHashMapRemove100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	m := New[int, struct{}]()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
 }
