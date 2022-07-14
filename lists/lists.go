@@ -26,8 +26,8 @@ type List[T any] interface {
 	Set(index int, value T)
 	PushBack(value ...T)
 	PushFront(value ...T)
-	PopBack()
-	PopFront()
+	PopBack(n int)
+	PopFront(n int)
 
 	ds.Container
 	// IsEmpty() bool

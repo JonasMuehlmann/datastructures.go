@@ -66,15 +66,15 @@ func (list *List[T]) PushFront(values ...T) {
 	list.size += len(values)
 }
 
-func (list *List[T]) PopBack() {
-	if list.size > 0 {
+func (list *List[T]) PopBack(n int) {
+	if list.size > 0 && list.size <= n {
 
 		list.elements = list.elements[:list.size-1]
 		list.size--
 	}
 }
-func (list *List[T]) PopFront() {
-	if list.size > 0 {
+func (list *List[T]) PopFront(n int) {
+	if list.size > 0 && list.size <= n {
 		list.elements = list.elements[1:]
 		list.size--
 	}

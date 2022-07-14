@@ -36,8 +36,8 @@ type element[T any] struct {
 
 func (list *List[T]) PushBack(values ...T)  { panic("Not implemented") }
 func (list *List[T]) PushFront(values ...T) { panic("Not implemented") }
-func (list *List[T]) PopBack()              { panic("Not implemented") }
-func (list *List[T]) PopFront()             { panic("Not implemented") }
+func (list *List[T]) PopBack(n int)         { panic("Not implemented") }
+func (list *List[T]) PopFront(n int)        { panic("Not implemented") }
 
 // New instantiates a new list and adds the passed values, if any, to the list
 func New[T any](values ...T) *List[T] {
