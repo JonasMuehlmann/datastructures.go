@@ -31,7 +31,6 @@ type List[T any] struct {
 }
 
 const (
-	GrowthFactor            = float32(2.0)  // growth by 100%
 	ShrinkThresholdPercent  = float32(0.25) // shrink when cap * ShrinkThresholdPercent > len (0 means never shrink)
 	ShrinkThresholdAbsolute = 100           // shrink when cap - len >= ShrinkThresholdAbsolute
 	ShrinkFactor            = float32(0.5)  // shrink by ShrinkFactor * cap - len
@@ -54,13 +53,9 @@ func NewFromSlice[T any](slice []T) *List[T] {
 
 // Add appends a value at the end of the list.
 func (list *List[T]) PushBack(values ...T) {
-	// TODO: Why not just use list.elemens = append(list.elements, ...values)?
-	// https://github.com/golang/go/blob/master/src/runtime/slice.go
-	list.growBy(len(values))
-	for _, value := range values {
-		list.elements[list.size] = value
-		list.size++
-	}
+	list.elements = append(list.elements, values...)
+
+	list.size += len(values)
 }
 
 func (list *List[T]) PushFront(values ...T) {
@@ -70,15 +65,14 @@ func (list *List[T]) PushFront(values ...T) {
 
 func (list *List[T]) PopBack(n int) {
 	if list.size > 0 && list.size <= n {
-
 		list.elements = list.elements[:list.size-1]
-		list.size--
+		list.size -= n
 	}
 }
 func (list *List[T]) PopFront(n int) {
 	if list.size > 0 && list.size <= n {
 		list.elements = list.elements[1:]
-		list.size--
+		list.size -= n
 	}
 }
 
@@ -203,11 +197,14 @@ func (list *List[T]) Insert(index int, values ...T) {
 		return
 	}
 
-	l := len(values)
-	list.growBy(l)
-	list.size += l
-	copy(list.elements[index+l:], list.elements[index:list.size-l])
-	copy(list.elements[index:], values)
+	newList := make([]T, list.size+len(values))
+
+	copy(newList[:index], list.elements[:index])
+	copy(newList[index:index+len(values)], values)
+	copy(newList[index+len(values):], list.elements[index+len(values)-1:])
+
+	list.elements = newList
+	list.size += len(values)
 }
 
 // Set the value at specified index
@@ -272,22 +269,6 @@ func (list *List[T]) TryShrink() {
 // Check that the index is within bounds of the list.
 func (list *List[T]) withinRange(index int) bool {
 	return index >= 0 && index < list.size
-}
-
-func (list *List[T]) resize(cap int) {
-	newElements := make([]T, cap, cap)
-	copy(newElements, list.elements)
-	list.elements = newElements
-}
-
-// Expand the array if necessary, i.e. capacity will be reached if we add n elements.
-func (list *List[T]) growBy(n int) {
-	// When capacity is reached, grow by a factor of growthFactor and add number of elements
-	currentCapacity := cap(list.elements)
-	if list.size+n >= currentCapacity {
-		newCapacity := int(GrowthFactor * float32(currentCapacity+n))
-		list.resize(newCapacity)
-	}
 }
 
 //******************************************************************//
