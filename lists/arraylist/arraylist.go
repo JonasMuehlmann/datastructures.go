@@ -60,15 +60,13 @@ func (list *List[T]) PushFront(values ...T) {
 }
 
 func (list *List[T]) PopBack(n int) {
-	if list.size > 0 && list.size <= n {
-		list.elements = list.elements[:list.size-1]
-		list.size -= n
+	if len(list.elements) > 0 && len(list.elements) >= n {
+		list.elements = list.elements[:len(list.elements)-n]
 	}
 }
 func (list *List[T]) PopFront(n int) {
-	if list.size > 0 && list.size <= n {
-		list.elements = list.elements[1:]
-		list.size -= n
+	if len(list.elements) > 0 && len(list.elements) >= n {
+		list.elements = list.elements[n:]
 	}
 }
 
@@ -89,8 +87,8 @@ func (list *List[T]) Remove(index int) {
 		return
 	}
 
-	list.elements[index] = list.elements[list.size-1]
-	list.size--
+	list.elements[index] = list.elements[len(list.elements)-1]
+	list.elements = list.elements[:len(list.elements)-1]
 }
 
 // RemoveStable removes the element at the given index from the list.
@@ -100,8 +98,7 @@ func (list *List[T]) RemoveStable(index int) {
 		return
 	}
 
-	copy(list.elements[index:], list.elements[index+1:list.size]) // shift to the left by one (slow operation, need ways to optimize this)
-	list.size--
+	list.elements = append(list.elements[:index], list.elements[index+1:]...) // shift to the left by one (slow operation, need ways to optimize this)
 }
 
 // PERF: Maybe we can provide separated implementations of the data structures (e.g. BasicList) through code generation, which are constrained with comparable
