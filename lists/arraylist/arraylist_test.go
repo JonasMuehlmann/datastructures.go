@@ -175,6 +175,52 @@ func TestListPopFront(t *testing.T) {
 	}
 }
 
+func TestListShrinkToFit(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		n            int
+		newLen       int
+		newCap       int
+	}{
+		{
+			name:         "empty list, remove nothing",
+			originalList: New[string](),
+			newLen:       0,
+			newCap:       0,
+		},
+		{
+			name:         "empty list, remove 2",
+			originalList: New[string](),
+			n:            2,
+			newLen:       0,
+			newCap:       0,
+		},
+		{
+			name:         "list with 2 items, remove nothing",
+			originalList: New[string]("foo", "bar"),
+			n:            0,
+			newLen:       2,
+			newCap:       2,
+		},
+		{
+			name:         "list with 4 items, remove 2",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			n:            2,
+			newLen:       2,
+			newCap:       2,
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.PopBack(test.n)
+		test.originalList.ShrinkToFit()
+
+		assert.Equal(t, test.newLen, len(test.originalList.elements), test.name)
+		assert.Equal(t, test.newCap, cap(test.originalList.elements), test.name)
+	}
+}
+
 func TestListIndexOf(t *testing.T) {
 	list := New[string]()
 

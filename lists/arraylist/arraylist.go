@@ -100,7 +100,7 @@ func (list *List[T]) Remove(index int) {
 	list.elements[index] = list.elements[list.size-1]
 	list.size--
 
-	list.shrink()
+	list.Shrink()
 }
 
 // RemoveStable removes the element at the given index from the list.
@@ -113,7 +113,7 @@ func (list *List[T]) RemoveStable(index int) {
 	copy(list.elements[index:], list.elements[index+1:list.size]) // shift to the left by one (slow operation, need ways to optimize this)
 	list.size--
 
-	list.shrink()
+	list.Shrink()
 }
 
 // PERF: Maybe we can provide separated implementations of the data structures (e.g. BasicList) through code generation, which are constrained with comparable
@@ -238,6 +238,26 @@ func (list *List[T]) ToString() string {
 	return str
 }
 
+// ShrinkToFit shrinks the array so that len == cap.
+func (list *List[T]) ShrinkToFit() {
+
+	newElements := make([]T, list.size)
+	copy(newElements, list.elements)
+	list.elements = newElements
+}
+
+// Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity.
+func (list *List[T]) Shrink() {
+	if shrinkFactor == 0.0 {
+		return
+	}
+	// Shrink when size is at shrinkFactor * capacity
+	currentCapacity := cap(list.elements)
+	if list.size <= int(float32(currentCapacity)*shrinkFactor) {
+		list.resize(list.size)
+	}
+}
+
 //******************************************************************//
 //                              Helper                              //
 //******************************************************************//
@@ -260,18 +280,6 @@ func (list *List[T]) growBy(n int) {
 	if list.size+n >= currentCapacity {
 		newCapacity := int(growthFactor * float32(currentCapacity+n))
 		list.resize(newCapacity)
-	}
-}
-
-// Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity.
-func (list *List[T]) shrink() {
-	if shrinkFactor == 0.0 {
-		return
-	}
-	// Shrink when size is at shrinkFactor * capacity
-	currentCapacity := cap(list.elements)
-	if list.size <= int(float32(currentCapacity)*shrinkFactor) {
-		list.resize(list.size)
 	}
 }
 
