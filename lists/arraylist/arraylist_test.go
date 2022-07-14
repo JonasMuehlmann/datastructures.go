@@ -57,6 +57,124 @@ func TestListPushBack(t *testing.T) {
 	}
 }
 
+func TestListPushFront(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		itemsToAdd   []string
+		newItems     []string
+	}{
+		{
+			name:         "empty list, add nothing",
+			originalList: New[string](),
+			itemsToAdd:   []string{},
+			newItems:     []string{},
+		},
+		{
+			name:         "empty list, add 2",
+			originalList: New[string](),
+			itemsToAdd:   []string{"foo", "bar"},
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 2 items, add nothing",
+			originalList: New[string]("foo", "bar"),
+			itemsToAdd:   []string{},
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 2 items, add 2",
+			originalList: New[string]("foo", "bar"),
+			itemsToAdd:   []string{"foo2", "bar2"},
+			newItems:     []string{"foo2", "bar2", "foo", "bar"},
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.PushFront(test.itemsToAdd...)
+
+		assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+	}
+}
+
+func TestListPopBack(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		n            int
+		newItems     []string
+	}{
+		{
+			name:         "empty list, remove nothing",
+			originalList: New[string](),
+			newItems:     []string{},
+		},
+		{
+			name:         "empty list, remove 2",
+			originalList: New[string](),
+			n:            2,
+			newItems:     []string{},
+		},
+		{
+			name:         "list with 2 items, remove nothing",
+			originalList: New[string]("foo", "bar"),
+			n:            0,
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 4 items, remove 2",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			n:            2,
+			newItems:     []string{"foo", "bar"},
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.PopBack(test.n)
+
+		assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+	}
+}
+
+func TestListPopFront(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		n            int
+		newItems     []string
+	}{
+		{
+			name:         "empty list, remove nothing",
+			originalList: New[string](),
+			newItems:     []string{},
+		},
+		{
+			name:         "empty list, remove 2",
+			originalList: New[string](),
+			n:            2,
+			newItems:     []string{},
+		},
+		{
+			name:         "list with 2 items, remove nothing",
+			originalList: New[string]("foo", "bar"),
+			n:            0,
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 4 items, remove 2",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			n:            2,
+			newItems:     []string{"baz", "foo"},
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.PopFront(test.n)
+
+		assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+	}
+}
+
 func TestListIndexOf(t *testing.T) {
 	list := New[string]()
 
