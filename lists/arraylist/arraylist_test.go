@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -269,155 +270,121 @@ func TestListString(t *testing.T) {
 	}
 }
 
-func benchmarkGet(b *testing.B, list *List[int], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			list.Get(n)
-		}
-	}
-}
-
-func benchmarkPushBack(b *testing.B, list *List[int], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			list.PushBack(n)
-		}
-	}
-}
-
-func benchmarkRemoveStable(b *testing.B, list *List[int], size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			list.RemoveStable(n)
-		}
-	}
-}
-
-func BenchmarkArrayListGet100(b *testing.B) {
+func BenchmarkArrayListGet(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.Set(i, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_, _ = m.Get(i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_ = m[i]
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, list, size)
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkArrayListGet1000(b *testing.B) {
+func BenchmarkArrayListPushBack(b *testing.B) {
 	b.StopTimer()
-	size := 1000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.PushBack("foo")
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, list, size)
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkArrayListGet10000(b *testing.B) {
+func BenchmarkArrayListRemoveStable(b *testing.B) {
 	b.StopTimer()
-	size := 10000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.PushBack("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.RemoveStable(i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					if i > 0 && i < len(m) {
+						copy(m[i:], m[i+1:])
+					}
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, list, size)
-}
 
-func BenchmarkArrayListGet100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkGet(b, list, size)
-}
-
-func BenchmarkArrayListPushBack100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	list := New[int]()
-	b.StartTimer()
-	benchmarkPushBack(b, list, size)
-}
-
-func BenchmarkArrayListPushBack1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkPushBack(b, list, size)
-}
-
-func BenchmarkArrayListPushBack10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkPushBack(b, list, size)
-}
-
-func BenchmarkArrayListPushBack100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkPushBack(b, list, size)
-}
-
-func BenchmarkArrayListRemoveStable100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkRemoveStable(b, list, size)
-}
-
-func BenchmarkArrayListRemoveStable1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkRemoveStable(b, list, size)
-}
-
-func BenchmarkArrayListRemoveStable10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkRemoveStable(b, list, size)
-}
-
-func BenchmarkArrayListRemoveStable100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	list := New[int]()
-	for n := 0; n < size; n++ {
-		list.PushBack(n)
-	}
-	b.StartTimer()
-	benchmarkRemoveStable(b, list, size)
 }
