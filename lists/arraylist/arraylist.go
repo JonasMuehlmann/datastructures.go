@@ -26,8 +26,6 @@ var _ lists.List[any] = (*List[any])(nil)
 // List holds the elements in a slice.
 type List[T any] struct {
 	elements []T
-	// TODO: Can't this be removed in favor of calls to len(list.elements)?
-	size int
 }
 
 const (
@@ -47,7 +45,7 @@ func New[T any](values ...T) *List[T] {
 
 // NewFromSLice instantiates a new list containing the provided slice.
 func NewFromSlice[T any](slice []T) *List[T] {
-	list := &List[T]{elements: slice, size: len(slice)}
+	list := &List[T]{elements: slice}
 	return list
 }
 
@@ -55,12 +53,10 @@ func NewFromSlice[T any](slice []T) *List[T] {
 func (list *List[T]) PushBack(values ...T) {
 	list.elements = append(list.elements, values...)
 
-	list.size += len(values)
 }
 
 func (list *List[T]) PushFront(values ...T) {
 	list.elements = append(values, list.elements...)
-	list.size += len(values)
 }
 
 func (list *List[T]) PopBack(n int) {
@@ -117,7 +113,7 @@ func (list *List[T]) RemoveStable(index int) {
 func (list *List[T]) Contains(comparator utils.Comparator[T], values ...T) bool {
 	for _, searchValue := range values {
 		found := false
-		for index := 0; index < list.size; index++ {
+		for index := 0; index < len(list.elements); index++ {
 			if comparator(list.elements[index], searchValue) == 0 {
 				found = true
 				break
@@ -132,13 +128,13 @@ func (list *List[T]) Contains(comparator utils.Comparator[T], values ...T) bool 
 
 // Values returns all elements in the list.
 func (list *List[T]) GetValues() []T {
-	newElements := make([]T, list.size, list.size)
-	copy(newElements, list.elements[:list.size])
+	newElements := make([]T, len(list.elements), len(list.elements))
+	copy(newElements, list.elements[:len(list.elements)])
 	return newElements
 }
 
 func (list *List[T]) IndexOf(comparator utils.Comparator[T], value T) int {
-	if list.size == 0 {
+	if len(list.elements) == 0 {
 		return -1
 	}
 	for index, element := range list.elements {
@@ -156,17 +152,16 @@ func (list *List[T]) GetSlice() []T {
 
 // Empty returns true if list does not contain any elements.
 func (list *List[T]) IsEmpty() bool {
-	return list.size == 0
+	return len(list.elements) == 0
 }
 
 // Size returns number of elements within the list.
 func (list *List[T]) Size() int {
-	return list.size
+	return len(list.elements)
 }
 
 // Clear removes all elements from the list.
 func (list *List[T]) Clear() {
-	list.size = 0
 	list.elements = []T{}
 }
 
@@ -175,7 +170,7 @@ func (list *List[T]) Sort(comparator utils.Comparator[T]) {
 	if len(list.elements) < 2 {
 		return
 	}
-	utils.Sort(list.elements[:list.size], comparator)
+	utils.Sort(list.elements[:len(list.elements)], comparator)
 }
 
 // Swap swaps the two values at the specified positions.
@@ -191,20 +186,19 @@ func (list *List[T]) Swap(i, j int) {
 func (list *List[T]) Insert(index int, values ...T) {
 	if !list.withinRange(index) {
 		// Append
-		if index == list.size {
+		if index == len(list.elements) {
 			list.PushBack(values...)
 		}
 		return
 	}
 
-	newList := make([]T, list.size+len(values))
+	newList := make([]T, len(list.elements)+len(values))
 
 	copy(newList[:index], list.elements[:index])
 	copy(newList[index:index+len(values)], values)
 	copy(newList[index+len(values):], list.elements[index+len(values)-1:])
 
 	list.elements = newList
-	list.size += len(values)
 }
 
 // Set the value at specified index
@@ -213,7 +207,7 @@ func (list *List[T]) Insert(index int, values ...T) {
 func (list *List[T]) Set(index int, value T) {
 	if !list.withinRange(index) {
 		// Append
-		if index == list.size {
+		if index == len(list.elements) {
 			list.PushBack(value)
 		}
 		return
@@ -226,7 +220,7 @@ func (list *List[T]) Set(index int, value T) {
 func (list *List[T]) ToString() string {
 	str := "ArrayList\n"
 	values := []string{}
-	for _, value := range list.elements[:list.size] {
+	for _, value := range list.elements[:len(list.elements)] {
 		values = append(values, fmt.Sprintf("%v", value))
 	}
 	str += strings.Join(values, ", ")
@@ -235,10 +229,7 @@ func (list *List[T]) ToString() string {
 
 // ShrinkToFit shrinks the array so that len == cap.
 func (list *List[T]) ShrinkToFit() {
-
-	newElements := make([]T, list.size)
-	copy(newElements, list.elements)
-	list.elements = newElements
+	list.elements = append([]T{}, list.elements...)
 }
 
 // TryShrink the array if possible/worthwhile.
@@ -268,7 +259,7 @@ func (list *List[T]) TryShrink() {
 
 // Check that the index is within bounds of the list.
 func (list *List[T]) withinRange(index int) bool {
-	return index >= 0 && index < list.size
+	return index >= 0 && index < len(list.elements)
 }
 
 //******************************************************************//
@@ -284,7 +275,7 @@ func (list *List[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (list *List[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return list.NewIterator(list, list.size)
+	return list.NewIterator(list, len(list.elements))
 }
 
 // First returns an initialized iterator, which points to it's first element.
@@ -294,7 +285,7 @@ func (list *List[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 
 // Last returns an initialized iterator, which points to it's last element.
 func (list *List[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return list.NewIterator(list, list.size-1)
+	return list.NewIterator(list, len(list.elements)-1)
 }
 
 //******************************************************************//
@@ -304,7 +295,7 @@ func (list *List[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 // ReverseBegin returns an initialized, reversed iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (list *List[T]) ReverseBegin() ds.ReadWriteOrdCompBidRevRandCollIterator[int, T] {
-	return list.NewReverseIterator(list, list.size)
+	return list.NewReverseIterator(list, len(list.elements))
 }
 
 // ReverseEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
@@ -315,7 +306,7 @@ func (list *List[T]) ReverseEnd() ds.ReadWriteOrdCompBidRevRandCollIterator[int,
 
 // ReverseFirst returns an initialized, reversed iterator, which points to it's first element.
 func (list *List[T]) ReverseFirst() ds.ReadWriteOrdCompBidRevRandCollIterator[int, T] {
-	return list.NewReverseIterator(list, list.size-1)
+	return list.NewReverseIterator(list, len(list.elements)-1)
 }
 
 // ReverseLast returns an initialized, reversed iterator, which points to it's last element.

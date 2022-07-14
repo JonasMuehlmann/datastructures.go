@@ -29,7 +29,7 @@ func (it *Iterator[T]) IsValid() bool {
 // PERF: Maybe an unsafe version is useful here
 // Get implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Get() (value T, found bool) {
-	if it.list.size == 0 || !it.IsValid() {
+	if len(it.list.elements) == 0 || !it.IsValid() {
 		return
 	}
 
@@ -39,7 +39,7 @@ func (it *Iterator[T]) Get() (value T, found bool) {
 // PERF: Maybe an unsafe version is useful here
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Set(value T) bool {
-	if it.list.size == 0 || !it.IsValid() {
+	if len(it.list.elements) == 0 || !it.IsValid() {
 		return false
 	}
 	it.list.elements[it.index] = value
@@ -115,7 +115,7 @@ func (it *Iterator[T]) MoveBy(n int) {
 
 // Size implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Size() int {
-	return it.list.size
+	return len(it.list.elements)
 }
 
 // Index implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -135,7 +135,7 @@ func (it *Iterator[T]) IsBegin() bool {
 
 // IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsEnd() bool {
-	return it.index == -1 || it.index == it.list.size
+	return it.index == -1 || it.index == len(it.list.elements)
 }
 
 // IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -145,13 +145,13 @@ func (it *Iterator[T]) IsFirst() bool {
 
 // IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsLast() bool {
-	return it.index == it.list.size-1
+	return it.index == len(it.list.elements)-1
 }
 
 // PERF: Maybe an unsafe version is useful here
 // GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
-	if it.list.size == 0 || !it.list.withinRange(i) {
+	if len(it.list.elements) == 0 || !it.list.withinRange(i) {
 		return
 	}
 
@@ -161,7 +161,7 @@ func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 // PERF: Maybe an unsafe version is useful here
 // SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) SetAt(i int, value T) bool {
-	if it.list.size == 0 || !it.list.withinRange(i) {
+	if len(it.list.elements) == 0 || !it.list.withinRange(i) {
 		return false
 	}
 	it.list.elements[i] = value

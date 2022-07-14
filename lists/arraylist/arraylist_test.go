@@ -13,6 +13,7 @@ import (
 	"github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TODO: Refactor tests with testify and table tests
