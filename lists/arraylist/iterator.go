@@ -26,7 +26,6 @@ func (it *Iterator[T]) IsValid() bool {
 	return it.list.withinRange(it.index)
 }
 
-// PERF: Maybe an unsafe version is useful here
 // Get implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Get() (value T, found bool) {
 	if len(it.list.elements) == 0 || !it.IsValid() {
@@ -36,7 +35,6 @@ func (it *Iterator[T]) Get() (value T, found bool) {
 	return it.list.elements[it.index], true
 }
 
-// PERF: Maybe an unsafe version is useful here
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Set(value T) bool {
 	if len(it.list.elements) == 0 || !it.IsValid() {
@@ -148,7 +146,6 @@ func (it *Iterator[T]) IsLast() bool {
 	return it.index == len(it.list.elements)-1
 }
 
-// PERF: Maybe an unsafe version is useful here
 // GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 	if len(it.list.elements) == 0 || !it.list.withinRange(i) {
@@ -158,7 +155,6 @@ func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 	return it.list.elements[i], true
 }
 
-// PERF: Maybe an unsafe version is useful here
 // SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) SetAt(i int, value T) bool {
 	if len(it.list.elements) == 0 || !it.list.withinRange(i) {

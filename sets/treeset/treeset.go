@@ -102,7 +102,6 @@ func (set *Set[T]) ToString() string {
 // Ref: https://en.wikipedia.org/wiki/Intersection_(set_theory)
 func (set *Set[T]) MakeIntersectionWith(other sets.Set[T]) sets.Set[T] {
 	result := NewWith(set.tree.Comparator)
-	// FIX: Allow making intersections with any type of set
 	concrete := other.(*Set[T])
 
 	setComparator := reflect.ValueOf(set.tree.Comparator)
@@ -135,7 +134,6 @@ func (set *Set[T]) MakeIntersectionWith(other sets.Set[T]) sets.Set[T] {
 // Ref: https://en.wikipedia.org/wiki/Union_(set_theory)
 func (set *Set[T]) MakeUnionWith(other sets.Set[T]) sets.Set[T] {
 	result := NewWith(set.tree.Comparator)
-	// FIX: Allow making  union with any type of set
 	concrete := other.(*Set[T])
 
 	setComparator := reflect.ValueOf(set.tree.Comparator)
@@ -160,7 +158,6 @@ func (set *Set[T]) MakeUnionWith(other sets.Set[T]) sets.Set[T] {
 // Ref: https://proofwiki.org/wiki/Definition:Set_Difference
 func (set *Set[T]) MakeDifferenceWith(other sets.Set[T]) sets.Set[T] {
 	result := NewWith(set.tree.Comparator)
-	// FIX: Allow making difference with any type of set
 	concrete := other.(*Set[T])
 
 	setComparator := reflect.ValueOf(set.tree.Comparator)

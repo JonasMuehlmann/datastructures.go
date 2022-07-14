@@ -101,8 +101,6 @@ func (list *List[T]) RemoveStable(index int) {
 	list.elements = append(list.elements[:index], list.elements[index+1:]...) // shift to the left by one (slow operation, need ways to optimize this)
 }
 
-// PERF: Maybe we can provide separated implementations of the data structures (e.g. BasicList) through code generation, which are constrained with comparable
-// PERF: Iterate over elements only once and keep counter of found values
 // Contains checks if elements (one or more) are present in the set.
 // All elements have to be present in the set for the method to return true.
 // Performance time complexity of n^2.

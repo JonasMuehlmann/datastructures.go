@@ -134,7 +134,6 @@ func (it *ReverseIterator[T]) IsLast() bool {
 	return it.index == 0
 }
 
-// PERF: Maybe an unsafe version is useful here
 // GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *ReverseIterator[T]) GetAt(i int) (value T, found bool) {
 	if len(it.list.elements) == 0 || !it.list.withinRange(i) {
@@ -144,7 +143,6 @@ func (it *ReverseIterator[T]) GetAt(i int) (value T, found bool) {
 	return it.list.elements[i], true
 }
 
-// PERF: Maybe an unsafe version is useful here
 // SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *ReverseIterator[T]) SetAt(i int, value T) bool {
 	if len(it.list.elements) == 0 || !it.list.withinRange(i) {
