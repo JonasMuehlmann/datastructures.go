@@ -11,17 +11,18 @@ import (
 	"testing"
 )
 
-func RunBenchmarkWithDefualtInputSizes(b *testing.B, name string, f func(n int)) {
+func RunBenchmarkWithDefualtInputSizes(b *testing.B, name string, f func(n int, name string)) {
 	RunBenchmarkWithInputSizes(b, 10, 1, 4, name, f)
 }
 
-func RunBenchmarkWithInputSizes(b *testing.B, base int, lowExponent int, highExponent int, name string, f func(n int)) {
+func RunBenchmarkWithInputSizes(b *testing.B, base int, lowExponent int, highExponent int, name string, f func(n int, name string)) {
 	for i := lowExponent; i <= highExponent; i++ {
 		n := math.Pow(float64(base), float64(i))
 
-		b.Run(fmt.Sprint(name, "/", n), func(b *testing.B) {
+		fullName := fmt.Sprint(name, "/", n)
+		b.Run(fullName, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				f(int(n))
+				f(int(n), fullName)
 			}
 		})
 	}

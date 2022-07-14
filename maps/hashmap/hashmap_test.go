@@ -174,15 +174,16 @@ func TestMapstring(t *testing.T) {
 	}
 }
 
+// TODO: Compare lists after operations, to require correctnes
 func BenchmarkHashMapRemove(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")
@@ -196,7 +197,7 @@ func BenchmarkHashMapRemove(b *testing.B) {
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make(map[int]string)
 				for i := 0; i < n; i++ {
 					m[i] = "foo"
@@ -218,11 +219,11 @@ func BenchmarkHashMapGet(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")
@@ -236,7 +237,7 @@ func BenchmarkHashMapGet(b *testing.B) {
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make(map[int]string)
 				for i := 0; i < n; i++ {
 					m[i] = "foo"
@@ -259,11 +260,11 @@ func BenchmarkHashMapPut(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				b.StartTimer()
 				for i := 0; i < n; i++ {
@@ -274,7 +275,7 @@ func BenchmarkHashMapPut(b *testing.B) {
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make(map[int]string)
 				b.StartTimer()
 				for i := 0; i < n; i++ {
@@ -293,11 +294,11 @@ func BenchmarkHashMapGetKeys(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")
@@ -309,7 +310,7 @@ func BenchmarkHashMapGetKeys(b *testing.B) {
 		},
 		{
 			name: "golang.org_x_exp",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")
@@ -330,11 +331,11 @@ func BenchmarkHashMapGetValues(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")
@@ -346,7 +347,7 @@ func BenchmarkHashMapGetValues(b *testing.B) {
 		},
 		{
 			name: "golang.org_x_exp",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[int, string]()
 				for i := 0; i < n; i++ {
 					m.Put(i, "foo")

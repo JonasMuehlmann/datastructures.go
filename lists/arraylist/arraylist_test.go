@@ -478,11 +478,11 @@ func BenchmarkArrayListGet(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				for i := 0; i < n; i++ {
 					m.Set(i, "foo")
@@ -496,7 +496,7 @@ func BenchmarkArrayListGet(b *testing.B) {
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
@@ -519,30 +519,30 @@ func BenchmarkArrayListPushBack(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				b.StartTimer()
 				for i := 0; i < n; i++ {
 					m.PushBack("foo")
 				}
 				b.StopTimer()
-				require.Equalf(b, n, len(m.elements), b.Name())
+				require.Equalf(b, n, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				b.StartTimer()
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
 				}
 				b.StopTimer()
-				require.Equalf(b, n, len(m), b.Name())
+				require.Equalf(b, n, len(m), name)
 			},
 		},
 	}
@@ -556,30 +556,30 @@ func BenchmarkArrayListPushFront(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				b.StartTimer()
 				for i := 0; i < n; i++ {
 					m.PushFront("foo")
 				}
 				b.StopTimer()
-				require.Equalf(b, n, len(m.elements), b.Name())
+				require.Equalf(b, n, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				b.StartTimer()
 				for i := 0; i < n; i++ {
 					m = append([]string{"foo"}, m...)
 				}
 				b.StopTimer()
-				require.Equalf(b, n, len(m), b.Name())
+				require.Equalf(b, n, len(m), name)
 			},
 		},
 	}
@@ -593,38 +593,36 @@ func BenchmarkArrayListRemoveStable(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				for i := 0; i < n; i++ {
 					m.PushBack("foo")
 				}
 				b.StartTimer()
-				for i := 0; i < n; i++ {
-					m.RemoveStable(i)
+				for i := 0; i < n-1; i++ {
+					m.RemoveStable(1)
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m.elements), b.Name())
+				require.Equalf(b, 1, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
 				}
 				b.StartTimer()
-				for i := 0; i < n; i++ {
-					if i > 0 && i < len(m) {
-						copy(m[i:], m[i+1:])
-					}
+				for i := 0; i < n-1; i++ {
+					m = append(m[:1], m[2:]...)
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m), b.Name())
+				require.Equalf(b, 1, len(m), name)
 			},
 		},
 	}
@@ -634,44 +632,42 @@ func BenchmarkArrayListRemoveStable(b *testing.B) {
 	}
 }
 
-// TODO: Compare lists after operations, to require correctnes
 func BenchmarkArrayListRemove(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				for i := 0; i < n; i++ {
 					m.PushBack("foo")
 				}
 				b.StartTimer()
-				for i := 0; i < n; i++ {
-					m.Remove(i)
+				for i := 0; i < n-1; i++ {
+					m.Remove(1)
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m.elements), b.Name())
+				require.Equalf(b, 1, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
 				}
 				b.StartTimer()
-				for i := 0; i < n; i++ {
-					if i > 0 && i < len(m) {
-						m[i] = m[len(m)-1]
-						m = m[:len(m)-1]
-					}
+				for i := 0; i < n-1; i++ {
+
+					m[1] = m[len(m)-1]
+					m = m[:len(m)-1]
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m), b.Name())
+				require.Equalf(b, 1, len(m), name)
 			},
 		},
 	}
@@ -685,11 +681,11 @@ func BenchmarkArrayListPopBack(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				for i := 0; i < n; i++ {
 					m.PushBack("foo")
@@ -699,24 +695,22 @@ func BenchmarkArrayListPopBack(b *testing.B) {
 					m.PopBack(1)
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m.elements), b.Name())
+				require.Equalf(b, 0, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
 				}
 				b.StartTimer()
 				for i := 0; i < n; i++ {
-					if i > 0 && i < len(m) {
-						m = m[:len(m)-1]
-					}
+					m = m[:len(m)-1]
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m), b.Name())
+				require.Equalf(b, 0, len(m), name)
 			},
 		},
 	}
@@ -730,11 +724,11 @@ func BenchmarkArrayListPopFront(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
-		f    func(n int)
+		f    func(n int, name string)
 	}{
 		{
 			name: "Ours",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := New[string]()
 				for i := 0; i < n; i++ {
 					m.PushBack("foo")
@@ -744,24 +738,22 @@ func BenchmarkArrayListPopFront(b *testing.B) {
 					m.PopFront(1)
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m.elements), b.Name())
+				require.Equalf(b, 0, len(m.elements), name)
 			},
 		},
 		{
 			name: "Raw",
-			f: func(n int) {
+			f: func(n int, name string) {
 				m := make([]string, 0)
 				for i := 0; i < n; i++ {
 					m = append(m, "foo")
 				}
 				b.StartTimer()
 				for i := 0; i < n; i++ {
-					if i > 0 && i < len(m) {
-						m = m[1:]
-					}
+					m = m[1:]
 				}
 				b.StopTimer()
-				require.Equalf(b, 0, len(m), b.Name())
+				require.Equalf(b, 0, len(m), name)
 			},
 		},
 	}
