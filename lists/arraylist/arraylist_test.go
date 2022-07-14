@@ -267,6 +267,45 @@ func TestListRemoveStable(t *testing.T) {
 		t.Errorf("Got %v expected %v", actualValue, 0)
 	}
 }
+func TestListRemove(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		i            int
+		newItems     []string
+	}{
+		{
+			name:         "empty list, remove nothing",
+			originalList: New[string](),
+			i:            -1,
+			newItems:     []string{},
+		},
+		{
+			name:         "empty list, remove 2",
+			originalList: New[string](),
+			i:            2,
+			newItems:     []string{},
+		},
+		{
+			name:         "list with 2 items, remove nothing",
+			originalList: New[string]("foo", "bar"),
+			i:            -1,
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 4 items, remove 2",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			i:            2,
+			newItems:     []string{"foo", "bar", "foo"},
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Remove(test.i)
+
+		assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+	}
+}
 
 func TestListGet(t *testing.T) {
 	list := New[string]()
@@ -491,6 +530,7 @@ func BenchmarkArrayListPushBack(b *testing.B) {
 					m.PushBack("foo")
 				}
 				b.StopTimer()
+				require.Equalf(b, n, len(m.elements), b.Name())
 			},
 		},
 		{
@@ -502,6 +542,44 @@ func BenchmarkArrayListPushBack(b *testing.B) {
 					m = append(m, "foo")
 				}
 				b.StopTimer()
+				require.Equalf(b, n, len(m), b.Name())
+			},
+		},
+	}
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+func BenchmarkArrayListPushFront(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.PushFront("foo")
+				}
+				b.StopTimer()
+				require.Equalf(b, n, len(m.elements), b.Name())
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m = append([]string{"foo"}, m...)
+				}
+				b.StopTimer()
+				require.Equalf(b, n, len(m), b.Name())
 			},
 		},
 	}
@@ -529,6 +607,7 @@ func BenchmarkArrayListRemoveStable(b *testing.B) {
 					m.RemoveStable(i)
 				}
 				b.StopTimer()
+				require.Equalf(b, 0, len(m.elements), b.Name())
 			},
 		},
 		{
@@ -545,6 +624,144 @@ func BenchmarkArrayListRemoveStable(b *testing.B) {
 					}
 				}
 				b.StopTimer()
+				require.Equalf(b, 0, len(m), b.Name())
+			},
+		},
+	}
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+// TODO: Compare lists after operations, to require correctnes
+func BenchmarkArrayListRemove(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.PushBack("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Remove(i)
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m.elements), b.Name())
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					if i > 0 && i < len(m) {
+						m[i] = m[len(m)-1]
+						m = m[:len(m)-1]
+					}
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), b.Name())
+			},
+		},
+	}
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+func BenchmarkArrayListPopBack(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.PushBack("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.PopBack(1)
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m.elements), b.Name())
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					if i > 0 && i < len(m) {
+						m = m[:len(m)-1]
+					}
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), b.Name())
+			},
+		},
+	}
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+func BenchmarkArrayListPopFront(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.PushBack("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.PopFront(1)
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m.elements), b.Name())
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					if i > 0 && i < len(m) {
+						m = m[1:]
+					}
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), b.Name())
 			},
 		},
 	}
