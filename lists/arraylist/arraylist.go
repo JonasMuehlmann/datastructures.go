@@ -31,8 +31,10 @@ type List[T any] struct {
 }
 
 const (
-	growthFactor = float32(2.0)  // growth by 100%
-	shrinkFactor = float32(0.25) // shrink when size is 25% of capacity (0 means never shrink)
+	GrowthFactor            = float32(2.0)  // growth by 100%
+	ShrinkThresholdPercent  = float32(0.25) // shrink when cap * ShrinkThresholdPercent > len (0 means never shrink)
+	ShrinkThresholdAbsolute = 100           // shrink when cap - len >= ShrinkThresholdAbsolute
+	ShrinkFactor            = float32(0.5)  // shrink by ShrinkFactor * cap - len
 )
 
 // New instantiates a new list and adds the passed values, if any, to the list.
@@ -99,8 +101,6 @@ func (list *List[T]) Remove(index int) {
 
 	list.elements[index] = list.elements[list.size-1]
 	list.size--
-
-	list.Shrink()
 }
 
 // RemoveStable removes the element at the given index from the list.
@@ -112,8 +112,6 @@ func (list *List[T]) RemoveStable(index int) {
 
 	copy(list.elements[index:], list.elements[index+1:list.size]) // shift to the left by one (slow operation, need ways to optimize this)
 	list.size--
-
-	list.Shrink()
 }
 
 // PERF: Maybe we can provide separated implementations of the data structures (e.g. BasicList) through code generation, which are constrained with comparable
@@ -246,15 +244,24 @@ func (list *List[T]) ShrinkToFit() {
 	list.elements = newElements
 }
 
-// Shrink the array if necessary, i.e. when size is shrinkFactor percent of current capacity.
-func (list *List[T]) Shrink() {
-	if shrinkFactor == 0.0 {
+// TryShrink the array if possible/worthwhile.
+// Shrinking is worthwile if:
+// cap - len > ShrinkThresholdAbsolute and
+// cap * ShrinkThresholdPercent > len
+//
+// To reduce the number of reslices upon appending, the new length will be len + ((cap - len) * ShrinkFactor).
+func (list *List[T]) TryShrink() {
+	if ShrinkThresholdPercent == 0.0 {
 		return
 	}
-	// Shrink when size is at shrinkFactor * capacity
 	currentCapacity := cap(list.elements)
-	if list.size <= int(float32(currentCapacity)*shrinkFactor) {
-		list.resize(list.size)
+	currentLength := len(list.elements)
+	diff := currentCapacity - currentLength
+
+	if diff > ShrinkThresholdAbsolute && float32(currentCapacity)*ShrinkThresholdPercent > float32(currentLength) {
+		newElements := make([]T, currentLength+int(float32(diff)*ShrinkFactor))
+		copy(newElements, list.elements)
+		list.elements = newElements
 	}
 }
 
@@ -278,7 +285,7 @@ func (list *List[T]) growBy(n int) {
 	// When capacity is reached, grow by a factor of growthFactor and add number of elements
 	currentCapacity := cap(list.elements)
 	if list.size+n >= currentCapacity {
-		newCapacity := int(growthFactor * float32(currentCapacity+n))
+		newCapacity := int(GrowthFactor * float32(currentCapacity+n))
 		list.resize(newCapacity)
 	}
 }
