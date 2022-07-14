@@ -13,6 +13,7 @@ import (
 	"github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/maps"
 )
 
 func TestMapPut(t *testing.T) {
@@ -254,7 +255,7 @@ func BenchmarkHashMapGet(b *testing.B) {
 	}
 }
 
-func BenchmarkHashMapSet(b *testing.B) {
+func BenchmarkHashMapPut(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -283,6 +284,80 @@ func BenchmarkHashMapSet(b *testing.B) {
 			},
 		},
 	}
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+func BenchmarkHashMapGetKeys(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = m.GetKeys()
+				b.StopTimer()
+			},
+		},
+		{
+			name: "golang.org_x_exp",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = maps.Keys(m.m)
+				b.StopTimer()
+			},
+		},
+	}
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
+}
+
+func BenchmarkHashMapGetValues(b *testing.B) {
+	b.StopTimer()
+	variants := []struct {
+		name string
+		f    func(n int)
+	}{
+		{
+			name: "Ours",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = m.GetValues()
+				b.StopTimer()
+			},
+		},
+		{
+			name: "golang.org_x_exp",
+			f: func(n int) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = maps.Values(m.m)
+				b.StopTimer()
+			},
+		},
+	}
+
 	for _, variant := range variants {
 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
