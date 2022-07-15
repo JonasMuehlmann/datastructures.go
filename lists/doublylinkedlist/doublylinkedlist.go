@@ -34,6 +34,7 @@ type element[T any] struct {
 	next  *element[T]
 }
 
+// TODO: Implement Pop functions
 func (list *List[T]) PopBack(n int)  { panic("Not implemented") }
 func (list *List[T]) PopFront(n int) { panic("Not implemented") }
 

@@ -8,13 +8,15 @@ package treemap
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMapPut(t *testing.T) {
-	m := NewWith(utils.IntComparator)
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -27,12 +29,9 @@ func TestMapPut(t *testing.T) {
 	if actualValue := m.Size(); actualValue != 7 {
 		t.Errorf("Got %v expected %v", actualValue, 7)
 	}
-	if actualValue, expectedValue := m.GetKeys(), []interface{}{1, 2, 3, 4, 5, 6, 7}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := m.GetValues(), []interface{}{"a", "b", "c", "d", "e", "f", "g"}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
+	assert.ElementsMatch(t, []int{1, 2, 3, 4, 5, 6, 7}, m.GetKeys())
+	assert.ElementsMatch(t, []string{}, m.GetValues())
+	assert.ElementsMatch(t, []int{1, 2, 3, 4, 5, 6, 7}, m.GetValues())
 
 	// key,expectedValue,expectedFound
 	tests1 := [][]interface{}{
@@ -48,15 +47,15 @@ func TestMapPut(t *testing.T) {
 
 	for _, test := range tests1 {
 		// retrievals
-		actualValue, actualFound := m.Get(test[0])
-		if actualValue != test[1] || actualFound != test[2] {
-			t.Errorf("Got %v expected %v", actualValue, test[1])
+		actualValue, actualFound := m.Get(test.key)
+		if actualValue != test.value || actualFound != test.retrieved {
+			t.Errorf("Got %v expected %v", actualValue, test.value)
 		}
 	}
 }
 
 func TestMapMin(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 
 	if k, v := m.Min(); k != nil || v != nil {
 		t.Errorf("Got %v->%v expected %v->%v", k, v, nil, nil)
@@ -82,7 +81,7 @@ func TestMapMin(t *testing.T) {
 }
 
 func TestMapMax(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 
 	if k, v := m.Max(); k != nil || v != nil {
 		t.Errorf("Got %v->%v expected %v->%v", k, v, nil, nil)
@@ -108,7 +107,7 @@ func TestMapMax(t *testing.T) {
 }
 
 func TestMapClear(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -123,7 +122,7 @@ func TestMapClear(t *testing.T) {
 }
 
 func TestMapRemove(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(5, "e")
 	m.Put(6, "f")
 	m.Put(7, "g")
@@ -190,7 +189,7 @@ func TestMapRemove(t *testing.T) {
 }
 
 func TestMapFloor(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(7, "g")
 	m.Put(3, "c")
 	m.Put(1, "a")
@@ -218,7 +217,7 @@ func TestMapFloor(t *testing.T) {
 }
 
 func TestMapCeiling(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(7, "g")
 	m.Put(3, "c")
 	m.Put(1, "a")
@@ -245,179 +244,8 @@ func TestMapCeiling(t *testing.T) {
 	}
 }
 
-func sameElements(a []interface{}, b []interface{}) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for _, av := range a {
-		found := false
-		for _, bv := range b {
-			if av == bv {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-	return true
-}
-
-func TestMapEach(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	count := 0
-	m.Each(func(key interface{}, value interface{}) {
-		count++
-		if actualValue, expectedValue := count, value; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		switch value {
-		case 1:
-			if actualValue, expectedValue := key, "a"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := key, "b"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 3:
-			if actualValue, expectedValue := key, "c"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-	})
-}
-
-func TestMapMap(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	mappedMap := m.Map(func(key1 interface{}, value1 interface{}) (key2 interface{}, value2 interface{}) {
-		return key1, value1.(int) * value1.(int)
-	})
-	if actualValue, _ := mappedMap.Get("a"); actualValue != 1 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: a")
-	}
-	if actualValue, _ := mappedMap.Get("b"); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: b")
-	}
-	if actualValue, _ := mappedMap.Get("c"); actualValue != 9 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: c")
-	}
-	if mappedMap.Size() != 3 {
-		t.Errorf("Got %v expected %v", mappedMap.Size(), 3)
-	}
-}
-
-func TestMapSelect(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	selectedMap := m.Select(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "b"
-	})
-	if actualValue, _ := selectedMap.Get("a"); actualValue != 1 {
-		t.Errorf("Got %v expected %v", actualValue, "value: a")
-	}
-	if actualValue, _ := selectedMap.Get("b"); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, "value: b")
-	}
-	if selectedMap.Size() != 2 {
-		t.Errorf("Got %v expected %v", selectedMap.Size(), 2)
-	}
-}
-
-func TestMapAny(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	any := m.Any(func(key interface{}, value interface{}) bool {
-		return value.(int) == 3
-	})
-	if any != true {
-		t.Errorf("Got %v expected %v", any, true)
-	}
-	any = m.Any(func(key interface{}, value interface{}) bool {
-		return value.(int) == 4
-	})
-	if any != false {
-		t.Errorf("Got %v expected %v", any, false)
-	}
-}
-
-func TestMapAll(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	all := m.All(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "c"
-	})
-	if all != true {
-		t.Errorf("Got %v expected %v", all, true)
-	}
-	all = m.All(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "b"
-	})
-	if all != false {
-		t.Errorf("Got %v expected %v", all, false)
-	}
-}
-
-func TestMapFind(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	foundKey, foundValue := m.Find(func(key interface{}, value interface{}) bool {
-		return key.(string) == "c"
-	})
-	if foundKey != "c" || foundValue != 3 {
-		t.Errorf("Got %v -> %v expected %v -> %v", foundKey, foundValue, "c", 3)
-	}
-	foundKey, foundValue = m.Find(func(key interface{}, value interface{}) bool {
-		return key.(string) == "x"
-	})
-	if foundKey != nil || foundValue != nil {
-		t.Errorf("Got %v at %v expected %v at %v", foundValue, foundKey, nil, nil)
-	}
-}
-
-func TestMapChaining(t *testing.T) {
-	m := NewWithStringComparator()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	chainedMap := m.Select(func(key interface{}, value interface{}) bool {
-		return value.(int) > 1
-	}).Map(func(key interface{}, value interface{}) (interface{}, interface{}) {
-		return key.(string) + key.(string), value.(int) * value.(int)
-	})
-	if actualValue := chainedMap.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	if actualValue, found := chainedMap.Get("aa"); actualValue != nil || found {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	if actualValue, found := chainedMap.Get("bb"); actualValue != 4 || !found {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-	if actualValue, found := chainedMap.Get("cc"); actualValue != 9 || !found {
-		t.Errorf("Got %v expected %v", actualValue, 9)
-	}
-}
-
 func TestMapIteratorNextOnEmpty(t *testing.T) {
-	m := NewWithStringComparator()
+	m := NewWith[string, string](utils.BasicComparator[string])
 	it := m.Iterator()
 	it = m.Iterator()
 	for it.Next() {
@@ -426,7 +254,7 @@ func TestMapIteratorNextOnEmpty(t *testing.T) {
 }
 
 func TestMapIteratorPrevOnEmpty(t *testing.T) {
-	m := NewWithStringComparator()
+	m := NewWith[string, string](utils.BasicComparator[string])
 	it := m.Iterator()
 	it = m.Iterator()
 	for it.Prev() {
@@ -435,7 +263,7 @@ func TestMapIteratorPrevOnEmpty(t *testing.T) {
 }
 
 func TestMapIteratorNext(t *testing.T) {
-	m := NewWithStringComparator()
+	m := NewWith[string, string](utils.BasicComparator[string])
 	m.Put("c", 3)
 	m.Put("a", 1)
 	m.Put("b", 2)
@@ -472,7 +300,7 @@ func TestMapIteratorNext(t *testing.T) {
 }
 
 func TestMapIteratorPrev(t *testing.T) {
-	m := NewWithStringComparator()
+	m := NewWith[string, string](utils.BasicComparator[string])
 	m.Put("c", 3)
 	m.Put("a", 1)
 	m.Put("b", 2)
@@ -511,7 +339,7 @@ func TestMapIteratorPrev(t *testing.T) {
 }
 
 func TestMapIteratorBegin(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	it := m.Iterator()
 	it.Begin()
 	m.Put(3, "c")
@@ -527,7 +355,7 @@ func TestMapIteratorBegin(t *testing.T) {
 }
 
 func TestMapIteratorEnd(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	it := m.Iterator()
 	m.Put(3, "c")
 	m.Put(1, "a")
@@ -540,7 +368,7 @@ func TestMapIteratorEnd(t *testing.T) {
 }
 
 func TestMapIteratorFirst(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(3, "c")
 	m.Put(1, "a")
 	m.Put(2, "b")
@@ -554,7 +382,7 @@ func TestMapIteratorFirst(t *testing.T) {
 }
 
 func TestMapIteratorLast(t *testing.T) {
-	m := NewWithIntComparator()
+	m := NewWith[int, string](utils.BasicComparator[int])
 	m.Put(3, "c")
 	m.Put(1, "a")
 	m.Put(2, "b")
@@ -570,12 +398,12 @@ func TestMapIteratorLast(t *testing.T) {
 func TestMapIteratorNextTo(t *testing.T) {
 	// Sample seek function, i.e. string starting with "b"
 	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
+		return strings.HasSuffix(value, "b")
 	}
 
 	// NextTo (empty)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		it := m.Iterator()
 		for it.NextTo(seek) {
 			t.Errorf("Shouldn't iterate on empty map")
@@ -584,7 +412,7 @@ func TestMapIteratorNextTo(t *testing.T) {
 
 	// NextTo (not found)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		m.Put(0, "xx")
 		m.Put(1, "yy")
 		it := m.Iterator()
@@ -595,7 +423,7 @@ func TestMapIteratorNextTo(t *testing.T) {
 
 	// NextTo (found)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		m.Put(0, "aa")
 		m.Put(1, "bb")
 		m.Put(2, "cc")
@@ -604,13 +432,13 @@ func TestMapIteratorNextTo(t *testing.T) {
 		if !it.NextTo(seek) {
 			t.Errorf("Shouldn't iterate on empty map")
 		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
+		if index, value := it.Key(), it.Value(); index != 1 || value != "bb" {
 			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
 		}
 		if !it.Next() {
 			t.Errorf("Should go to first element")
 		}
-		if index, value := it.Key(), it.Value(); index != 2 || value.(string) != "cc" {
+		if index, value := it.Key(), it.Value(); index != 2 || value != "cc" {
 			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "cc")
 		}
 		if it.Next() {
@@ -622,12 +450,12 @@ func TestMapIteratorNextTo(t *testing.T) {
 func TestMapIteratorPrevTo(t *testing.T) {
 	// Sample seek function, i.e. string starting with "b"
 	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
+		return strings.HasSuffix(value, "b")
 	}
 
 	// PrevTo (empty)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		it := m.Iterator()
 		it.End()
 		for it.PrevTo(seek) {
@@ -637,7 +465,7 @@ func TestMapIteratorPrevTo(t *testing.T) {
 
 	// PrevTo (not found)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		m.Put(0, "xx")
 		m.Put(1, "yy")
 		it := m.Iterator()
@@ -649,7 +477,7 @@ func TestMapIteratorPrevTo(t *testing.T) {
 
 	// PrevTo (found)
 	{
-		m := NewWithIntComparator()
+		m := NewWith[int, string](utils.BasicComparator[int])
 		m.Put(0, "aa")
 		m.Put(1, "bb")
 		m.Put(2, "cc")
@@ -658,13 +486,13 @@ func TestMapIteratorPrevTo(t *testing.T) {
 		if !it.PrevTo(seek) {
 			t.Errorf("Shouldn't iterate on empty map")
 		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
+		if index, value := it.Key(), it.Value(); index != 1 || value != "bb" {
 			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
 		}
 		if !it.Prev() {
 			t.Errorf("Should go to first element")
 		}
-		if index, value := it.Key(), it.Value(); index != 0 || value.(string) != "aa" {
+		if index, value := it.Key(), it.Value(); index != 0 || value != "aa" {
 			t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "aa")
 		}
 		if it.Prev() {
@@ -675,7 +503,7 @@ func TestMapIteratorPrevTo(t *testing.T) {
 
 func TestMapSerialization(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		original := NewWithStringComparator()
+		original := NewWith[string, string](utils.BasicComparator[string])
 		original.Put("d", "4")
 		original.Put("e", "5")
 		original.Put("c", "3")
@@ -690,7 +518,7 @@ func TestMapSerialization(t *testing.T) {
 		}
 		assertSerialization(original, "B", t)
 
-		deserialized := NewWithStringComparator()
+		deserialized := NewWith[string, string](utils.BasicComparator[string])
 		err = deserialized.FromJSON(serialized)
 		if err != nil {
 			t.Errorf("Got error %v", err)
@@ -698,7 +526,7 @@ func TestMapSerialization(t *testing.T) {
 		assertSerialization(deserialized, "C", t)
 	}
 
-	m := NewWithStringComparator()
+	m := NewWith[string, string](utils.BasicComparator[string])
 	m.Put("a", 1.0)
 	m.Put("b", 2.0)
 	m.Put("c", 3.0)
@@ -715,7 +543,7 @@ func TestMapSerialization(t *testing.T) {
 }
 
 func TestMapString(t *testing.T) {
-	c := NewWithStringComparator()
+	c := NewWith[string, string](utils.BasicComparator[string])
 	c.Put("a", 1)
 	if !strings.HasPrefix(c.ToString(), "TreeMap") {
 		t.Errorf("ToString should start with container name")
@@ -723,21 +551,21 @@ func TestMapString(t *testing.T) {
 }
 
 //noinspection GoBoolExpressions
-func assertSerialization(m *Map, txt string, t *testing.T) {
+func assertSerialization(m *Map[int, struct{}], txt string, t *testing.T) {
 	if actualValue := m.GetKeys(); false ||
-		actualValue[0].(string) != "a" ||
-		actualValue[1].(string) != "b" ||
-		actualValue[2].(string) != "c" ||
-		actualValue[3].(string) != "d" ||
-		actualValue[4].(string) != "e" {
+		actualValue[0] != "a" ||
+		actualValue[1] != "b" ||
+		actualValue[2] != "c" ||
+		actualValue[3] != "d" ||
+		actualValue[4] != "e" {
 		t.Errorf("[%s] Got %v expected %v", txt, actualValue, "[a,b,c,d,e]")
 	}
 	if actualValue := m.GetValues(); false ||
-		actualValue[0].(string) != "1" ||
-		actualValue[1].(string) != "2" ||
-		actualValue[2].(string) != "3" ||
-		actualValue[3].(string) != "4" ||
-		actualValue[4].(string) != "5" {
+		actualValue[0] != "1" ||
+		actualValue[1] != "2" ||
+		actualValue[2] != "3" ||
+		actualValue[3] != "4" ||
+		actualValue[4] != "5" {
 		t.Errorf("[%s] Got %v expected %v", txt, actualValue, "[1,2,3,4,5]")
 	}
 	if actualValue, expectedValue := m.Size(), 5; actualValue != expectedValue {
@@ -745,7 +573,7 @@ func assertSerialization(m *Map, txt string, t *testing.T) {
 	}
 }
 
-func benchmarkGet(b *testing.B, m *Map, size int) {
+func benchmarkGet(b *testing.B, m *Map[int, struct{}], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.Get(n)
@@ -753,7 +581,7 @@ func benchmarkGet(b *testing.B, m *Map, size int) {
 	}
 }
 
-func benchmarkPut(b *testing.B, m *Map, size int) {
+func benchmarkPut(b *testing.B, m *Map[int, struct{}], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.Put(n, struct{}{})
@@ -761,7 +589,7 @@ func benchmarkPut(b *testing.B, m *Map, size int) {
 	}
 }
 
-func benchmarkRemove(b *testing.B, m *Map, size int) {
+func benchmarkRemove(b *testing.B, m *Map[int, struct{}], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			m.Remove(n)
@@ -772,7 +600,7 @@ func benchmarkRemove(b *testing.B, m *Map, size int) {
 func BenchmarkTreeMapGet100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -783,7 +611,7 @@ func BenchmarkTreeMapGet100(b *testing.B) {
 func BenchmarkTreeMapGet1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -794,7 +622,7 @@ func BenchmarkTreeMapGet1000(b *testing.B) {
 func BenchmarkTreeMapGet10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -805,7 +633,7 @@ func BenchmarkTreeMapGet10000(b *testing.B) {
 func BenchmarkTreeMapGet100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -816,7 +644,7 @@ func BenchmarkTreeMapGet100000(b *testing.B) {
 func BenchmarkTreeMapPut100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	b.StartTimer()
 	benchmarkPut(b, m, size)
 }
@@ -824,7 +652,7 @@ func BenchmarkTreeMapPut100(b *testing.B) {
 func BenchmarkTreeMapPut1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -835,7 +663,7 @@ func BenchmarkTreeMapPut1000(b *testing.B) {
 func BenchmarkTreeMapPut10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -846,7 +674,7 @@ func BenchmarkTreeMapPut10000(b *testing.B) {
 func BenchmarkTreeMapPut100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -857,7 +685,7 @@ func BenchmarkTreeMapPut100000(b *testing.B) {
 func BenchmarkTreeMapRemove100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -868,7 +696,7 @@ func BenchmarkTreeMapRemove100(b *testing.B) {
 func BenchmarkTreeMapRemove1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -879,7 +707,7 @@ func BenchmarkTreeMapRemove1000(b *testing.B) {
 func BenchmarkTreeMapRemove10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}
@@ -890,7 +718,7 @@ func BenchmarkTreeMapRemove10000(b *testing.B) {
 func BenchmarkTreeMapRemove100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	m := NewWithIntComparator()
+	m := NewWith[int, struct{}](utils.BasicComparator[int])
 	for n := 0; n < size; n++ {
 		m.Put(n, struct{}{})
 	}

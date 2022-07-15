@@ -109,30 +109,6 @@ type ForwardIterator interface {
 	// NextN(n int) ForwardIterator
 }
 
-// UnorderedForwardIterator defines an unordered ForwardIterator, which can be moved forward according to  the indexes ordering.
-// This iterator would allow you to e.g. iterate over a builtin map in the lexographical order of the keys.
-type UnorderedForwardIterator interface {
-	// *********************    Inherited methods    ********************//
-	ForwardIterator
-	// ************************    Own methods    ***********************//
-}
-
-// ReversedIterator defines a a ForwardIterator, whose iteration direction is reversed.
-// This allows using ForwardIterator and ReversedIterator with the same API.
-type ReversedIterator interface {
-	// *********************    Inherited methods    ********************//
-	ForwardIterator
-	// ************************    Own methods    ***********************//
-}
-
-// UnorderedReversedIterator defines an UnorderedForwardIterator, whose iteration direction is reversed.
-// This allows using UnorderedForwardIterator and UnorderedReversedIterator with the same API.
-type UnorderedReversedIterator interface {
-	// *********************    Inherited methods    ********************//
-	UnorderedForwardIterator
-	// ************************    Own methods    ***********************//
-}
-
 // BackwardIterator defines an Iterator, which can be moved backward according to the indexes ordering.
 type BackwardIterator interface {
 	// *********************    Inherited methods    ********************//
@@ -152,14 +128,6 @@ type BackwardIterator interface {
 	// PreviousN(n int) BackwardIterator
 }
 
-// UnorderedBackwardIterator defines an unordered BackwardIterator, which can be moved backward according to  the indexes ordering.
-// This iterator would allow you to e.g. iterate over a builtin map in the reverse lexographical order of the keys.
-type UnorderedBackwardIterator interface {
-	// *********************    Inherited methods    ********************//
-	BackwardIterator
-	// ************************    Own methods    ***********************//
-}
-
 // BidirectionalIterator defines a ForwardIterator and BackwardIterator, which can be moved forward and backward according to the underlying data structure's ordering.
 type BidirectionalIterator interface {
 	// *********************    Inherited methods    ********************//
@@ -172,32 +140,9 @@ type BidirectionalIterator interface {
 	// Nth(n int) BidirectionalIterator
 }
 
-// UnorderedBidirectionalIterator defines an UnorderedForwardIterator and UnorderedBackwardIterator, which can be moved forward and backward according to the indexes ordering.
-type UnorderedBidirectionalIterator interface {
-	// *********************    Inherited methods    ********************//
-	UnorderedForwardIterator
-	UnorderedBackwardIterator
-	// ************************    Own methods    ***********************//
-
-	// Next moves the iterator forward/backward by n positions.
-	MoveBy(n int)
-	// Nth(n int) BidirectionalIterator
-}
-
 // RandomAccessIterator defines a BidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
 type RandomAccessIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
-	CollectionIterator[TIndex]
-	// ************************    Own methods    ***********************//
-
-	// MoveTo moves the iterator to the given index.
-	MoveTo(i TIndex)
-}
-
-// UnorderedRandomAccessIterator defines an UnorderedBidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
-type UnorderedRandomAccessIterator[TIndex any] interface {
-	// *********************    Inherited methods    ********************//
-	UnorderedBidirectionalIterator
 	CollectionIterator[TIndex]
 	// ************************    Own methods    ***********************//
 
@@ -220,28 +165,6 @@ type RandomAccessReadableIterator[TIndex any, TValue any] interface {
 type RandomAccessWriteableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
 	RandomAccessIterator[TIndex]
-	WritableIterator[TValue]
-	// ************************    Own methods    ***********************//
-
-	// GetAt sets the value at the given index of the iterator.
-	SetAt(i TIndex, value TValue) bool
-}
-
-// UnorderedRandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
-type UnorderedRandomAccessReadableIterator[TIndex any, TValue any] interface {
-	// *********************    Inherited methods    ********************//
-	UnorderedRandomAccessIterator[TIndex]
-	ReadableIterator[TValue]
-	// ************************    Own methods    ***********************//
-
-	// GetAt returns the value at the given index of the iterator.
-	GetAt(i TIndex) (value TValue, found bool)
-}
-
-// UnorderedRandomAccessWriteableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
-type UnorderedRandomAccessWriteableIterator[TIndex any, TValue any] interface {
-	// *********************    Inherited methods    ********************//
-	UnorderedRandomAccessIterator[TIndex]
 	WritableIterator[TValue]
 	// ************************    Own methods    ***********************//
 

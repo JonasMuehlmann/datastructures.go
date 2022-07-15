@@ -10,25 +10,25 @@ import (
 )
 
 // Assert Serialization implementation
-var _ ds.JSONSerializer = (*Map)(nil)
-var _ ds.JSONDeserializer = (*Map)(nil)
+var _ ds.JSONSerializer = (*Map[string, any])(nil)
+var _ ds.JSONDeserializer = (*Map[string, any])(nil)
 
 // ToJSON outputs the JSON representation of the map.
-func (m *Map) ToJSON() ([]byte, error) {
+func (m *Map[Tkey, TValue]) ToJSON() ([]byte, error) {
 	return m.tree.ToJSON()
 }
 
 // FromJSON populates the map from the input JSON representation.
-func (m *Map) FromJSON(data []byte) error {
+func (m *Map[Tkey, TValue]) FromJSON(data []byte) error {
 	return m.tree.FromJSON(data)
 }
 
 // UnmarshalJSON @implements json.Unmarshaler
-func (m *Map) UnmarshalJSON(bytes []byte) error {
+func (m *Map[Tkey, TValue]) UnmarshalJSON(bytes []byte) error {
 	return m.FromJSON(bytes)
 }
 
 // MarshalJSON @implements json.Marshaler
-func (m *Map) MarshalJSON() ([]byte, error) {
+func (m *Map[Tkey, TValue]) MarshalJSON() ([]byte, error) {
 	return m.ToJSON()
 }

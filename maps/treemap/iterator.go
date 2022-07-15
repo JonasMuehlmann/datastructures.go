@@ -11,68 +11,68 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReverseIteratorWithKey = (*Iterator)(nil)
+var _ ds.ReverseIteratorWithKey = (*Iterator[string, any])(nil)
 
 // Iterator holding the iterator's state
-type Iterator struct {
-	iterator rbt.Iterator
+type Iterator[TKey comparable, TValue any] struct {
+	iterator rbt.Iterator[TKey, TValue]
 }
 
 // Iterator returns a stateful iterator whose elements are key/value pairs.
-func (m *Map) Iterator() Iterator {
-	return Iterator{iterator: m.tree.Iterator()}
+func (m *Map[TKey, TValue]) Iterator() Iterator[TKey, TValue] {
+	return Iterator[TKey, TValue]{iterator: m.tree.Iterator()}
 }
 
 // Next moves the iterator to the next element and returns true if there was a next element in the container.
 // If Next() returns true, then next element's key and value can be retrieved by Key() and Value().
 // If Next() was called for the first time, then it will point the iterator to the first element if it exists.
 // Modifies the state of the iterator.
-func (iterator *Iterator) Next() bool {
+func (iterator *Iterator[TKey, TValue]) Next() bool {
 	return iterator.iterator.Next()
 }
 
 // Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
 // If Prev() returns true, then previous element's key and value can be retrieved by Key() and Value().
 // Modifies the state of the iterator.
-func (iterator *Iterator) Prev() bool {
+func (iterator *Iterator[TKey, TValue]) Prev() bool {
 	return iterator.iterator.Prev()
 }
 
 // Value returns the current element's value.
 // Does not modify the state of the iterator.
-func (iterator *Iterator) Value() interface{} {
+func (iterator *Iterator[TKey, TValue]) Value() TValue {
 	return iterator.iterator.Value()
 }
 
 // Key returns the current element's key.
 // Does not modify the state of the iterator.
-func (iterator *Iterator) Key() interface{} {
+func (iterator *Iterator[TKey, TValue]) Key() TKey {
 	return iterator.iterator.Key()
 }
 
 // Begin resets the iterator to its initial state (one-before-first)
 // Call Next() to fetch the first element if any.
-func (iterator *Iterator) Begin() {
+func (iterator *Iterator[TKey, TValue]) Begin() {
 	iterator.iterator.Begin()
 }
 
 // End moves the iterator past the last element (one-past-the-end).
 // Call Prev() to fetch the last element if any.
-func (iterator *Iterator) End() {
+func (iterator *Iterator[TKey, TValue]) End() {
 	iterator.iterator.End()
 }
 
 // First moves the iterator to the first element and returns true if there was a first element in the container.
 // If First() returns true, then first element's key and value can be retrieved by Key() and Value().
 // Modifies the state of the iterator
-func (iterator *Iterator) First() bool {
+func (iterator *Iterator[TKey, TValue]) First() bool {
 	return iterator.iterator.First()
 }
 
 // Last moves the iterator to the last element and returns true if there was a last element in the container.
 // If Last() returns true, then last element's key and value can be retrieved by Key() and Value().
 // Modifies the state of the iterator.
-func (iterator *Iterator) Last() bool {
+func (iterator *Iterator[TKey, TValue]) Last() bool {
 	return iterator.iterator.Last()
 }
 
@@ -80,7 +80,7 @@ func (iterator *Iterator) Last() bool {
 // passed function, and returns true if there was a next element in the container.
 // If NextTo() returns true, then next element's key and value can be retrieved by Key() and Value().
 // Modifies the state of the iterator.
-func (iterator *Iterator) NextTo(f func(key interface{}, value interface{}) bool) bool {
+func (iterator *Iterator[TKey, TValue]) NextTo(f func(key TKey, value TValue) bool) bool {
 	for iterator.Next() {
 		key, value := iterator.Key(), iterator.Value()
 		if f(key, value) {
@@ -94,7 +94,7 @@ func (iterator *Iterator) NextTo(f func(key interface{}, value interface{}) bool
 // passed function, and returns true if there was a next element in the container.
 // If PrevTo() returns true, then next element's key and value can be retrieved by Key() and Value().
 // Modifies the state of the iterator.
-func (iterator *Iterator) PrevTo(f func(key interface{}, value interface{}) bool) bool {
+func (iterator *Iterator[TKey, TValue]) PrevTo(f func(key TKey, value TValue) bool) bool {
 	for iterator.Prev() {
 		key, value := iterator.Key(), iterator.Value()
 		if f(key, value) {

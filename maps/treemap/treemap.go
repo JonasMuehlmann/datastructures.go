@@ -14,95 +14,94 @@ package treemap
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
-	"strings"
 )
 
 // Assert Map implementation
-var _ maps.Map = (*Map)(nil)
+var _ maps.Map[string, any] = (*Map[string, any])(nil)
 
 // Map holds the elements in a red-black tree
-type Map struct {
-	tree *rbt.Tree
+type Map[TKey comparable, TValue any] struct {
+	tree *rbt.Tree[TKey, TValue]
 }
 
 // NewWith instantiates a tree map with the custom comparator.
-func NewWith(comparator utils.Comparator) *Map {
-	return &Map{tree: rbt.NewWith(comparator)}
+func NewWith[TKey comparable, TValue any](comparator utils.Comparator[TKey]) *Map[TKey, TValue] {
+	return &Map[TKey, TValue]{tree: rbt.NewWith[TKey, TValue](comparator)}
 }
 
-// NewWithIntComparator instantiates a tree map with the IntComparator, i.e. keys are of type int.
-func NewWithIntComparator() *Map {
-	return &Map{tree: rbt.NewWithIntComparator()}
+func (m *Map[TKey, TValue]) MergeWith(other *maps.Map[TKey, TValue]) bool {
+	panic("Not implemented")
 }
 
-// NewWithStringComparator instantiates a tree map with the StringComparator, i.e. keys are of type string.
-func NewWithStringComparator() *Map {
-	return &Map{tree: rbt.NewWithStringComparator()}
+func (m *Map[TKey, TValue]) MergeWithSafe(other *maps.Map[TKey, TValue], overwriteOriginal bool) {
+	panic("Not implemented")
 }
 
 // Put inserts key-value pair into the map.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
-func (m *Map) Put(key interface{}, value interface{}) {
+func (m *Map[TKey, TValue]) Put(key TKey, value TValue) {
 	m.tree.Put(key, value)
 }
 
 // Get searches the element in the map by key and returns its value or nil if key is not found in tree.
 // Second return parameter is true if key was found, otherwise false.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
-func (m *Map) Get(key interface{}) (value interface{}, found bool) {
+func (m *Map[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
 	return m.tree.Get(key)
 }
 
 // Remove removes the element from the map by key.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
-func (m *Map) Remove(key interface{}) {
-	m.tree.Remove(key)
+func (m *Map[TKey, TValue]) Remove(comparator utils.Comparator[TKey], key TKey) {
+	m.tree.Remove(comparator, key)
 }
 
 // Empty returns true if map does not contain any elements
-func (m *Map) IsEmpty() bool {
-	return m.tree.Empty()
+func (m *Map[TKey, TValue]) IsEmpty() bool {
+	return m.tree.IsEmpty()
 }
 
 // Size returns number of elements in the map.
-func (m *Map) Size() int {
+func (m *Map[TKey, TValue]) Size() int {
 	return m.tree.Size()
 }
 
 // GetKeys returns all keys in-order
-func (m *Map) GetKeys() []interface{} {
+func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	return m.tree.GetKeys()
 }
 
 // Values returns all values in-order based on the key.
-func (m *Map) GetValues() []interface{} {
-	return m.tree.Values()
+func (m *Map[TKey, TValue]) GetValues() []TValue {
+	return m.tree.GetValues()
 }
 
 // Clear removes all elements from the map.
-func (m *Map) Clear() {
+func (m *Map[TKey, TValue]) Clear() {
 	m.tree.Clear()
 }
 
 // Min returns the minimum key and its value from the tree map.
 // Returns nil, nil if map is empty.
-func (m *Map) Min() (key interface{}, value interface{}) {
+func (m *Map[TKey, TValue]) Min() (key TKey, value TValue) {
 	if node := m.tree.Left(); node != nil {
 		return node.Key, node.Value
 	}
-	return nil, nil
+	return
 }
 
 // Max returns the maximum key and its value from the tree map.
 // Returns nil, nil if map is empty.
-func (m *Map) Max() (key interface{}, value interface{}) {
+func (m *Map[TKey, TValue]) Max() (key TKey, value TValue) {
 	if node := m.tree.Right(); node != nil {
 		return node.Key, node.Value
 	}
-	return nil, nil
+	return
 }
 
 // Floor finds the floor key-value pair for the input key.
@@ -114,12 +113,12 @@ func (m *Map) Max() (key interface{}, value interface{}) {
 // all keys in the map are larger than the given key.
 //
 // Key should adhere to the comparator's type assertion, otherwise method panics.
-func (m *Map) Floor(key interface{}) (foundKey interface{}, foundValue interface{}) {
+func (m *Map[TKey, TValue]) Floor(key TKey) (foundkey TKey, foundvalue TValue) {
 	node, found := m.tree.Floor(key)
 	if found {
 		return node.Key, node.Value
 	}
-	return nil, nil
+	return
 }
 
 // Ceiling finds the ceiling key-value pair for the input key.
@@ -131,16 +130,16 @@ func (m *Map) Floor(key interface{}) (foundKey interface{}, foundValue interface
 // all keys in the map are smaller than the given key.
 //
 // Key should adhere to the comparator's type assertion, otherwise method panics.
-func (m *Map) Ceiling(key interface{}) (foundKey interface{}, foundValue interface{}) {
+func (m *Map[TKey, TValue]) Ceiling(key TKey) (foundkey TKey, foundvalue TValue) {
 	node, found := m.tree.Ceiling(key)
 	if found {
 		return node.Key, node.Value
 	}
-	return nil, nil
+	return
 }
 
 // String returns a string representation of container
-func (m *Map) ToString() string {
+func (m *Map[TKey, TValue]) ToString() string {
 	str := "TreeMap\nmap["
 	it := m.Iterator()
 	for it.Next() {
