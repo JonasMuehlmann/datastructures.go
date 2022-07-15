@@ -33,22 +33,21 @@ type element[T any] struct {
 	next  *element[T]
 }
 
-func (list *List[T]) PushBack(values ...T)  { panic("Not implemented") }
-func (list *List[T]) PushFront(values ...T) { panic("Not implemented") }
-func (list *List[T]) PopBack(n int)         { panic("Not implemented") }
-func (list *List[T]) PopFront(n int)        { panic("Not implemented") }
+// TODO: Implement Pop functions
+func (list *List[T]) PopBack(n int)  { panic("Not implemented") }
+func (list *List[T]) PopFront(n int) { panic("Not implemented") }
 
 // New instantiates a new list and adds the passed values, if any, to the list
 func New[T any](values ...T) *List[T] {
 	list := &List[T]{}
 	if len(values) > 0 {
-		list.Add(values...)
+		list.PushBack(values...)
 	}
 	return list
 }
 
 // Add appends a value (one or more) at the end of the list (same as Append())
-func (list *List[T]) Add(values ...T) {
+func (list *List[T]) PushBack(values ...T) {
 	for _, value := range values {
 		newElement := &element[T]{value: value}
 		if list.size == 0 {
@@ -62,14 +61,14 @@ func (list *List[T]) Add(values ...T) {
 	}
 }
 
-// Append appends a value (one or more) at the end of the list (same as Add())
+// Append appends a value (one or more) at the end of the list (same as PushBack())
 func (list *List[T]) Append(values ...T) {
-	list.Add(values...)
+	list.PushBack(values...)
 }
 
 // Prepend prepends a values (or more)
-func (list *List[T]) Prepend(values ...T) {
-	// in reverse to keep passed order i.e. ["c","d"] -> Prepend(["a","b"]) -> ["a","b","c",d"]
+func (list *List[T]) PushFront(values ...T) {
+	// in reverse to keep passed order i.e. ["c","d"] -> PushFront(["a","b"]) -> ["a","b","c",d"]
 	for v := len(values) - 1; v >= 0; v-- {
 		newElement := &element[T]{value: values[v], next: list.first}
 		list.first = newElement
@@ -206,7 +205,7 @@ func (list *List[T]) Sort(comparator utils.Comparator[T]) {
 
 	list.Clear()
 
-	list.Add(values...)
+	list.PushBack(values...)
 
 }
 
@@ -234,7 +233,7 @@ func (list *List[T]) Insert(index int, values ...T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
-			list.Add(values...)
+			list.PushBack(values...)
 		}
 		return
 	}
@@ -278,7 +277,7 @@ func (list *List[T]) Set(index int, value T) {
 	if !list.withinRange(index) {
 		// Append
 		if index == list.size {
-			list.Add(value)
+			list.PushBack(value)
 		}
 		return
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 // Assert Serialization implementation
-var _ ds.JSONSerializer[T] = (*List[T])(nil)
-var _ ds.JSONDeserializer[T] = (*List[T])(nil)
+var _ ds.JSONSerializer = (*List[any])(nil)
+var _ ds.JSONDeserializer = (*List[any])(nil)
 
 // ToJSON outputs the JSON representation of list's elements.
 func (list *List[T]) ToJSON() ([]byte, error) {
@@ -22,11 +22,11 @@ func (list *List[T]) ToJSON() ([]byte, error) {
 
 // FromJSON populates list's elements from the input JSON representation.
 func (list *List[T]) FromJSON(data []byte) error {
-	elements := []interface{}{}
+	elements := []T{}
 	err := json.Unmarshal(data, &elements)
 	if err == nil {
 		list.Clear()
-		list.Add(elements...)
+		list.PushBack(elements...)
 	}
 	return err
 }
