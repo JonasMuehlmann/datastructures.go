@@ -26,7 +26,7 @@ func (list *List[T]) FromJSON(data []byte) error {
 	err := json.Unmarshal(data, &elements)
 	if err == nil {
 		list.Clear()
-		list.Add(elements...)
+		list.PushBack(elements...)
 	}
 	return err
 }

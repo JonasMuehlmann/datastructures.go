@@ -66,36 +66,36 @@ type Container interface {
 
 Containers are either ordered or unordered. All ordered containers provide [stateful iterators](#iterator) and some of them allow [enumerable functions](#enumerable).
 
-| **Data** | **Structure**                         | **Ordered** | **[Iterator](#iterator)** | **Referenced by** |
-| :--- |:--------------------------------------| :---: | :---: | :---: | :---: |
-| [Lists](#lists) |
-|   | [ArrayList](#arraylist)               | yes | yes* | index |
-|   | [SinglyLinkedList](#singlylinkedlist) | yes | yes | index |
-|   | [DoublyLinkedList](#doublylinkedlist) | yes | yes* | index |
-| [Sets](#sets) |
-|   | [HashSet](#hashset)                   | no | no | index |
-|   | [TreeSet](#treeset)                   | yes | yes* | index |
-|   | [LinkedHashSet](#linkedhashset)       | yes | yes* | index |
+| **Data**          | **Structure**                         | **Ordered** | **[Iterator](#iterator)**         | **Referenced by** |
+|:------------------|:--------------------------------------|:-----------:|:---------------------------------:|:-----------------:|
+| [Lists](#lists)   |
+|                   | [ArrayList](#arraylist)               | yes         | yes*                              | index             |
+|                   | [SinglyLinkedList](#singlylinkedlist) | yes         | yes                               | index             |
+|                   | [DoublyLinkedList](#doublylinkedlist) | yes         | yes*                              | index             |
+| [Sets](#sets)     |
+|                   | [HashSet](#hashset)                   | no          | no                                | index             |
+|                   | [TreeSet](#treeset)                   | yes         | yes*                              | index             |
+|                   | [LinkedHashSet](#linkedhashset)       | yes         | yes*                              | index             |
 | [Stacks](#stacks) |
-|   | [LinkedListStack](#linkedliststack)   | yes | yes | index |
-|   | [ArrayStack](#arraystack)             | yes | yes* | index |
-| [Maps](#maps) |
-|   | [HashMap](#hashmap)                   | no | no | key |
-|   | [TreeMap](#treemap)                   | yes | yes* | key |
-|   | [LinkedHashMap](#linkedhashmap)       | yes | yes* | key |
-|   | [HashBidiMap](#hashbidimap)           | no | no | key* |
-|   | [TreeBidiMap](#treebidimap)           | yes | yes* | key* |
-| [Trees](#trees) |
-|   | [RedBlackTree](#redblacktree)         | yes | yes* | key |
-|   | [AVLTree](#avltree)                   | yes | yes* | key |
-|   | [BTree](#btree)                       | yes | yes* | key |
-|   | [BinaryHeap](#binaryheap)             | yes | yes* | index |
+|                   | [LinkedListStack](#linkedliststack)   | yes         | yes                               | index             |
+|                   | [ArrayStack](#arraystack)             | yes         | yes*                              | index             |
+| [Maps](#maps)     |
+|                   | [HashMap](#hashmap)                   | no          | yes                               | key               |
+|                   | [TreeMap](#treemap)                   | yes         | yes*                              | key               |
+|                   | [LinkedHashMap](#linkedhashmap)       | yes         | yes*                              | key               |
+|                   | [HashBidiMap](#hashbidimap)           | no          | no                                | key*              |
+|                   | [TreeBidiMap](#treebidimap)           | yes         | yes*                              | key*              |
+| [Trees](#trees)   |
+|                   | [RedBlackTree](#redblacktree)         | yes         | yes*                              | key               |
+|                   | [AVLTree](#avltree)                   | yes         | yes*                              | key               |
+|                   | [BTree](#btree)                       | yes         | yes*                              | key               |
+|                   | [BinaryHeap](#binaryheap)             | yes         | yes*                              | index             |
 | [Queues](#queues) |
-|   | [LinkedListQueue](#linkedlistqueue)   | yes | yes | index |
-|   | [ArrayQueue](#arrayqueue)             | yes | yes* | index |
-|   | [CircularBuffer](#circularbuffer)     | yes | yes* | index |
-|   | [PriorityQueue](#priorityqueue)       | yes | yes* | index |
-|   |                                       |  | <sub><sup>*reversible</sup></sub> |  | <sub><sup>*bidirectional</sup></sub> |
+|                   | [LinkedListQueue](#linkedlistqueue)   | yes         | yes                               | index             |
+|                   | [ArrayQueue](#arrayqueue)             | yes         | yes*                              | index             |
+|                   | [CircularBuffer](#circularbuffer)     | yes         | yes*                              | index             |
+|                   | [PriorityQueue](#priorityqueue)       | yes         | yes*                              | index             |
+|                   |                                       |             | <sub><sup>*reversible</sup></sub> |                   | <sub><sup>*bidirectional</sup></sub> |
 
 ### Lists
 
