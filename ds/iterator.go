@@ -8,6 +8,16 @@ package ds
 // TODO: Implement Constructors for types, which take iterators to materialize
 // TODO: Can we use type parameters in interfaces to embed? This could simplify variant creation like BidirectionalIterator  vs UnorderedBidirectionalIterator
 
+type BoundsSentinel int
+
+const (
+	SentinelBegin BoundsSentinel = iota
+	SentinelEnd
+	SentinelFirst
+	SentinelLast
+	SentinelInRange
+)
+
 // Iterator defines the minimum functionality required for all other iterators.
 type Iterator interface {
 	// IsBegin checks if the iterator is pointing to one element before it's first element, unless Next() is called, the iterator is in an invalid state.
@@ -63,10 +73,19 @@ type SizedIterator interface {
 type CollectionIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
 	SizedIterator
+	IndexedIterator[TIndex]
+	// ************************    Own methods    ***********************//
+}
+
+// IndexedIterator defines an Iterator, which defines an an iterator with an index.
+// This iterator can be combined with a ReadableIterator to hold key-value pairs.
+type IndexedIterator[TIndex any] interface {
+	// *********************    Inherited methods    ********************//
+	SizedIterator
 	// ************************    Own methods    ***********************//
 
 	// Index returns the index of the iterator's position in the collection.
-	Index() TIndex
+	Index() (TIndex, bool)
 }
 
 // WritableIterator defines an Iterator, which can be used to write to the underlying values.

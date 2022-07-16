@@ -20,6 +20,7 @@ package ds
 // BidirectionalIterator = Bid
 
 // RandomAccessIterator = Rand
+// IndexedIterator = Index
 // CollectionIterator = Coll
 
 const (
@@ -51,4 +52,32 @@ type ReadWriteUnordCompBidRandCollIterator[TIndex any, TValue any] interface {
 	BidirectionalIterator
 	RandomAccessReadableIterator[TIndex, TValue]
 	RandomAccessWriteableIterator[TIndex, TValue]
+}
+
+type ReadForIterator[TValue any] interface {
+	ReadableIterator[TValue]
+	ForwardIterator
+}
+
+type ReadCompForIterator[TValue any] interface {
+	ReadableIterator[TValue]
+	ComparableIterator
+	ForwardIterator
+}
+
+type ReadCompForIndexIterator[TIndex any, TValue any] interface {
+	ReadableIterator[TValue]
+	IndexedIterator[TIndex]
+	ComparableIterator
+	ForwardIterator
+}
+
+type CompIndexIterator[TIndex any] interface {
+	IndexedIterator[TIndex]
+	ComparableIterator
+}
+
+type ReadCompIterator[TValue any] interface {
+	ReadableIterator[TValue]
+	ComparableIterator
 }
