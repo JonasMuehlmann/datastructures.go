@@ -15,9 +15,10 @@
 package ds
 
 // Container defines the minimum functionality required for all other containers.
-type Container interface {
+type Container[TValue any] interface {
 	IsEmpty() bool
 	Size() int
 	Clear()
+	GetValues() []TValue
 	ToString() string
 }

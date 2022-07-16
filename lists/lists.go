@@ -24,15 +24,11 @@ type List[T any] interface {
 	Swap(index1, index2 int)
 	Insert(index int, values ...T)
 	Set(index int, value T)
+
 	PushBack(value ...T)
 	PushFront(value ...T)
 	PopBack(n int)
 	PopFront(n int)
 
-	ds.Container
-	// IsEmpty() bool
-	// Size() int
-	// Clear()
-	// GetValues() []interface{}
-	// ToString() string
+	ds.Container[T]
 }

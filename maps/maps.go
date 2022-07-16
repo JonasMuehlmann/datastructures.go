@@ -30,12 +30,7 @@ type Map[TKey, TValue any] interface {
 	MergeWith(other *Map[TKey, TValue]) bool
 	MergeWithSafe(other *Map[TKey, TValue], overwriteOriginal bool)
 
-	ds.Container
-	// IsEmpty() bool
-	// Size() int
-	// Clear()
-	// GetValues() []T
-	// ToString() string
+	ds.Container[TValue]
 }
 
 // BidiMap interface that all bidirectional maps implement (extends the Map interface).

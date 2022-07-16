@@ -18,10 +18,5 @@ type Stack[T any] interface {
 	Pop() (value T, ok bool)
 	Peek() (value T, ok bool)
 
-	ds.Container
-	// IsEmpty() bool
-	// Size() int
-	// Clear()
-	// GetValues() []T
-	// ToString() string
+	ds.Container[T]
 }

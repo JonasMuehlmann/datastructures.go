@@ -13,11 +13,6 @@ package trees
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Tree interface that all trees implement.
-type Tree[Tkey comparable, TValue any] interface {
-	ds.Container
-	// IsEmpty() bool
-	// Size() int
-	// Clear()
-	// GetValues() []T
-	// ToString() string
+type Tree[TKey comparable, TValue any] interface {
+	ds.Container[TValue]
 }

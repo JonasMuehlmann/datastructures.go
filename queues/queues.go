@@ -18,10 +18,5 @@ type Queue[T any] interface {
 	Dequeue() (value T, ok bool)
 	Peek() (value T, ok bool)
 
-	ds.Container
-	// IsEmpty() bool
-	// Size() int
-	// Clear()
-	// GetValues() []T
-	// ToString() string
+	ds.Container[T]
 }
