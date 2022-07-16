@@ -474,6 +474,62 @@ func TestListString(t *testing.T) {
 	}
 }
 
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
+	}
+
+	for _, test := range tests {
+		it := test.originalList.First()
+		newList := NewFromIterator[string](it)
+
+		assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
+	}
+
+}
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
+	}
+
+	for _, test := range tests {
+		first := test.originalList.First()
+		end := test.originalList.End()
+		newList := NewFromIterators[string](first, end)
+
+		assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
+	}
+
+}
+
 func BenchmarkArrayListGet(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {

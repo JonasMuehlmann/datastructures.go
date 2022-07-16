@@ -174,6 +174,65 @@ func TestMapstring(t *testing.T) {
 	}
 }
 
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
+	}
+
+	for _, test := range tests {
+		it := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+
+		newMap := NewFromIterator[string, int](it)
+
+		assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+	}
+
+}
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+	}{
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
+	}
+
+	for _, test := range tests {
+		first := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
+
+		newMap := NewFromIterators[string, int](first, end)
+
+		assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+	}
+
+}
+
 // TODO: Compare lists after operations, to require correctnes
 func BenchmarkHashMapRemove(b *testing.B) {
 	b.StopTimer()

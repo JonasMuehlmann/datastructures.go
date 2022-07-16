@@ -36,16 +36,60 @@ const (
 
 // New instantiates a new list and adds the passed values, if any, to the list.
 func New[T any](values ...T) *List[T] {
-	list := &List[T]{}
+	list := &List[T]{elements: make([]T, 0)}
 	if len(values) > 0 {
 		list.PushBack(values...)
 	}
 	return list
 }
 
-// NewFromSLice instantiates a new list containing the provided slice.
+// NewFromSlice instantiates a new list containing the provided slice.
 func NewFromSlice[T any](slice []T) *List[T] {
 	list := &List[T]{elements: slice}
+	return list
+}
+
+// NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *List[T] {
+	length := 0
+	sizedIterator, ok := it.(ds.SizedIterator)
+	if ok {
+		length = sizedIterator.Size()
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		elements = append(elements, newItem)
+	}
+
+	list := &List[T]{elements: elements}
+	return list
+}
+
+// NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *List[T] {
+	length := 0
+	sizedFirst, ok := first.(ds.OrderedIterator)
+	sizedLast, ok2 := end.(ds.OrderedIterator)
+	if ok && ok2 {
+		length = -sizedFirst.DistanceTo(sizedLast)
+		if length < 0 {
+			length = 0
+		}
+		// panic(length)
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		elements = append(elements, newItem)
+	}
+
+	list := &List[T]{elements: elements}
 	return list
 }
 
