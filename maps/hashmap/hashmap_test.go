@@ -6,8 +6,6 @@
 package hashmap
 
 import (
-	"encoding/json"
-	"strings"
 	"testing"
 
 	"github.com/JonasMuehlmann/datastructures.go/tests"
@@ -16,161 +14,302 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-func TestMapPut(t *testing.T) {
-	m := New[int, string]()
-	m.Put(5, "e")
-	m.Put(6, "f")
-	m.Put(7, "g")
-	m.Put(3, "c")
-	m.Put(4, "d")
-	m.Put(1, "x")
-	m.Put(2, "b")
-	m.Put(1, "a") //overwrite
-
-	if actualValue := m.Size(); actualValue != 7 {
-		t.Errorf("Got %v expected %v", actualValue, 7)
-	}
-
-	actualValue, expectedValue := m.GetKeys(), []int{1, 2, 3, 4, 5, 6, 7}
-	assert.ElementsMatch(t, actualValue, expectedValue)
-
-	actualValue2, expectedValue2 := m.GetValues(), []string{"a", "b", "c", "d", "e", "f", "g"}
-	assert.ElementsMatch(t, actualValue2, expectedValue2)
-
-	// key,expectedValue,expectedFound
-	tests1 := []struct {
-		key   int
-		value string
-		found bool
+func TestRemove(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		newMap      *Map[string, int]
+		toRemove    string
 	}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
-		{5, "e", true},
-		{6, "f", true},
-		{7, "g", true},
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			newMap:      New[string, int](),
+			toRemove:    "foo",
+		},
+		{
+			name:        "single item",
+			toRemove:    "foo",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      New[string, int](),
+		},
+		{
+			name:        "single item, target does not exist",
+			toRemove:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			toRemove:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1, "baz": 3}),
+		},
 	}
 
-	for _, test := range tests1 {
-		// retrievals
-		actualValue, actualFound := m.Get(test.key)
-		if actualValue != test.value || actualFound != test.found {
-			t.Errorf("Got %v expected %v", actualValue, test.value)
-		}
+	for _, test := range tests {
+		test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
+
+		assert.Equalf(t, test.originalMap, test.newMap, test.name)
 	}
 }
 
-func TestMapRemove(t *testing.T) {
-	m := New[int, string]()
-	m.Put(5, "e")
-	m.Put(6, "f")
-	m.Put(7, "g")
-	m.Put(3, "c")
-	m.Put(4, "d")
-	m.Put(1, "x")
-	m.Put(2, "b")
-	m.Put(1, "a") //overwrite
-
-	m.Remove(utils.BasicComparator[int], 5)
-	m.Remove(utils.BasicComparator[int], 6)
-	m.Remove(utils.BasicComparator[int], 7)
-	m.Remove(utils.BasicComparator[int], 8)
-	m.Remove(utils.BasicComparator[int], 5)
-
-	actualValue, expectedValue := m.GetKeys(), []int{1, 2, 3, 4}
-	assert.ElementsMatch(t, actualValue, expectedValue)
-
-	actualValue2, expectedValue2 := m.GetValues(), []string{"a", "b", "c", "d"}
-	assert.ElementsMatch(t, actualValue2, expectedValue2)
-
-	if actualValue := m.Size(); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-
-	tests2 := []struct {
-		key   int
-		value string
-		found bool
+func TestPut(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		newMap      *Map[string, int]
+		keyToAdd    string
+		valueToAdd  int
 	}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+		},
+		{
+			name:        "single item",
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item, overwrite",
+			keyToAdd:    "foo",
+			valueToAdd:  2,
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 2}),
+		},
+		{
+			name:        "3 items",
+			keyToAdd:    "bar",
+			valueToAdd:  2,
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "baz": 3}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
 
-	for _, test := range tests2 {
-		actualValue, actualFound := m.Get(test.key)
-		if actualValue != test.value || actualFound != test.found {
-			t.Errorf("Got %v expected %v", actualValue, test.value)
-		}
+	for _, test := range tests {
+		test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
-	}
-
-	m.Remove(utils.BasicComparator[int], 1)
-	m.Remove(utils.BasicComparator[int], 4)
-	m.Remove(utils.BasicComparator[int], 2)
-	m.Remove(utils.BasicComparator[int], 3)
-	m.Remove(utils.BasicComparator[int], 2)
-	m.Remove(utils.BasicComparator[int], 2)
-
-	assert.Empty(t, m.GetKeys())
-	assert.Empty(t, m.GetValues())
-
-	if actualValue := m.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
-	if actualValue := m.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-}
-
-func TestMapSerialization(t *testing.T) {
-	m := New[string, float32]()
-	m.Put("a", 1.0)
-	m.Put("b", 2.0)
-	m.Put("c", 3.0)
-
-	var err error
-	assert := func() {
-		actualValue, expectedValue := m.GetValues(), []float32{1.0, 2.0, 3.0}
-		assert.ElementsMatch(t, actualValue, expectedValue)
-
-		actualValue2, expectedValue2 := m.GetKeys(), []string{"a", "b", "c"}
-		assert.ElementsMatch(t, actualValue2, expectedValue2)
-
-		if actualValue, expectedValue := m.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
-	}
-
-	assert()
-
-	bytes, err := m.ToJSON()
-	assert()
-
-	err = m.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]string{"a", "b", "c"})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`{"a":1,"b":2}`), &m)
-	if err != nil {
-		t.Errorf("Got error %v", err)
+		assert.Equalf(t, test.originalMap, test.newMap, test.name)
 	}
 }
 
-func TestMapstring(t *testing.T) {
-	c := New[string, int]()
-	c.Put("a", 1)
-	if !strings.HasPrefix(c.ToString(), "HashMap") {
-		t.Errorf("Tostring should start with container name")
+func TestGet(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		keyToGet    string
+		value       int
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			keyToGet:    "foo",
+			found:       false,
+		},
+		{
+			name:        "single item",
+			keyToGet:    "foo",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			value:       1,
+			found:       true,
+		},
+		{
+			name:        "single item, target does not exist",
+			keyToGet:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			found:       false,
+		},
+		{
+			name:        "3 items",
+			keyToGet:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			value:       2,
+			found:       true,
+		},
+	}
+
+	for _, test := range tests {
+		value, found := test.originalMap.Get(test.keyToGet)
+
+		assert.Equalf(t, test.value, value, test.name)
+		assert.Equalf(t, test.found, found, test.name)
+	}
+}
+
+func TestGetKeys(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		keys        []string
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			keys:        []string{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			keys:        []string{"foo"},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			keys:        []string{"foo", "bar", "baz"},
+		},
+	}
+
+	for _, test := range tests {
+		keys := test.originalMap.GetKeys()
+
+		assert.ElementsMatch(t, test.keys, keys, test.name)
+	}
+}
+
+func TestGetValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		values      []int
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			values:      []int{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			values:      []int{1},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			values:      []int{1, 2, 3},
+		},
+	}
+
+	for _, test := range tests {
+		values := test.originalMap.GetValues()
+
+		assert.ElementsMatch(t, test.values, values, test.name)
+	}
+}
+
+func TestGetMap(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		newMap      map[string]int
+		toRemove    string
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			newMap:      make(map[string]int),
+			toRemove:    "foo",
+		},
+		{
+			name:        "single item",
+			toRemove:    "foo",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      map[string]int{"foo": 1},
+		},
+		{
+			name:        "3 items",
+			toRemove:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			newMap:      map[string]int{"foo": 1, "bar": 2, "baz": 3},
+		},
+	}
+
+	for _, test := range tests {
+		newMap := test.originalMap.GetMap()
+
+		assert.Equal(t, test.newMap, newMap, test.name)
+	}
+}
+
+func TestIsEmpty(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		isEmpty     bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			isEmpty:     true,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			isEmpty:     false,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmpty:     false,
+		},
+	}
+
+	for _, test := range tests {
+		isEmpty := test.originalMap.IsEmpty()
+
+		assert.Equal(t, test.isEmpty, isEmpty, test.name)
+	}
+}
+
+func TestClear(t *testing.T) {
+	tests := []struct {
+		name          string
+		originalMap   *Map[string, int]
+		isEmptyBefore bool
+		isEmptyAfter  bool
+	}{
+
+		{
+			name:          "empty list",
+			originalMap:   New[string, int](),
+			isEmptyBefore: true,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "single item",
+			originalMap:   NewFromMap[string, int](map[string]int{"foo": 1}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "3 items",
+			originalMap:   NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+	}
+
+	for _, test := range tests {
+		isEmptyBefore := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+
+		test.originalMap.Clear()
+
+		isEmptAfter := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
 	}
 }
 
@@ -203,6 +342,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 }
+
 func TestNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name        string
