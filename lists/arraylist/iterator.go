@@ -133,7 +133,7 @@ func (it *Iterator[T]) IsBegin() bool {
 
 // IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsEnd() bool {
-	return it.index == -1 || it.index == len(it.list.elements)
+	return it.list.Size() == 0 || it.index == len(it.list.elements)
 }
 
 // IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator

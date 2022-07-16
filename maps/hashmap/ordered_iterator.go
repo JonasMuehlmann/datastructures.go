@@ -24,7 +24,12 @@ func (m *Map[TKey, TValue]) NewOrderedIterator(m_ *Map[TKey, TValue], position i
 	keys := m_.GetKeys()
 	utils.Sort(keys, comparator)
 
-	return &OrderedIterator[TKey, TValue]{m: m_, keys: keys}
+	return &OrderedIterator[TKey, TValue]{
+		m:          m_,
+		keys:       keys,
+		index:      position,
+		comparator: comparator,
+	}
 }
 
 // IsBegin implements ds.ReadWriteUnordCompBidRandCollIterator
@@ -34,7 +39,7 @@ func (it *OrderedIterator[TKey, TValue]) IsBegin() bool {
 
 // IsEnd implements ds.ReadWriteUnordCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsEnd() bool {
-	return it.index == -1 || it.index == len(it.keys)
+	return len(it.keys) == 0 || it.index == len(it.keys)
 }
 
 // IsFirst implements ds.ReadWriteUnordCompBidRandCollIterator
@@ -49,7 +54,7 @@ func (it *OrderedIterator[TKey, TValue]) IsLast() bool {
 
 // IsValid implements ds.ReadWriteUnordCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsValid() bool {
-	return it.index >= 0 && it.index < len(it.keys)
+	return len(it.keys) > 0 && it.index >= 0 && it.index < len(it.keys)
 }
 
 // IsEqual implements ds.ReadWriteUnordCompBidRandCollIterator
@@ -147,7 +152,7 @@ func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) {
 
 // Get implements ds.ReadWriteUnordCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
-	if len(it.keys) == 0 || !it.IsValid() {
+	if !it.IsValid() {
 		return
 	}
 
@@ -156,7 +161,7 @@ func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
 
 // GetAt implements ds.ReadWriteUnordCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) GetAt(i TKey) (value TValue, found bool) {
-	if len(it.keys) == 0 || !it.IsValid() {
+	if !it.IsValid() {
 		return
 	}
 
@@ -165,7 +170,7 @@ func (it *OrderedIterator[TKey, TValue]) GetAt(i TKey) (value TValue, found bool
 
 // Set implements ds.ReadWriteUnordCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
-	if len(it.keys) == 0 || !it.IsValid() {
+	if !it.IsValid() {
 		return false
 	}
 
