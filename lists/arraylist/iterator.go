@@ -46,7 +46,7 @@ func (it *Iterator[T]) Set(value T) bool {
 }
 
 // DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
-// If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
+// If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
