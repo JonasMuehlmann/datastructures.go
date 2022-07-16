@@ -8,7 +8,7 @@ package arraylist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ ds.ReadWriteCompForRandCollIterator[int, any] = (*ReverseIterator[any])(nil)
+var _ ds.ReadWriteUnordCompBidRandCollIterator[int, any] = (*ReverseIterator[any])(nil)
 
 // ReverseIterator holding the iterator's state
 type ReverseIterator[T any] struct {
@@ -48,30 +48,42 @@ func (it *ReverseIterator[T]) Set(value T) bool {
 // DistanceTo implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 // If other is of type CollectionIterator, CollectionIterator.Index() will be used, possibly executing in O(1)
 func (it *ReverseIterator[T]) DistanceTo(other ds.OrderedIterator) int {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
+	otherThis, ok := other.(*ReverseIterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
 
-	return -forwardIterator.DistanceTo(other)
+	return otherThis.index - it.index
 }
 
 // IsAfter implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsAfter(other ds.OrderedIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
+	otherThis, ok := other.(*ReverseIterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
 
-	return !forwardIterator.IsAfter(other)
+	return it.DistanceTo(otherThis) > 0
 }
 
 // IsBefore implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsBefore(other ds.OrderedIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
+	otherThis, ok := other.(*ReverseIterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
 
-	return !forwardIterator.IsBefore(other)
+	return it.DistanceTo(otherThis) < 0
 }
 
 // IsEqual implements ds.ReadWriteOrdCompBidRandCollReverseIterator
 func (it *ReverseIterator[T]) IsEqual(other ds.ComparableIterator) bool {
-	forwardIterator := ds.ReadWriteOrdCompBidRandCollIterator[int, T](it)
+	otherThis, ok := other.(*ReverseIterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
 
-	return forwardIterator.IsEqual(other)
+	return it.DistanceTo(otherThis) == 0
 }
 
 // Next implements ds.ReadWriteOrdCompBidRandCollReverseIterator

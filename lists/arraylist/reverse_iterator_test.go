@@ -13,7 +13,7 @@ func TestArrayListReverseIteratorIsValid(t *testing.T) {
 		list         *List[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*List[int]) ds.ReadWriteCompForRandCollIterator[int, int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -74,6 +74,518 @@ func TestArrayListReverseIteratorIsValid(t *testing.T) {
 	}
 }
 
+func TestArrayListReverseIteratorIndex(t *testing.T) {
+	tests := []struct {
+		name         string
+		list         *List[int]
+		position     int
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:         "Empty",
+			list:         New[int](),
+			position:     0,
+			iteratorInit: (*List[int]).ReverseBegin,
+		},
+		{
+			name:         "One element, begin",
+			list:         New[int](1),
+			position:     1,
+			iteratorInit: (*List[int]).ReverseBegin,
+		},
+		{
+			name:         "One element, end",
+			list:         New[int](1),
+			position:     -1,
+			iteratorInit: (*List[int]).ReverseEnd,
+		},
+		{
+			name:         "One element, first",
+			list:         New[int](1),
+			position:     0,
+			iteratorInit: (*List[int]).ReverseFirst,
+		},
+		{
+			name:         "One element, last",
+			list:         New[int](1),
+			position:     0,
+			iteratorInit: (*List[int]).ReverseLast,
+		},
+		{
+			name:         "3 elements, middle",
+			list:         New[int](1, 2, 3),
+			position:     3,
+			iteratorInit: (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			position, valid := it.Index()
+
+			assert.Equalf(t, test.position, position, test.name)
+			assert.Truef(t, valid, test.name)
+		})
+	}
+}
+
+func TestArrayListReverseIteratorNext(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseEnd,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseFirst,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseLast,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			if test.position != NoMoveMagicPosition {
+				it.MoveTo(test.position)
+			}
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.Next()
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
+func TestArrayListReverseIteratorNextN(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		n             int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseEnd,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseFirst,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseLast,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "3 elements, middle, move out of bounds",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             5,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			if test.position != NoMoveMagicPosition {
+				it.MoveTo(test.position)
+			}
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.NextN(test.n)
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
+func TestArrayListReverseIteratorPrevious(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseEnd,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseFirst,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseLast,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			if test.position != NoMoveMagicPosition {
+				it.MoveTo(test.position)
+			}
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.Previous()
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
+func TestArrayListReverseIteratorPreviousN(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		n             int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseEnd,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseFirst,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseLast,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "3 elements, middle, move out of bounds",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             5,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			if test.position != NoMoveMagicPosition {
+				it.MoveTo(test.position)
+			}
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.PreviousN(test.n)
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
+func TestArrayListReverseIteratorMoveBy(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		n             int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseEnd,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseFirst,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseLast,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "5 elements, middle, forward by 2",
+			list:          New[int](1, 2, 3, 4, 5),
+			position:      2,
+			n:             2,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		}, {
+			name:          "5 elements, middle, backward by 2",
+			list:          New[int](1, 2, 3, 4, 5),
+			position:      2,
+			n:             -2,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+		{
+			name:          "3 elements, middle, move out of bounds",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             5,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).ReverseBegin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			it := test.iteratorInit(test.list)
+
+			if test.position != NoMoveMagicPosition {
+				it.MoveTo(test.position)
+			}
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.MoveBy(test.n)
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
 func TestArrayListReverseIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -105,7 +617,7 @@ func TestArrayListReverseIteratorGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it := test.list.Begin()
+			it := test.list.ReverseBegin()
 
 			if test.position != NoMoveMagicPosition {
 				it.MoveTo(test.position)
@@ -152,7 +664,7 @@ func TestArrayListReverseIteratorSet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it := test.list.Begin()
+			it := test.list.ReverseBegin()
 
 			if test.position != NoMoveMagicPosition {
 				it.MoveTo(test.position)
@@ -196,7 +708,7 @@ func TestArrayListReverseIteratorGetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it := test.list.Begin()
+			it := test.list.ReverseBegin()
 
 			value, found := it.GetAt(test.position)
 
@@ -239,7 +751,7 @@ func TestArrayListReverseIteratorSetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it := test.list.Begin()
+			it := test.list.ReverseBegin()
 
 			successfull := it.SetAt(test.position, test.value)
 
@@ -265,20 +777,20 @@ func TestArrayListReverseIteratorDistanceTo(t *testing.T) {
 			name:      "First lower",
 			position1: 0,
 			position2: 1,
-			distance:  -1,
+			distance:  1,
 		},
 		{
 			name:      "Second lower",
 			position1: 1,
 			position2: 0,
-			distance:  1,
+			distance:  -1,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int]().ReverseBegin()
+			it2 := New[int]().ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -307,20 +819,20 @@ func TestArrayListReverseIteratorIsAfter(t *testing.T) {
 			name:      "First lower",
 			position1: 0,
 			position2: 1,
-			isAfter:   false,
+			isAfter:   true,
 		},
 		{
 			name:      "Second lower",
 			position1: 1,
 			position2: 0,
-			isAfter:   true,
+			isAfter:   false,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int]().ReverseBegin()
+			it2 := New[int]().ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -349,20 +861,20 @@ func TestArrayListReverseIteratorIsBefore(t *testing.T) {
 			name:      "First lower",
 			position1: 0,
 			position2: 1,
-			isAfter:   true,
+			isAfter:   false,
 		},
 		{
 			name:      "Second lower",
 			position1: 1,
 			position2: 0,
-			isAfter:   false,
+			isAfter:   true,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int]().ReverseBegin()
+			it2 := New[int]().ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -403,8 +915,8 @@ func TestArrayListReverseIteratorIsEqual(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int]().ReverseBegin()
+			it2 := New[int]().ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -419,28 +931,28 @@ func TestArrayListReverseIteratorIsEqual(t *testing.T) {
 func TestArrayListReverseIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*List[int]) ds.ReadWriteCompForRandCollIterator[int, int]
-		iteratorCheck func(ds.ReadWriteCompForRandCollIterator[int, int]) bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Begin",
 			iteratorInit:  (*List[int]).ReverseBegin,
-			iteratorCheck: (ds.ReadWriteCompForRandCollIterator[int, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*List[int]).ReverseEnd,
-			iteratorCheck: (ds.ReadWriteCompForRandCollIterator[int, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsEnd,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*List[int]).ReverseFirst,
-			iteratorCheck: (ds.ReadWriteCompForRandCollIterator[int, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsFirst,
 		},
 		{
 			name:          "Last",
 			iteratorInit:  (*List[int]).ReverseLast,
-			iteratorCheck: (ds.ReadWriteCompForRandCollIterator[int, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsLast,
 		},
 	}
 

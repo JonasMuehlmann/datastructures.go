@@ -330,22 +330,22 @@ func (list *List[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 
 // ReverseBegin returns an initialized, reversed iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
-func (list *List[T]) ReverseBegin() ds.ReadWriteCompForRandCollIterator[int, T] {
+func (list *List[T]) ReverseBegin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewReverseIterator(list, len(list.elements))
 }
 
 // ReverseEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
-func (list *List[T]) ReverseEnd() ds.ReadWriteCompForRandCollIterator[int, T] {
+func (list *List[T]) ReverseEnd() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewReverseIterator(list, -1)
 }
 
 // ReverseFirst returns an initialized, reversed iterator, which points to it's first element.
-func (list *List[T]) ReverseFirst() ds.ReadWriteCompForRandCollIterator[int, T] {
+func (list *List[T]) ReverseFirst() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewReverseIterator(list, len(list.elements)-1)
 }
 
 // ReverseLast returns an initialized, reversed iterator, which points to it's last element.
-func (list *List[T]) ReverseLast() ds.ReadWriteCompForRandCollIterator[int, T] {
+func (list *List[T]) ReverseLast() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewReverseIterator(list, 0)
 }
