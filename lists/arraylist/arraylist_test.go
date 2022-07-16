@@ -6,59 +6,410 @@
 package arraylist
 
 import (
-	"encoding/json"
-	"strings"
 	"testing"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// TODO: Refactor tests with testify and table tests
-func TestListNew(t *testing.T) {
-	list1 := New[int]()
-
-	if actualValue := list1.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
+func TestArrayListGet(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		position     int
+		value        string
+		found        bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			position:     0,
+			found:        false,
+		},
+		{
+			name:         "3 items, position out of bounds",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			position:     5,
+			found:        false,
+		},
+		{
+			name:         "3 items, position in middle",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "bar",
+			position:     1,
+			found:        true,
+		},
 	}
 
-	list2 := New[string]("a", "b")
+	for _, test := range tests {
+		value, found := test.originalList.Get(test.position)
 
-	if actualValue := list2.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-
-	if actualValue, ok := list2.Get(0); actualValue != "a" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "a")
-	}
-
-	if actualValue, ok := list2.Get(1); actualValue != "b" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "b")
-	}
-
-	if _, ok := list2.Get(2); ok {
-		t.Errorf("Got %v expected %v", ok, false)
-	}
-}
-
-func TestListPushBack(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	if actualValue := list.IsEmpty(); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := list.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := list.Get(2); actualValue != "c" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "c")
+		assert.Equalf(t, test.value, value, test.name)
+		assert.Equalf(t, test.found, found, test.name)
 	}
 }
 
-func TestListPushFront(t *testing.T) {
+func TestArrayListContains(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		value        string
+		found        bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			value:        "foo",
+			found:        false,
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "golang",
+			found:        false,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "bar",
+			found:        true,
+		},
+	}
+
+	for _, test := range tests {
+		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
+
+		assert.Equalf(t, test.found, found, test.name)
+	}
+}
+
+func TestArrayListIndexOf(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		value        string
+		position     int
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			value:        "foo",
+			position:     -1,
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "golang",
+			position:     -1,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "bar",
+			position:     1,
+		},
+	}
+
+	for _, test := range tests {
+		position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+
+		assert.Equalf(t, test.position, position, test.name)
+	}
+}
+
+func TestArrayListGetValues(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+	}
+
+	for _, test := range tests {
+		values := test.originalList.GetValues()
+
+		assert.ElementsMatchf(t, test.originalList.elements, values, test.name)
+	}
+}
+
+func TestArrayListGetSlice(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+	}
+
+	for _, test := range tests {
+		slice := test.originalList.GetSlice()
+
+		assert.ElementsMatchf(t, test.originalList.elements, slice, test.name)
+	}
+}
+
+func TestArrayListIsEmpty(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		isEmpty      bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			isEmpty:      true,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			isEmpty:      false,
+		},
+	}
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+
+		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+	}
+}
+
+func TestArrayListClear(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+	}
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+		assert.Equalf(t, len(test.originalList.elements) == 0, isEmpty, test.name)
+
+		test.originalList.Clear()
+
+		isEmpty = test.originalList.IsEmpty()
+		assert.Truef(t, isEmpty, test.name)
+	}
+}
+
+func TestArrayListSet(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		value        string
+		position     int
+		successfull  bool
+	}{
+		{
+			name:         "empty list, set position 0",
+			originalList: New[string](),
+			value:        "foo",
+			position:     0,
+			successfull:  true,
+		},
+		{
+			name:         "empty list, set position 5",
+			originalList: New[string](),
+			value:        "foo",
+			position:     5,
+			successfull:  false,
+		},
+		{
+			name:         "position out of bounds",
+			originalList: New[string]("foo", "bar", "baz"),
+			value:        "foo",
+			position:     -1,
+			successfull:  false,
+		},
+
+		{
+			name:         "3 items, set middle",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:        "golang",
+			position:     1,
+			successfull:  true,
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Set(test.position, test.value)
+
+		index := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+
+		assert.Equalf(t, test.successfull, index == test.position, test.name)
+	}
+}
+
+func TestArrayListInsert(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		newList      *List[string]
+		value        string
+		position     int
+	}{
+		{
+			name:         "empty list, set position 0",
+			originalList: New[string](),
+			newList:      New[string]("foo"),
+			value:        "foo",
+			position:     0,
+		},
+		{
+			name:         "empty list, set position 5",
+			originalList: New[string](),
+			newList:      New[string](),
+			value:        "foo",
+			position:     5,
+		},
+		{
+			name:         "position out of bounds",
+			originalList: New[string]("foo", "bar", "baz"),
+			newList:      New[string]("foo", "bar", "baz"),
+			value:        "foo",
+			position:     -1,
+		},
+
+		{
+			name:         "3 items, insert in middle",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			newList:      NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			value:        "golang",
+			position:     1,
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Insert(test.position, test.value)
+
+		assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
+	}
+}
+
+func TestArrayListSwap(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		newList      *List[string]
+		position1    int
+		position2    int
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			newList:      New[string](),
+			position1:    1,
+			position2:    2,
+		},
+		{
+			name:         "3 items, position 1 out of bounds",
+			originalList: NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			newList:      NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			position1:    5,
+			position2:    1,
+		}, {
+			name:         "3 items, position 2 out of bounds",
+			originalList: NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			newList:      NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			position1:    1,
+			position2:    5,
+		},
+		{
+			name:         "3 items, swap first two",
+			originalList: NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			newList:      NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			position1:    0,
+			position2:    1,
+		}, {
+			name:         "3 items, swap first and last",
+			originalList: NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			newList:      NewFromSlice[string]([]string{"foo", "golang", "bar", "baz"}),
+			position1:    0,
+			position2:    2,
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Swap(test.position1, test.position2)
+
+		assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
+	}
+}
+
+func TestArrayListSort(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		newList      *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			newList:      New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+			newList:      New[string]("foo"),
+		},
+		{
+			name:         "two items",
+			originalList: New[string]("foo", "bar"),
+			newList:      New[string]("bar", "foo"),
+		},
+
+		{
+			name:         "3 items, unchanged",
+			originalList: NewFromSlice[string]([]string{"bar", "baz", "foo"}),
+			newList:      NewFromSlice[string]([]string{"bar", "baz", "foo"}),
+		},
+		{
+			name:         "3 items, reverse",
+			originalList: NewFromSlice[string]([]string{"foo", "baz", "bar"}),
+			newList:      NewFromSlice[string]([]string{"bar", "baz", "foo"}),
+		},
+		{
+			name:         "3 items, random order",
+			originalList: NewFromSlice[string]([]string{"baz", "bar", "foo"}),
+			newList:      NewFromSlice[string]([]string{"bar", "baz", "foo"}),
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Sort(utils.BasicComparator[string])
+
+		assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
+	}
+}
+
+func TestArrayListPushFront(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -98,7 +449,7 @@ func TestListPushFront(t *testing.T) {
 	}
 }
 
-func TestListPopBack(t *testing.T) {
+func TestArrayListPopBack(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -137,7 +488,7 @@ func TestListPopBack(t *testing.T) {
 	}
 }
 
-func TestListPopFront(t *testing.T) {
+func TestArrayListPopFront(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -176,7 +527,7 @@ func TestListPopFront(t *testing.T) {
 	}
 }
 
-func TestListShrinkToFit(t *testing.T) {
+func TestArrayListShrinkToFit(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -222,52 +573,47 @@ func TestListShrinkToFit(t *testing.T) {
 	}
 }
 
-func TestListIndexOf(t *testing.T) {
-	list := New[string]()
-
-	expectedIndex := -1
-	if index := list.IndexOf(utils.BasicComparator[string], "a"); index != expectedIndex {
-		t.Errorf("Got %v expected %v", index, expectedIndex)
+func TestArrayListRemoveStable(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+		i            int
+		newItems     []string
+	}{
+		{
+			name:         "empty list, remove nothing",
+			originalList: New[string](),
+			i:            -1,
+			newItems:     []string{},
+		},
+		{
+			name:         "empty list, remove 2",
+			originalList: New[string](),
+			i:            2,
+			newItems:     []string{},
+		},
+		{
+			name:         "list with 2 items, remove nothing",
+			originalList: New[string]("foo", "bar"),
+			i:            -1,
+			newItems:     []string{"foo", "bar"},
+		},
+		{
+			name:         "list with 4 items, remove 2",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			i:            2,
+			newItems:     []string{"foo", "bar", "foo"},
+		},
 	}
 
-	list.PushBack("a")
-	list.PushBack("b", "c")
+	for _, test := range tests {
+		test.originalList.RemoveStable(test.i)
 
-	expectedIndex = 0
-	if index := list.IndexOf(utils.BasicComparator[string], "a"); index != expectedIndex {
-		t.Errorf("Got %v expected %v", index, expectedIndex)
-	}
-
-	expectedIndex = 1
-	if index := list.IndexOf(utils.BasicComparator[string], "b"); index != expectedIndex {
-		t.Errorf("Got %v expected %v", index, expectedIndex)
-	}
-
-	expectedIndex = 2
-	if index := list.IndexOf(utils.BasicComparator[string], "c"); index != expectedIndex {
-		t.Errorf("Got %v expected %v", index, expectedIndex)
+		assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
 	}
 }
 
-func TestListRemoveStable(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	list.RemoveStable(2)
-	if actualValue, ok := list.Get(2); ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	list.RemoveStable(1)
-	list.RemoveStable(0)
-	list.RemoveStable(0) // no effect
-	if actualValue := list.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := list.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
-}
-func TestListRemove(t *testing.T) {
+func TestArrayListRemove(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -307,171 +653,31 @@ func TestListRemove(t *testing.T) {
 	}
 }
 
-func TestListGet(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	if actualValue, ok := list.Get(0); actualValue != "a" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "a")
-	}
-	if actualValue, ok := list.Get(1); actualValue != "b" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "b")
-	}
-	if actualValue, ok := list.Get(2); actualValue != "c" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "c")
-	}
-	if actualValue, ok := list.Get(3); ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	list.RemoveStable(0)
-	if actualValue, ok := list.Get(0); actualValue != "b" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "b")
-	}
-}
-
-func TestListSwap(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	list.Swap(0, 1)
-	if actualValue, ok := list.Get(0); actualValue != "b" || !ok {
-		t.Errorf("Got %v expected %v", actualValue, "b")
-	}
-}
-
-func TestListSort(t *testing.T) {
-	list := New[string]()
-	list.Sort(utils.BasicComparator[string])
-	list.PushBack("e", "f", "g", "a", "b", "c", "d")
-	list.Sort(utils.BasicComparator[string])
-	for i := 1; i < list.Size(); i++ {
-		a, _ := list.Get(i - 1)
-		b, _ := list.Get(i)
-		if a > b {
-			t.Errorf("Not sorted! %s > %s", a, b)
-		}
-	}
-}
-
-func TestListClear(t *testing.T) {
-	list := New[string]()
-	list.PushBack("e", "f", "g", "a", "b", "c", "d")
-	list.Clear()
-	if actualValue := list.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := list.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
-}
-
-func TestListContains(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	if actualValue := list.Contains(utils.BasicComparator[string], "a"); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := list.Contains(utils.BasicComparator[string], "a", "b", "c"); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := list.Contains(utils.BasicComparator[string], "a", "b", "c", "d"); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	list.Clear()
-	if actualValue := list.Contains(utils.BasicComparator[string], "a"); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := list.Contains(utils.BasicComparator[string], "a", "b", "c"); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-}
-
-func TestListValues(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a")
-	list.PushBack("b", "c")
-	actualValue, expectedValue := list.GetValues(), []string{"a", "b", "c"}
-	assert.Equal(t, actualValue, expectedValue)
-}
-
-func TestListInsert(t *testing.T) {
-	list := New[string]()
-	list.Insert(0, "b", "c")
-	list.Insert(0, "a")
-	list.Insert(10, "x") // ignore
-	if actualValue := list.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	list.Insert(3, "d") // append
-	if actualValue := list.Size(); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-	actualValue, expectedValue := list.GetValues(), []string{"a", "b", "c", "d"}
-	assert.Equal(t, actualValue, expectedValue)
-}
-
-func TestListSet(t *testing.T) {
-	list := New[string]()
-	list.Set(0, "a")
-	list.Set(1, "b")
-	if actualValue := list.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	list.Set(2, "c") // append
-	if actualValue := list.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	list.Set(4, "d")  // ignore
-	list.Set(1, "bb") // update
-	if actualValue := list.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	actualValue, expectedValue := list.GetValues(), []string{"a", "bb", "c"}
-	assert.Equal(t, actualValue, expectedValue)
-}
-
-func TestListSerialization(t *testing.T) {
-	list := New[string]()
-	list.PushBack("a", "b", "c")
-
-	var err error
-	assert := func() {
-		actualValue, expectedValue := list.GetValues(), []string{"a", "b", "c"}
-		assert.Equal(t, actualValue, expectedValue)
-		if actualValue, expectedValue := list.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
+func TestNewFromSlice(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *List[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
 	}
 
-	assert()
+	for _, test := range tests {
+		newList := NewFromSlice[string](test.originalList.elements)
 
-	bytes, err := list.ToJSON()
-	assert()
-
-	err = list.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", list})
-	if err != nil {
-		t.Errorf("Got error %v", err)
+		assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
 	}
 
-	err = json.Unmarshal([]byte(`["a", "b", "c"]`), &list)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-}
-
-func TestListString(t *testing.T) {
-	c := New[int]()
-	c.PushBack(1)
-	if !strings.HasPrefix(c.ToString(), "ArrayList") {
-		t.Errorf("ToString should start with container name")
-	}
 }
 
 func TestNewFromIterator(t *testing.T) {
@@ -501,22 +707,42 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 }
+
+// NOTE: Missing test case: unordered iterator, which prevents preallocation
 func TestNewFromIterators(t *testing.T) {
 	tests := []struct {
-		name         string
-		originalList *List[string]
+		name              string
+		originalList      *List[string]
+		newList           *List[string]
+		iteratorInitFirst func(*List[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitEnd   func(*List[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
 	}{
 		{
-			name:         "empty list",
-			originalList: New[string](),
+			name:              "empty list",
+			originalList:      New[string](),
+			newList:           New[string](),
+			iteratorInitFirst: (*List[string]).First,
+			iteratorInitEnd:   (*List[string]).End,
 		},
 		{
-			name:         "single item",
-			originalList: New[string]("foo"),
+			name:              "single item",
+			originalList:      New[string]("foo"),
+			iteratorInitFirst: (*List[string]).First,
+			iteratorInitEnd:   (*List[string]).End,
 		},
 		{
-			name:         "3 items",
-			originalList: New[string]("foo", "bar", "baz"),
+			name:              "3 items",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string]("foo", "bar", "baz"),
+			iteratorInitFirst: (*List[string]).First,
+			iteratorInitEnd:   (*List[string]).End,
+		},
+		{
+			name:              "3 items, end and first swapped",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string](),
+			iteratorInitFirst: (*List[string]).End,
+			iteratorInitEnd:   (*List[string]).First,
 		},
 	}
 

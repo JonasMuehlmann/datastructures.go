@@ -22,8 +22,6 @@ import (
 // Assert List implementation.
 var _ lists.List[any] = (*List[any])(nil)
 
-// TODO: Try and reimplement methods through iterator
-// List holds the elements in a slice.
 type List[T any] struct {
 	elements []T
 }
@@ -79,7 +77,6 @@ func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableI
 		if length < 0 {
 			length = 0
 		}
-		// panic(length)
 	}
 
 	elements := make([]T, 0, length)
