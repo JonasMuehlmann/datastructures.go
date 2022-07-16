@@ -98,8 +98,16 @@ func (it *OrderedIterator[TKey, TValue]) Size() int {
 }
 
 // Index implements ds.ReadWriteUnordCompBidRandCollIterator
-func (it *OrderedIterator[TKey, TValue]) Index() TKey {
-	return it.keys[it.index]
+func (it *OrderedIterator[TKey, TValue]) Index() (key TKey, found bool) {
+	if !it.IsValid() {
+		found = false
+		return
+	}
+
+	key = it.keys[it.index]
+	found = true
+
+	return
 }
 
 // Next implements ds.ReadWriteUnordCompBidRandCollIterator

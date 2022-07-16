@@ -117,8 +117,8 @@ func (it *Iterator[T]) Size() int {
 }
 
 // Index implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Index() int {
-	return it.index
+func (it *Iterator[T]) Index() (int, bool) {
+	return it.index, true
 }
 
 // MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
