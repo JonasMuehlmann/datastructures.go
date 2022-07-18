@@ -45,6 +45,16 @@ type ReadWriteCompForRandCollIterator[TIndex any, TValue any] interface {
 	RandomAccessWriteableIterator[TIndex, TValue]
 }
 
+type ReadWriteOrdCompForRandCollIterator[TIndex any, TValue any] interface {
+	OrderedIterator
+	ComparableIterator
+	CollectionIterator[TIndex]
+	ForwardIterator
+	ReadableIterator[TValue]
+	WritableIterator[TValue]
+	RandomAccessIterator[TIndex]
+}
+
 type ReadWriteUnordCompBidRandCollIterator[TIndex any, TValue any] interface {
 	ComparableIterator
 	OrderedIterator

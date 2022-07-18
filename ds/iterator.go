@@ -78,7 +78,7 @@ type CollectionIterator[TIndex any] interface {
 }
 
 // IndexedIterator defines an Iterator, which defines an an iterator with an index.
-// This iterator can be combined with a ReadableIterator to hold key-value pairs.
+// This iterator can be combined with a ReadableIterator to hold key-value or index-value pairs.
 type IndexedIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
 	SizedIterator
@@ -159,14 +159,15 @@ type BidirectionalIterator interface {
 	// Nth(n int) BidirectionalIterator
 }
 
-// RandomAccessIterator defines a BidirectionalIterator and CollectionIterator, which can be moved to every position in the iterator.
+// RandomAccessIterator defines a CollectionIterator, which can be moved to every position in the iterable direction.
+// A RandomAccessIterator does not imply bidirectional iteration.
 type RandomAccessIterator[TIndex any] interface {
 	// *********************    Inherited methods    ********************//
 	CollectionIterator[TIndex]
 	// ************************    Own methods    ***********************//
 
-	// MoveTo moves the iterator to the given index.
-	MoveTo(i TIndex)
+	// MoveTo moves the iterator to the given index, if it is reachable.
+	MoveTo(i TIndex) bool
 }
 
 // RandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.

@@ -122,8 +122,10 @@ func (it *ReverseIterator[T]) Index() (int, bool) {
 }
 
 // MoveTo implements ds.ReadWriteOrdCompBidRandCollReverseIterator
-func (it *ReverseIterator[T]) MoveTo(i int) {
+func (it *ReverseIterator[T]) MoveTo(i int) bool {
 	it.index = i
+
+	return true
 }
 
 // IsBegin implements ds.ReverseIterator

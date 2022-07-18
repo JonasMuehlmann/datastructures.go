@@ -141,13 +141,15 @@ func (it *OrderedIterator[TKey, TValue]) MoveBy(n int) {
 }
 
 // MoveTo implements ds.ReadWriteUnordCompBidRandCollIterator
-func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) {
+func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) bool {
 	for i, key := range it.keys {
 		if key == k {
 			it.index = i
-			return
+			return true
 		}
 	}
+
+	return false
 }
 
 // Get implements ds.ReadWriteUnordCompBidRandCollIterator
