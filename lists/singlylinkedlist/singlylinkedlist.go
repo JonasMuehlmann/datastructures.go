@@ -72,6 +72,41 @@ func New[T any](values ...T) *List[T] {
 	return list
 }
 
+// NewFromSlice instantiates a new list containing the provided slice.
+func NewFromSlice[T any](slice []T) *List[T] {
+	list := &List[T]{}
+
+	for _, element := range slice {
+		list.PushBack(element)
+	}
+
+	return list
+}
+
+// NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *List[T] {
+	list := &List[T]{}
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		list.PushBack(newItem)
+	}
+
+	return list
+}
+
+// NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *List[T] {
+	list := &List[T]{}
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		list.PushBack(newItem)
+	}
+
+	return list
+}
+
 // Add appends a value (one or more) at the end of the list (same as Append())
 func (list *List[T]) PushBack(values ...T) {
 	for _, value := range values {
