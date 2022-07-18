@@ -122,11 +122,6 @@ func (list *List[T]) PushBack(values ...T) {
 	}
 }
 
-// Append appends a value (one or more) at the end of the list (same as PushBack())
-func (list *List[T]) Append(values ...T) {
-	list.PushBack(values...)
-}
-
 // Prepend prepends a values (or more)
 func (list *List[T]) PushFront(values ...T) {
 	// in reverse to keep passed order i.e. ["c","d"] -> PushFront(["a","b"]) -> ["a","b","c",d"]
