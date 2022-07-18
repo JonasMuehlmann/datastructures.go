@@ -33,9 +33,35 @@ type element[T any] struct {
 	next  *element[T]
 }
 
-// TODO: Implement Pop functions
-func (list *List[T]) PopBack(n int)  { panic("Not implemented") }
-func (list *List[T]) PopFront(n int) { panic("Not implemented") }
+func (list *List[T]) PopBack(n int) {
+	if list.size < n || n == 0 || list.size == 0 {
+		return
+	}
+
+	e := list.first
+
+	for i := 0; i < list.size-n-1; i++ {
+		e = e.next
+	}
+
+	e.next = nil
+	list.last = e
+
+	list.size -= n
+}
+
+func (list *List[T]) PopFront(n int) {
+	if list.size < n || n == 0 || list.size == 0 {
+		return
+	}
+
+	for i := 0; i < n; i++ {
+		list.first = list.first.next
+	}
+
+	list.size -= n
+
+}
 
 // New instantiates a new list and adds the passed values, if any, to the list
 func New[T any](values ...T) *List[T] {
