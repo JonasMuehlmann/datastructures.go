@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -359,4 +360,24 @@ func (list *List[T]) ToString() string {
 // Check that the index is within bounds of the list
 func (list *List[T]) withinRange(index int) bool {
 	return index >= 0 && index < list.size
+}
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (list *List[T]) End() ds.ReadWriteOrdCompForCollIterator[int, *element[T]] {
+	return list.NewIterator(list, list.size)
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (list *List[T]) First() ds.ReadWriteOrdCompForCollIterator[int, *element[T]] {
+	return list.NewIterator(list, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (list *List[T]) Last() ds.ReadWriteOrdCompForCollIterator[int, *element[T]] {
+	return list.NewIterator(list, list.size-1)
 }
