@@ -86,6 +86,7 @@ func (list *List[T]) PopBack(n int) {
 
 	for i := 0; i < n; i++ {
 		list.last = list.last.prev
+		list.last.next = nil
 	}
 
 	list.size -= n
@@ -98,6 +99,7 @@ func (list *List[T]) PopFront(n int) {
 
 	for i := 0; i < n; i++ {
 		list.first = list.first.next
+		list.first.prev = nil
 	}
 
 	list.size -= n
