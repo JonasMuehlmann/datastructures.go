@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/JonasMuehlmann/datastructures.go/ds"
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ const (
 	NoMoveMagicPosition = 7869543205234798
 )
 
-func TestArrayListIteratorIsValid(t *testing.T) {
+func TestSinglyLinkedlistIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *List[int]
@@ -58,6 +59,7 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -71,7 +73,7 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIndex(t *testing.T) {
+func TestSinglyLinkedlistIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *List[int]
@@ -112,6 +114,7 @@ func TestArrayListIteratorIndex(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			position, valid := it.Index()
@@ -122,7 +125,7 @@ func TestArrayListIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorNext(t *testing.T) {
+func TestSinglyLinkedlistIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *List[int]
@@ -175,6 +178,7 @@ func TestArrayListIteratorNext(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -192,7 +196,7 @@ func TestArrayListIteratorNext(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorNextN(t *testing.T) {
+func TestSinglyLinkedlistIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *List[int]
@@ -260,6 +264,7 @@ func TestArrayListIteratorNextN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -277,7 +282,7 @@ func TestArrayListIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorGet(t *testing.T) {
+func TestSinglyLinkedlistIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *List[int]
@@ -302,6 +307,7 @@ func TestArrayListIteratorGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 
 			if test.position != NoMoveMagicPosition {
@@ -318,7 +324,7 @@ func TestArrayListIteratorGet(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorSet(t *testing.T) {
+func TestSinglyLinkedlistIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *List[int]
@@ -344,6 +350,7 @@ func TestArrayListIteratorSet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 			itCopy := test.list.First()
 
@@ -362,7 +369,7 @@ func TestArrayListIteratorSet(t *testing.T) {
 }
 
 // NOTE: Missing test case: other does not implement IndexedIterator
-func TestArrayListIteratorDistanceTo(t *testing.T) {
+func TestSinglyLinkedlistIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -391,6 +398,7 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
 
@@ -404,7 +412,7 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsAfter(t *testing.T) {
+func TestSinglyLinkedlistIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -433,6 +441,7 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
 
@@ -446,7 +455,7 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsBefore(t *testing.T) {
+func TestSinglyLinkedlistIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -475,6 +484,7 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
 
@@ -488,7 +498,7 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsEqual(t *testing.T) {
+func TestSinglyLinkedlistIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -517,6 +527,7 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
 
@@ -556,6 +567,7 @@ func TestSinglyLinkedListIteratorIsEndFirstLast(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
 		})

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/JonasMuehlmann/datastructures.go/ds"
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,6 +66,7 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -125,6 +127,7 @@ func TestArrayListIteratorIndex(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			position, valid := it.Index()
@@ -196,6 +199,7 @@ func TestArrayListIteratorNext(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -290,6 +294,7 @@ func TestArrayListIteratorNextN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -368,6 +373,7 @@ func TestArrayListIteratorPrevious(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -462,6 +468,7 @@ func TestArrayListIteratorPreviousN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -573,6 +580,7 @@ func TestArrayListIteratorMoveBy(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
 			if test.position != NoMoveMagicPosition {
@@ -621,6 +629,7 @@ func TestArrayListIteratorGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
 			if test.position != NoMoveMagicPosition {
@@ -668,6 +677,7 @@ func TestArrayListIteratorSet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
 			if test.position != NoMoveMagicPosition {
@@ -712,6 +722,7 @@ func TestArrayListIteratorGetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
 			value, found := it.GetAt(test.position)
@@ -755,6 +766,7 @@ func TestArrayListIteratorSetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
 			successfull := it.SetAt(test.position, test.value)
@@ -794,6 +806,7 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int]().Begin()
 			it2 := New[int]().Begin()
 
@@ -836,6 +849,7 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int]().Begin()
 			it2 := New[int]().Begin()
 
@@ -878,6 +892,7 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int]().Begin()
 			it2 := New[int]().Begin()
 
@@ -920,6 +935,7 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int]().Begin()
 			it2 := New[int]().Begin()
 
@@ -963,6 +979,7 @@ func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
 		})

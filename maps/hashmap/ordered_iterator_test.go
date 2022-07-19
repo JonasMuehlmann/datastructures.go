@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/JonasMuehlmann/datastructures.go/ds"
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -34,6 +35,7 @@ func TestHashMapOrderedIteratorIsValid(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -72,6 +74,7 @@ func TestHashMapOrderedIteratorGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -112,6 +115,7 @@ func TestHashMapOrderedIteratorSet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -151,6 +155,7 @@ func TestHashMapOrderedIteratorGetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			value, found := it.GetAt(test.position)
@@ -188,6 +193,7 @@ func TestHashMapOrderedIteratorSetAt(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			successfull := it.SetAt(test.position, test.value)
@@ -230,6 +236,7 @@ func TestHashMapOrderedIteratorDistanceTo(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
@@ -276,6 +283,7 @@ func TestHashMapOrderedIteratorIsAfter(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
@@ -322,6 +330,7 @@ func TestHashMapOrderedIteratorIsBefore(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
@@ -364,6 +373,7 @@ func TestHashMapOrderedIteratorIsEqual(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			m := NewFromMap[string, int](map[string]int{"a": 1, "b": 2, "c": 4, "5": 5})
 
 			it1 := m.OrderedFirst(utils.BasicComparator[string])
@@ -429,6 +439,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			position, valid := it.Index()
@@ -459,6 +470,7 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedBegin(utils.BasicComparator[string])
 
 			size := it.Size()
@@ -526,6 +538,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -620,6 +633,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -695,6 +709,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -786,6 +801,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -894,6 +910,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
@@ -940,6 +957,7 @@ func TestHashMapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(NewFromMap[string, int](map[string]int{"a": 1, "b": 2, "c": 4, "5": 5}), utils.BasicComparator[string])
 			assert.Truef(t, test.iteratorCheck(it), test.name)
 		})
