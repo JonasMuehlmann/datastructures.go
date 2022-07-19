@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func RunBenchmarkWithDefualtInputSizes(b *testing.B, name string, f func(n int, name string)) {
@@ -25,5 +27,11 @@ func RunBenchmarkWithInputSizes(b *testing.B, base int, lowExponent int, highExp
 				f(int(n), fullName)
 			}
 		})
+	}
+}
+
+func HandlePanic(t *testing.T, name string) {
+	if err := recover(); err != nil {
+		assert.Fail(t, name, err)
 	}
 }
