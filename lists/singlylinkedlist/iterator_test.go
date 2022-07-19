@@ -282,6 +282,88 @@ func TestSinglyLinkedlistIteratorNextN(t *testing.T) {
 	}
 }
 
+func TestSinglyLinkedlistIteratorMoveTo(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *List[int]
+		position      int
+		n             int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, *element[int]]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).First,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).End,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).First,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).Last,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             1,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).First,
+		},
+		{
+			name:          "3 elements, middle, move out of bounds",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			n:             5,
+			isValidBefore: true,
+			isValidAfter:  false,
+			iteratorInit:  (*List[int]).First,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.iteratorInit(test.list)
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.MoveTo(test.n)
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
 func TestSinglyLinkedlistIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -570,6 +652,48 @@ func TestSinglyLinkedListIteratorIsEndFirstLast(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
+			assert.Falsef(t, it.IsBegin(), test.name)
+		})
+	}
+}
+
+func TestSinglyLinkedlistIteratorSize(t *testing.T) {
+	tests := []struct {
+		name         string
+		list         *List[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, *element[int]]
+		size         int
+	}{
+		{
+			name:         "Empty",
+			list:         New[int](),
+			size:         0,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "One element, first",
+			list:         New[int](1),
+			size:         1,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "3 elements, middle",
+			list:         New[int](1, 2, 3),
+			size:         3,
+			iteratorInit: (*List[int]).First,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.iteratorInit(test.list)
+
+			size := it.Size()
+
+			assert.Equalf(t, test.size, size, test.name)
 		})
 	}
 }

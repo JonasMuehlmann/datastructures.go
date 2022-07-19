@@ -340,6 +340,14 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			isValidAfter:  true,
 			iteratorInit:  (*List[int]).First,
 		},
+		{
+			name:          "5 elements, middle",
+			list:          New[int](1, 2, 3, 4, 5),
+			position:      2,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).First,
+		},
 	}
 
 	for _, test := range tests {
@@ -427,6 +435,15 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 			isValidAfter:  true,
 			iteratorInit:  (*List[int]).First,
 		},
+		{
+			name:          "5 elements, middle",
+			list:          New[int](1, 2, 3, 4, 5),
+			position:      2,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).First,
+		},
+
 		{
 			name:          "3 elements, middle, move out of bounds",
 			list:          New[int](1, 2, 3),
@@ -615,6 +632,77 @@ func TestDoublyLinkedlistIteratorSet(t *testing.T) {
 	}
 }
 
+func TestDoublyLinkedlistIteratorSetAt(t *testing.T) {
+	tests := []struct {
+		name     string
+		list     *List[int]
+		position int
+		value    int
+		found    bool
+	}{
+		{
+			name:     "Empty",
+			list:     New[int](),
+			position: 0,
+			found:    false,
+		},
+		{
+			name:     "One element, first",
+			list:     New[int](1),
+			position: 0,
+			value:    1,
+			found:    true,
+		},
+		{
+			name:     "Three elements, first",
+			list:     New[int](1, 2, 3),
+			position: 0,
+			value:    1,
+			found:    true,
+		},
+		{
+			name:     "Three elements, middle",
+			list:     New[int](1, 2, 3),
+			position: 1,
+			value:    2,
+			found:    true,
+		},
+		{
+			name:     "Three elements, last",
+			list:     New[int](1, 2, 3),
+			position: 2,
+			value:    3,
+			found:    true,
+		},
+		{
+			name:     "Three elements, out of bounds left",
+			list:     New[int](1, 2, 3),
+			position: -3,
+			found:    false,
+		},
+		{
+			name:     "Three elements, out of bounds right",
+			list:     New[int](1, 2, 3),
+			position: 5,
+			found:    false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.list.First()
+
+			element, found := it.GetAt(test.position)
+
+			assert.Equalf(t, test.found, found, test.name)
+			if test.found {
+				assert.Equalf(t, test.value, element.value, test.name)
+			}
+		})
+	}
+}
+
 // NOTE: Missing test case: other does not implement IndexedIterator
 func TestDoublyLinkedlistIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
@@ -788,7 +876,7 @@ func TestDoublyLinkedlistIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestdoublylinkedlistIteratorIsEndFirstLast(t *testing.T) {
+func TestDoublylInkedlistIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
@@ -822,6 +910,47 @@ func TestdoublylinkedlistIteratorIsEndFirstLast(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
+		})
+	}
+}
+
+func TestDoublyLinkedlistIteratorSize(t *testing.T) {
+	tests := []struct {
+		name         string
+		list         *List[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		size         int
+	}{
+		{
+			name:         "Empty",
+			list:         New[int](),
+			size:         0,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "One element, first",
+			list:         New[int](1),
+			size:         1,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "3 elements, middle",
+			list:         New[int](1, 2, 3),
+			size:         3,
+			iteratorInit: (*List[int]).First,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.iteratorInit(test.list)
+
+			size := it.Size()
+
+			assert.Equalf(t, test.size, size, test.name)
 		})
 	}
 }

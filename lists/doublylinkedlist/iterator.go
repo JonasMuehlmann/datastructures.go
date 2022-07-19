@@ -161,6 +161,7 @@ func (it *Iterator[T]) NextN(n int) {
 
 	if it.index+n == it.list.size-1 {
 		it.element = it.list.last
+		it.index += n
 
 		return
 	}

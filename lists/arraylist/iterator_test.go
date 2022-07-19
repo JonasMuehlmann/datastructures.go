@@ -985,3 +985,44 @@ func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
 		})
 	}
 }
+
+func TestArrayListIteratorSize(t *testing.T) {
+	tests := []struct {
+		name         string
+		list         *List[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		size         int
+	}{
+		{
+			name:         "Empty",
+			list:         New[int](),
+			size:         0,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "One element, first",
+			list:         New[int](1),
+			size:         1,
+			iteratorInit: (*List[int]).First,
+		},
+
+		{
+			name:         "3 elements, middle",
+			list:         New[int](1, 2, 3),
+			size:         3,
+			iteratorInit: (*List[int]).First,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.iteratorInit(test.list)
+
+			size := it.Size()
+
+			assert.Equalf(t, test.size, size, test.name)
+		})
+	}
+}
