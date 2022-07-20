@@ -8,98 +8,166 @@ package linkedhashset
 import (
 	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Iterator implementation
-var _ ds.ReverseIteratorWithIndex = (*Iterator)(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[int, string] = (*Iterator[string])(nil)
 
-// Iterator holding the iterator's state
-type Iterator struct {
-	iterator doublylinkedlist.Iterator
+type Iterator[T comparable] struct {
+	s             *Set[T]
+	orderIterator *doublylinkedlist.Iterator[T]
+	comparator    utils.Comparator[T]
 }
 
-// Iterator returns a stateful iterator whose values can be fetched by an index.
-func (set *Set) Iterator() Iterator {
-	return Iterator{iterator: set.ordering.Iterator()}
-}
-
-// Next moves the iterator to the next element and returns true if there was a next element in the container.
-// If Next() returns true, then next element's index and value can be retrieved by Index() and Value().
-// If Next() was called for the first time, then it will point the iterator to the first element if it exists.
-// Modifies the state of the iterator.
-func (iterator *Iterator) Next() bool {
-	return iterator.iterator.Next()
-}
-
-// Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
-// If Prev() returns true, then previous element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Prev() bool {
-	return iterator.iterator.Prev()
-}
-
-// Value returns the current element's value.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Value() interface{} {
-	return iterator.iterator.Value()
-}
-
-// Index returns the current element's index.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Index() int {
-	return iterator.iterator.Index()
-}
-
-// Begin resets the iterator to its initial state (one-before-first)
-// Call Next() to fetch the first element if any.
-func (iterator *Iterator) Begin() {
-	iterator.iterator.Begin()
-}
-
-// End moves the iterator past the last element (one-past-the-end).
-// Call Prev() to fetch the last element if any.
-func (iterator *Iterator) End() {
-	iterator.iterator.End()
-}
-
-// First moves the iterator to the first element and returns true if there was a first element in the container.
-// If First() returns true, then first element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) First() bool {
-	return iterator.iterator.First()
-}
-
-// Last moves the iterator to the last element and returns true if there was a last element in the container.
-// If Last() returns true, then last element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Last() bool {
-	return iterator.iterator.Last()
-}
-
-// NextTo moves the iterator to the next element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If NextTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) NextTo(f func(index int, value interface{}) bool) bool {
-	for iterator.Next() {
-		index, value := iterator.Index(), iterator.Value()
-		if f(index, value) {
-			return true
-		}
+func (m *Set[T]) NewIterator(s *Set[T], position int, comparator utils.Comparator[T]) *Iterator[T] {
+	return &Iterator[T]{
+		s:             s,
+		comparator:    comparator,
+		orderIterator: s.ordering.NewIterator(s.ordering, position),
 	}
-	return false
 }
 
-// PrevTo moves the iterator to the previous element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If PrevTo() returns true, then next element's index and value can be retrieved by Index() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) PrevTo(f func(index int, value interface{}) bool) bool {
-	for iterator.Prev() {
-		index, value := iterator.Index(), iterator.Value()
-		if f(index, value) {
-			return true
-		}
+// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsBegin() bool {
+	return it.orderIterator.IsBegin()
+}
+
+// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsEnd() bool {
+	return it.orderIterator.IsEnd()
+}
+
+// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsFirst() bool {
+	return it.orderIterator.IsFirst()
+}
+
+// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsLast() bool {
+	return it.orderIterator.IsLast()
+}
+
+// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsValid() bool {
+	return it.orderIterator.IsValid()
+}
+
+// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
 	}
-	return false
+
+	return it.orderIterator.IsEqual(otherThis.orderIterator)
+
+}
+
+// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.orderIterator.DistanceTo(otherThis.orderIterator)
+}
+
+// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.orderIterator.IsAfter(otherThis.orderIterator)
+}
+
+// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[T])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.orderIterator.IsBefore(otherThis.orderIterator)
+}
+
+// Size implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Size() int {
+	return it.s.ordering.Size()
+}
+
+// Index implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Index() (index int, found bool) {
+	return it.orderIterator.Index()
+}
+
+// Next implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Next() {
+	it.orderIterator.Next()
+}
+
+// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) NextN(i int) {
+	it.orderIterator.NextN(i)
+}
+
+// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Previous() {
+	it.orderIterator.Previous()
+}
+
+// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) PreviousN(n int) {
+	it.orderIterator.PreviousN(n)
+}
+
+// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveBy(n int) {
+	it.orderIterator.MoveBy(n)
+}
+
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveTo(i int) bool {
+	return it.orderIterator.MoveTo(i)
+}
+
+// Get implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Get() (value T, found bool) {
+	return it.orderIterator.Get()
+}
+
+// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
+	return it.orderIterator.GetAt(i)
+}
+
+// Set implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Set(value T) bool {
+	if !it.IsValid() {
+		return false
+	}
+
+	it.orderIterator.Set(value)
+
+	valueToRemove, _ := it.Get()
+	it.s.Remove(it.comparator, valueToRemove)
+	it.s.table[value] = itemExists
+
+	return true
+}
+
+// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) SetAt(i int, value T) bool {
+	if i < 0 || i >= it.Size() {
+		return false
+	}
+
+	valueToRemove, _ := it.Get()
+	delete(it.s.table, valueToRemove)
+	it.s.table[value] = itemExists
+
+	return true
 }
