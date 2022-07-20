@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/sets"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
@@ -28,8 +29,9 @@ var _ sets.Set[string] = (*Set[string])(nil)
 
 // Set holds elements in go's native map
 type Set[T comparable] struct {
-	table    map[T]struct{}
-	ordering *doublylinkedlist.List[T]
+	table      map[T]struct{}
+	ordering   *doublylinkedlist.List[T]
+	comparator utils.Comparator[T]
 }
 
 var itemExists = struct{}{}
@@ -46,13 +48,54 @@ func New[T comparable](values ...T) *Set[T] {
 	return set
 }
 
+// NewFromMap instantiates a new  set from the provided slice.
+func NewFromSlice[T comparable](slice []T) *Set[T] {
+	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
+
+	for _, item := range slice {
+		s.table[item] = itemExists
+		s.ordering.PushBack(item)
+	}
+
+	return s
+}
+
+// NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
+func NewFromIterator[T comparable](it ds.ReadCompForIndexIterator[int, T]) *Set[T] {
+	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
+
+	for ; !it.IsEnd(); it.Next() {
+		newValue, _ := it.Get()
+
+		s.table[newValue] = itemExists
+		s.ordering.PushBack(newValue)
+	}
+
+	return s
+}
+
+// NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T comparable](first ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
+	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
+
+	for ; !first.IsEqual(end); first.Next() {
+		newValue, _ := first.Get()
+
+		s.table[newValue] = itemExists
+		s.ordering.PushBack(newValue)
+	}
+
+	return s
+}
+
 // Add adds the items (one or more) to the set.
 // Note that insertion-order is not affected if an element is re-inserted into the set.
 func (set *Set[T]) Add(items ...T) {
 	for _, item := range items {
 		if _, contains := set.table[item]; !contains {
 			set.table[item] = itemExists
-			set.ordering.Append(item)
+			set.ordering.PushBack(item)
 		}
 	}
 }
@@ -99,11 +142,13 @@ func (set *Set[T]) Clear() {
 
 // Values returns all items in the set.
 func (set *Set[T]) GetValues() []T {
-	values := make([]T, set.Size())
-	it := set.Iterator()
-	for it.Next() {
-		values[it.Index()] = it.Value()
+	values := make([]T, 0, set.Size())
+
+	for it := set.First(set.comparator); !it.IsEnd(); it.Next() {
+		value, _ := it.Get()
+		values = append(values, value)
 	}
+
 	return values
 }
 
@@ -111,11 +156,14 @@ func (set *Set[T]) GetValues() []T {
 func (set *Set[T]) ToString() string {
 	str := "LinkedHashSet\n"
 	items := []string{}
-	it := set.Iterator()
-	for it.Next() {
-		items = append(items, fmt.Sprintf("%v", it.Value()))
+
+	for it := set.First(set.comparator); !it.IsEnd(); it.Next() {
+		value, _ := it.Get()
+		items = append(items, fmt.Sprintf("%v", value))
 	}
+
 	str += strings.Join(items, ", ")
+
 	return str
 }
 
