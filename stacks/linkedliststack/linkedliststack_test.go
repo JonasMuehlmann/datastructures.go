@@ -6,346 +6,406 @@
 package linkedliststack
 
 import (
-	"encoding/json"
-	"fmt"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/tests"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestStackPush(t *testing.T) {
-	stack := New()
-	if actualValue := stack.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	stack.Push(1)
-	stack.Push(2)
-	stack.Push(3)
+// func TestLinkedListStackContains(t *testing.T) {
+// 	tests := []struct {
+// 		name         string
+// 		originalList *Stack[string]
+// 		value        string
+// 		found        bool
+// 	}{
+// 		{
+// 			name:         "empty list",
+// 			originalList: New[string](),
+// 			value:        "foo",
+// 			found:        false,
+// 		},
+// 		{
+// 			name:         "3 items, not found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "golang",
+// 			found:        false,
+// 		},
+// 		{
+// 			name:         "3 items, found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "bar",
+// 			found:        true,
+// 		},
+// 	}
 
-	if actualValue := stack.GetValues(); actualValue[0].(int) != 3 || actualValue[1].(int) != 2 || actualValue[2].(int) != 1 {
-		t.Errorf("Got %v expected %v", actualValue, "[3,2,1]")
+// 	for _, test := range tests {
+// 		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
+
+// 		assert.Equalf(t, test.found, found, test.name)
+// 	}
+// }
+
+// func TestLinkedListStackIndexOf(t *testing.T) {
+// 	tests := []struct {
+// 		name         string
+// 		originalList *Stack[string]
+// 		value        string
+// 		position     int
+// 	}{
+// 		{
+// 			name:         "empty list",
+// 			originalList: New[string](),
+// 			value:        "foo",
+// 			position:     -1,
+// 		},
+// 		{
+// 			name:         "3 items, not found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "golang",
+// 			position:     -1,
+// 		},
+// 		{
+// 			name:         "3 items, found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "bar",
+// 			position:     1,
+// 		},
+// 	}
+
+// 	for _, test := range tests {
+// 		position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+
+// 		assert.Equalf(t, test.position, position, test.name)
+// 	}
+// }
+
+func TestLinkedListStackGetValues(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
 	}
-	if actualValue := stack.IsEmpty(); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := stack.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := stack.Peek(); actualValue != 3 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 3)
+
+	for _, test := range tests {
+		values := test.originalList.GetValues()
+
+		assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
 	}
 }
 
-func TestStackPeek(t *testing.T) {
-	stack := New()
-	if actualValue, ok := stack.Peek(); actualValue != nil || ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
+func TestLinkedListStackIsEmpty(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+		isEmpty      bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			isEmpty:      true,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			isEmpty:      false,
+		},
 	}
-	stack.Push(1)
-	stack.Push(2)
-	stack.Push(3)
-	if actualValue, ok := stack.Peek(); actualValue != 3 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 3)
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+
+		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
 	}
 }
 
-func TestStackPop(t *testing.T) {
-	stack := New()
-	stack.Push(1)
-	stack.Push(2)
-	stack.Push(3)
-	stack.Pop()
-	if actualValue, ok := stack.Peek(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
+func TestLinkedListStackClear(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
 	}
-	if actualValue, ok := stack.Pop(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	if actualValue, ok := stack.Pop(); actualValue != 1 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 1)
-	}
-	if actualValue, ok := stack.Pop(); actualValue != nil || ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	if actualValue := stack.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := stack.GetValues(); len(actualValue) != 0 {
-		t.Errorf("Got %v expected %v", actualValue, "[]")
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+		assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
+
+		test.originalList.Clear()
+
+		isEmpty = test.originalList.IsEmpty()
+		assert.Truef(t, isEmpty, test.name)
 	}
 }
 
-func TestStackIterator(t *testing.T) {
-	stack := New()
-	stack.Push("a")
-	stack.Push("b")
-	stack.Push("c")
+func TestLinkedListStackPush(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+		valueToAdd   string
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo"},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			valueToAdd:   "bar",
+			newItems:     []string{"foo", "bar"},
+		},
 
-	// Iterator
-	it := stack.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		index := it.Index()
-		value := it.Value()
-		switch index {
-		case 0:
-			if actualValue, expectedValue := value, "c"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 1:
-			if actualValue, expectedValue := value, "b"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := value, "a"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := index, count-1; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string]("foo", "bar", "baz"),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo", "bar", "baz", "foo"},
+		},
 	}
 
-	stack.Clear()
-	it = stack.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty stack")
+	for _, test := range tests {
+		test.originalList.Push(test.valueToAdd)
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestStackIteratorBegin(t *testing.T) {
-	stack := New()
-	it := stack.Iterator()
-	it.Begin()
-	stack.Push("a")
-	stack.Push("b")
-	stack.Push("c")
-	for it.Next() {
-	}
-	it.Begin()
-	it.Next()
-	if index, value := it.Index(), it.Value(); index != 0 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "c")
-	}
-}
+func TestLinkedListStackPop(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			newItems:     []string{},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			newItems:     []string{},
+		},
 
-func TestStackIteratorFirst(t *testing.T) {
-	stack := New()
-	it := stack.Iterator()
-	if actualValue, expectedValue := it.First(), false; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			newItems:     []string{"foo", "bar", "baz"},
+		},
 	}
-	stack.Push("a")
-	stack.Push("b")
-	stack.Push("c")
-	if actualValue, expectedValue := it.First(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if index, value := it.Index(), it.Value(); index != 0 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "c")
+
+	for _, test := range tests {
+		test.originalList.Pop()
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestStackIteratorNextTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index int, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
+func TestLinkedListStackPeek(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+		found        bool
+		value        string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			found:        false,
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			found:        true,
+			value:        "foo",
+		},
+
+		{
+			name:         "list with 4 items",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			found:        true,
+			value:        "foo",
+		},
 	}
 
-	// NextTo (empty)
-	{
-		stack := New()
-		it := stack.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty stack")
-		}
-	}
+	for _, test := range tests {
+		value, found := test.originalList.Peek()
 
-	// NextTo (not found)
-	{
-		stack := New()
-		stack.Push("xx")
-		stack.Push("yy")
-		it := stack.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty stack")
-		}
-	}
+		assert.Equalf(t, test.found, found, test.name)
 
-	// NextTo (found)
-	{
-		stack := New()
-		stack.Push("aa")
-		stack.Push("bb")
-		stack.Push("cc")
-		it := stack.Iterator()
-		it.Begin()
-		if !it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty stack")
+		if test.found {
+			assert.Equalf(t, test.value, value, test.name)
 		}
-		if index, value := it.Index(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Next() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Index(), it.Value(); index != 2 || value.(string) != "aa" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "aa")
-		}
-		if it.Next() {
-			t.Errorf("Should not go past last element")
-		}
+
 	}
 }
 
-func TestStackSerialization(t *testing.T) {
-	stack := New()
-	stack.Push("a")
-	stack.Push("b")
-	stack.Push("c")
-
-	var err error
-	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", stack.GetValues()...), "cba"; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if actualValue, expectedValue := stack.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
+func TestNewFromSlice(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
 	}
 
-	assert()
+	for _, test := range tests {
+		newList := NewFromSlice[string](test.originalList.GetValues())
 
-	bytes, err := stack.ToJSON()
-	assert()
-
-	err = stack.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", stack})
-	if err != nil {
-		t.Errorf("Got error %v", err)
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
 
-	err = json.Unmarshal([]byte(`[1,2,3]`), &stack)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
 }
 
-func TestStackString(t *testing.T) {
-	c := New()
-	c.Push(1)
-	if !strings.HasPrefix(c.ToString(), "LinkedListStack") {
-		t.Errorf("ToString should start with container name")
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Stack[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
 	}
+
+	for _, test := range tests {
+		it := test.originalList.First()
+		newList := NewFromIterator[string](it)
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+	}
+
 }
 
-func benchmarkPush(b *testing.B, stack *Stack, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			stack.Push(n)
-		}
+// NOTE: Missing test case: unordered iterator, which prevents preallocation
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name              string
+		originalList      *Stack[string]
+		newList           *Stack[string]
+		iteratorInitFirst func(*Stack[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitEnd   func(*Stack[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+	}{
+		{
+			name:              "empty list",
+			originalList:      New[string](),
+			newList:           New[string](),
+			iteratorInitFirst: (*Stack[string]).First,
+			iteratorInitEnd:   (*Stack[string]).End,
+		},
+		{
+			name:              "single item",
+			originalList:      New[string]("foo"),
+			iteratorInitFirst: (*Stack[string]).First,
+			iteratorInitEnd:   (*Stack[string]).End,
+		},
+		{
+			name:              "3 items",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string]("foo", "bar", "baz"),
+			iteratorInitFirst: (*Stack[string]).First,
+			iteratorInitEnd:   (*Stack[string]).End,
+		},
+		{
+			name:              "3 items, end and first swapped",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string](),
+			iteratorInitFirst: (*Stack[string]).End,
+			iteratorInitEnd:   (*Stack[string]).First,
+		},
 	}
+
+	for _, test := range tests {
+		first := test.originalList.First()
+		end := test.originalList.End()
+		newList := NewFromIterators[string](first, end)
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+	}
+
 }
 
-func benchmarkPop(b *testing.B, stack *Stack, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			stack.Pop()
-		}
-	}
-}
-
-func BenchmarkLinkedListStackPop100(b *testing.B) {
+func BenchmarkLinkedListStackPop(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.Push("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Pop()
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, m.Size(), name)
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m = m[:len(m)-1]
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), name)
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkPop(b, stack, size)
-}
 
-func BenchmarkLinkedListStackPop1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkPop(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPop10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPop(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPop100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPop(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPush100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	stack := New()
-	b.StartTimer()
-	benchmarkPush(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPush1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPush10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, stack, size)
-}
-
-func BenchmarkLinkedListStackPush100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	stack := New()
-	for n := 0; n < size; n++ {
-		stack.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, stack, size)
 }
