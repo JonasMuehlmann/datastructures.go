@@ -24,7 +24,7 @@ type Set[T any] interface {
 	MakeUnionWith(other Set[T]) Set[T]
 	MakeDifferenceWith(other Set[T]) Set[T]
 
-	ds.Container
+	ds.Container[T]
 	// IsEmpty() bool
 	// Size() int
 	// Clear()
