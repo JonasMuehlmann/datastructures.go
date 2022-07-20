@@ -8,7 +8,7 @@ package singlylinkedlist
 import "github.com/JonasMuehlmann/datastructures.go/ds"
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompForRandCollIterator[int, *element[any]] = (*Iterator[any])(nil)
+var _ ds.ReadWriteOrdCompForRandCollIterator[int, any] = (*Iterator[any])(nil)
 
 // Iterator holding the iterator's state
 type Iterator[T any] struct {
@@ -29,31 +29,25 @@ func (list *List[T]) NewIterator(l *List[T], position int) *Iterator[T] {
 
 // IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsValid() bool {
-	return it.list.withinRange(it.index)
+	return it.list.size > 0 && it.list.withinRange(it.index) && it.element != nil
 }
 
 // Get implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Get() (value *element[T], found bool) {
-	if it.list.size == 0 || !it.IsValid() {
+func (it *Iterator[T]) Get() (value T, found bool) {
+	if !it.IsValid() {
 		return
 	}
 
-	value = it.element
-
-	if value != nil {
-		found = true
-	}
-
-	return
+	return it.element.value, true
 }
 
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Set(value *element[T]) bool {
-	if it.list.size == 0 || !it.IsValid() {
+func (it *Iterator[T]) Set(value T) bool {
+	if !it.IsValid() {
 		return false
 	}
 
-	it.element = value
+	it.element.value = value
 
 	return true
 }
@@ -103,7 +97,7 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 func (it *Iterator[T]) Next() {
 	it.index++
 
-	if it.index >= it.list.size || it.list.size == 0 {
+	if !it.IsValid() {
 		it.element = nil
 
 		return
@@ -114,16 +108,19 @@ func (it *Iterator[T]) Next() {
 
 // NextN implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) NextN(n int) {
-	if it.index+n > it.list.size || n < 0 {
-		it.index += n
-		it.element = nil
-
+	if n < 0 {
 		return
 	}
 
 	it.index += n
 
-	if it.index+n == it.list.size-1 {
+	if !it.IsValid() {
+		it.element = nil
+
+		return
+	}
+
+	if it.IsLast() {
 		it.element = it.list.last
 
 		return
@@ -136,7 +133,7 @@ func (it *Iterator[T]) NextN(n int) {
 
 // MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) MoveTo(n int) bool {
-	if it.list.size == 0 || n < 0 {
+	if n < 0 {
 		return false
 	}
 

@@ -408,22 +408,22 @@ func (list *List[T]) withinRange(index int) bool {
 
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
-func (list *List[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, *element[T]] {
+func (list *List[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewIterator(list, -1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
-func (list *List[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, *element[T]] {
+func (list *List[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewIterator(list, list.size)
 }
 
 // First returns an initialized iterator, which points to it's first element.
-func (list *List[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, *element[T]] {
+func (list *List[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewIterator(list, 0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
-func (list *List[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, *element[T]] {
+func (list *List[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
 	return list.NewIterator(list, list.size-1)
 }

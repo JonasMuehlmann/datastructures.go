@@ -18,7 +18,7 @@ func TestDoublyLinkedlistIteratorIsValid(t *testing.T) {
 		list         *List[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -78,7 +78,7 @@ func TestDoublyLinkedlistIteratorIndex(t *testing.T) {
 		name         string
 		list         *List[int]
 		position     int
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -132,7 +132,7 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -205,7 +205,7 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -290,7 +290,7 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -361,12 +361,12 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			}
 
 			isValidBefore := it.IsValid()
-			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name+" valid before")
 
 			it.Previous()
 
 			isValidAfter := it.IsValid()
-			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name+" valid after")
 		})
 	}
 }
@@ -379,7 +379,7 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -507,11 +507,11 @@ func TestDoublyLinkedlistIteratorGet(t *testing.T) {
 				it.MoveTo(test.position)
 			}
 
-			element, found := it.Get()
+			value, found := it.Get()
 
 			assert.Equalf(t, test.found, found, test.name)
 			if test.found {
-				assert.Equalf(t, test.value, element.value, test.name)
+				assert.Equalf(t, test.value, value, test.name)
 			}
 		})
 	}
@@ -578,11 +578,11 @@ func TestDoublyLinkedlistIteratorGetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 
-			element, found := it.GetAt(test.position)
+			value, found := it.GetAt(test.position)
 
 			assert.Equalf(t, test.found, found, test.name)
 			if test.found {
-				assert.Equalf(t, test.value, element.value, test.name)
+				assert.Equalf(t, test.value, value, test.name)
 			}
 		})
 	}
@@ -616,16 +616,7 @@ func TestDoublyLinkedlistIteratorSet(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
-			itCopy := test.list.First()
-
-			if test.position != NoMoveMagicPosition {
-				it.MoveTo(test.position)
-				itCopy.MoveTo(test.position + 1)
-			}
-
-			next, _ := itCopy.Get()
-
-			successfull := it.Set(&element[int]{value: test.value, next: next})
+			successfull := it.Set(test.value)
 
 			assert.Equalf(t, test.successfull, successfull, test.name)
 		})
@@ -693,11 +684,11 @@ func TestDoublyLinkedlistIteratorSetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 
-			element, found := it.GetAt(test.position)
+			value, found := it.GetAt(test.position)
 
 			assert.Equalf(t, test.found, found, test.name)
 			if test.found {
-				assert.Equalf(t, test.value, element.value, test.name)
+				assert.Equalf(t, test.value, value, test.name)
 			}
 		})
 	}
@@ -879,29 +870,29 @@ func TestDoublyLinkedlistIteratorIsEqual(t *testing.T) {
 func TestDoublylInkedlistIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]) bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Last",
 			iteratorInit:  (*List[int]).Last,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsLast,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*List[int]).First,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsFirst,
 		},
 		{
 			name:          "Begin",
 			iteratorInit:  (*List[int]).Begin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsBegin,
 		},
 
 		{
 			name:          "End",
 			iteratorInit:  (*List[int]).End,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsEnd,
 		},
 	}
 
@@ -918,7 +909,7 @@ func TestDoublyLinkedlistIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *List[int]
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, *element[int]]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 		size         int
 	}{
 		{
