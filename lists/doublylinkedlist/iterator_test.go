@@ -28,6 +28,13 @@ func TestDoublyLinkedlistIteratorIsValid(t *testing.T) {
 			iteratorInit: (*List[int]).First,
 		},
 		{
+			name:         "One element, begin",
+			list:         New[int](1),
+			position:     NoMoveMagicPosition,
+			isValid:      false,
+			iteratorInit: (*List[int]).Begin,
+		},
+		{
 			name:         "One element, end",
 			list:         New[int](1),
 			position:     NoMoveMagicPosition,
@@ -87,6 +94,12 @@ func TestDoublyLinkedlistIteratorIndex(t *testing.T) {
 			iteratorInit: (*List[int]).First,
 		},
 		{
+			name:         "One element, begin",
+			list:         New[int](1),
+			position:     -1,
+			iteratorInit: (*List[int]).Begin,
+		},
+		{
 			name:         "One element, end",
 			list:         New[int](1),
 			position:     1,
@@ -105,7 +118,7 @@ func TestDoublyLinkedlistIteratorIndex(t *testing.T) {
 			iteratorInit: (*List[int]).Last,
 		},
 		{
-			name:         "3 elements, middle",
+			name:         "3 elements, first",
 			list:         New[int](1, 2, 3),
 			position:     0,
 			iteratorInit: (*List[int]).First,
@@ -141,6 +154,14 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 			isValidBefore: false,
 			isValidAfter:  false,
 			iteratorInit:  (*List[int]).First,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*List[int]).Begin,
 		},
 		{
 			name:          "One element, end",
@@ -477,24 +498,35 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 
 func TestDoublyLinkedlistIteratorGet(t *testing.T) {
 	tests := []struct {
-		name     string
-		list     *List[int]
-		position int
-		value    int
-		found    bool
+		name         string
+		list         *List[int]
+		position     int
+		value        int
+		found        bool
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
-			name:     "Empty",
-			list:     New[int](),
-			position: NoMoveMagicPosition,
-			found:    false,
+			name:         "Empty",
+			list:         New[int](),
+			position:     NoMoveMagicPosition,
+			found:        false,
+			iteratorInit: (*List[int]).First,
 		},
 		{
-			name:     "One element, first",
-			list:     New[int](1),
-			position: 0,
-			value:    1,
-			found:    true,
+			name:         "One element, first",
+			list:         New[int](1),
+			position:     0,
+			value:        1,
+			found:        true,
+			iteratorInit: (*List[int]).First,
+		},
+		{
+			name:         "Three elements, begin",
+			list:         New[int](1, 2, 3),
+			position:     1,
+			value:        2,
+			found:        true,
+			iteratorInit: (*List[int]).Begin,
 		},
 	}
 

@@ -141,6 +141,18 @@ func (it *Iterator[T]) Next() {
 		return
 	}
 
+	// We are now entering the valid bound from beyond the left
+	if it.IsFirst() {
+		it.element = it.list.first
+
+		return
+	}
+
+	// We are still beyond the left bound
+	if it.index < 0 {
+		return
+	}
+
 	it.element = it.element.next
 }
 
@@ -164,6 +176,14 @@ func (it *Iterator[T]) NextN(n int) {
 		return
 	}
 
+	// We are moving from beyond the left bound into the valid bound
+	// Start at first prevent null pointer dereferences
+	if it.index-n < 0 {
+		n -= n - it.index
+		it.element = it.list.first
+	}
+
+	// We should be guaranteed to be in bounds here
 	for i := 0; i < n; i++ {
 		it.element = it.element.next
 	}
