@@ -6,341 +6,554 @@
 package hashset
 
 import (
-	"encoding/json"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/tests"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/maps"
 )
 
-func TestSetNew(t *testing.T) {
-	set := New(2, 1)
+func TestRemove(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+		newSet      *Set[string]
+		toRemove    string
+	}{
 
-	if actualValue := set.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+			newSet:      New[string](),
+			toRemove:    "foo",
+		},
+		{
+			name:        "single item",
+			toRemove:    "foo",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			newSet:      New[string](),
+		},
+		{
+			name:        "single item, target does not exist",
+			toRemove:    "bar",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			newSet:      NewFromSlice[string]([]string{"foo"}),
+		},
+		{
+			name:        "3 items",
+			toRemove:    "bar",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			newSet:      NewFromSlice[string]([]string{"foo", "baz"}),
+		},
 	}
-	if actualValue := set.Contains(1); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := set.Contains(2); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := set.Contains(3); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-}
 
-func TestSetAdd(t *testing.T) {
-	set := New()
-	set.Add()
-	set.Add(1)
-	set.Add(2)
-	set.Add(2, 3)
-	set.Add()
-	if actualValue := set.IsEmpty(); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := set.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-}
+	for _, test := range tests {
+		test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
 
-func TestSetContains(t *testing.T) {
-	set := New()
-	set.Add(3, 1, 2)
-	set.Add(2, 3)
-	set.Add()
-	if actualValue := set.Contains(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := set.Contains(1); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := set.Contains(1, 2, 3); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := set.Contains(1, 2, 3, 4); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
+		assert.Equalf(t, test.originalSet, test.newSet, test.name)
 	}
 }
 
-func TestSetRemove(t *testing.T) {
-	set := New()
-	set.Add(3, 1, 2)
-	set.Remove()
-	if actualValue := set.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	set.Remove(1)
-	if actualValue := set.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	set.Remove(3)
-	set.Remove(3)
-	set.Remove()
-	set.Remove(2)
-	if actualValue := set.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
-}
+func TestAdd(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+		newSet      *Set[string]
+		keyToAdd    string
+		valueToAdd  int
+	}{
 
-func TestSetSerialization(t *testing.T) {
-	set := New()
-	set.Add("a", "b", "c")
-
-	var err error
-	assert := func() {
-		if actualValue, expectedValue := set.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if actualValue := set.Contains("a", "b", "c"); actualValue != true {
-			t.Errorf("Got %v expected %v", actualValue, true)
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+			newSet:      NewFromSlice[string]([]string{"foo"}),
+			keyToAdd:    "foo",
+		},
+		{
+			name:        "single item",
+			keyToAdd:    "foo",
+			newSet:      NewFromSlice[string]([]string{"foo"}),
+			originalSet: New[string](),
+		},
+		{
+			name:        "single item, overwrite",
+			keyToAdd:    "foo",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			newSet:      NewFromSlice[string]([]string{"foo"}),
+		},
+		{
+			name:        "3 items",
+			keyToAdd:    "bar",
+			originalSet: NewFromSlice[string]([]string{"foo", "baz"}),
+			newSet:      NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
 	}
 
-	assert()
+	for _, test := range tests {
+		test.originalSet.Add(test.keyToAdd)
 
-	bytes, err := set.ToJSON()
-	assert()
-
-	err = set.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", set})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`[1,2,3]`), &set)
-	if err != nil {
-		t.Errorf("Got error %v", err)
+		assert.Equalf(t, test.originalSet, test.newSet, test.name)
 	}
 }
 
-func TestSetString(t *testing.T) {
-	c := New()
-	c.Add(1)
-	if !strings.HasPrefix(c.ToString(), "HashSet") {
-		t.Errorf("ToString should start with container name")
+func TestGetValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+		values      []string
+	}{
+
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+			values:      []string{},
+		},
+		{
+			name:        "single item",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			values:      []string{"foo"},
+		},
+		{
+			name:        "3 items",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			values:      []string{"foo", "bar", "baz"},
+		},
+	}
+
+	for _, test := range tests {
+		values := test.originalSet.GetValues()
+
+		assert.ElementsMatchf(t, test.values, values, test.name)
 	}
 }
 
-func TestSetIntersection(t *testing.T) {
-	set := New()
-	another := New()
+func TestContains(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+		value       string
+		doesContain bool
+	}{
 
-	intersection := set.Intersection(another)
-	if actualValue, expectedValue := intersection.Size(), 0; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+			value:       "foo",
+			doesContain: false,
+		},
+		{
+			name:        "single item",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			value:       "foo",
+			doesContain: true,
+		},
+		{
+			name:        "3 items",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			value:       "foo",
+			doesContain: true,
+		},
 	}
 
-	set.Add("a", "b", "c", "d")
-	another.Add("c", "d", "e", "f")
-
-	intersection = set.Intersection(another)
-
-	if actualValue, expectedValue := intersection.Size(), 2; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := intersection.Contains("c", "d"); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-}
-
-func TestSetUnion(t *testing.T) {
-	set := New()
-	another := New()
-
-	union := set.Union(another)
-	if actualValue, expectedValue := union.Size(), 0; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-
-	set.Add("a", "b", "c", "d")
-	another.Add("c", "d", "e", "f")
-
-	union = set.Union(another)
-
-	if actualValue, expectedValue := union.Size(), 6; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := union.Contains("a", "b", "c", "d", "e", "f"); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
+	for _, test := range tests {
+		assert.Equalf(t, test.doesContain, test.originalSet.Contains(test.value), test.name)
 	}
 }
 
-func TestSetDifference(t *testing.T) {
-	set := New()
-	another := New()
+func TestIsEmpty(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+		isEmpty     bool
+	}{
 
-	difference := set.Difference(another)
-	if actualValue, expectedValue := difference.Size(), 0; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+			isEmpty:     true,
+		},
+		{
+			name:        "single item",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+			isEmpty:     false,
+		},
+		{
+			name:        "3 items",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			isEmpty:     false,
+		},
 	}
 
-	set.Add("a", "b", "c", "d")
-	another.Add("c", "d", "e", "f")
+	for _, test := range tests {
+		isEmpty := test.originalSet.IsEmpty()
 
-	difference = set.Difference(another)
-
-	if actualValue, expectedValue := difference.Size(), 2; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := difference.Contains("a", "b"); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-}
-
-func benchmarkContains(b *testing.B, set *Set, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			set.Contains(n)
-		}
-	}
-}
-
-func benchmarkAdd(b *testing.B, set *Set, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			set.Add(n)
-		}
+		assert.Equal(t, test.isEmpty, isEmpty, test.name)
 	}
 }
 
-func benchmarkRemove(b *testing.B, set *Set, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			set.Remove(n)
-		}
+func TestClear(t *testing.T) {
+	tests := []struct {
+		name          string
+		originalSet   *Set[string]
+		isEmptyBefore bool
+		isEmptyAfter  bool
+	}{
+
+		{
+			name:          "empty list",
+			originalSet:   New[string](),
+			isEmptyBefore: true,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "single item",
+			originalSet:   NewFromSlice[string]([]string{"foo"}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "3 items",
+			originalSet:   NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+	}
+
+	for _, test := range tests {
+		isEmptyBefore := test.originalSet.IsEmpty()
+		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+
+		test.originalSet.Clear()
+
+		isEmptAfter := test.originalSet.IsEmpty()
+		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
 	}
 }
 
-func BenchmarkHashSetContains100(b *testing.B) {
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+	}{
+
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+		},
+		{
+			name:        "single item",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+		},
+		{
+			name:        "3 items",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+	}
+
+	for _, test := range tests {
+		it := test.originalSet.OrderedFirst(utils.BasicComparator[string])
+
+		newSet := NewFromIterator[string](it)
+
+		assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+	}
+
+}
+
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalSet *Set[string]
+	}{
+		{
+			name:        "empty list",
+			originalSet: New[string](),
+		},
+		{
+			name:        "single item",
+			originalSet: NewFromSlice[string]([]string{"foo"}),
+		},
+		{
+			name:        "3 items",
+			originalSet: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+	}
+
+	for _, test := range tests {
+		first := test.originalSet.OrderedFirst(utils.BasicComparator[string])
+		end := test.originalSet.OrderedEnd(utils.BasicComparator[string])
+
+		newSet := NewFromIterators[string](first, end)
+
+		assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+	}
+}
+
+func TestMakeIntersectionWith(t *testing.T) {
+	tests := []struct {
+		name         string
+		a            *Set[string]
+		b            *Set[string]
+		intersection *Set[string]
+	}{
+		{
+			name:         "first empty",
+			a:            New[string](),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string](),
+		},
+		{
+			name:         "Second empty",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string](),
+			intersection: New[string](),
+		},
+		{
+			name:         "equal",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "first shorter",
+			a:            New[string]("bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string]("bar", "baz"),
+		},
+		{
+			name:         "second shorter",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("bar", "baz"),
+			intersection: New[string]("bar", "baz"),
+		},
+		{
+			name:         "No overlap",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("1", "2"),
+			intersection: New[string](),
+		},
+	}
+
+	for _, test := range tests {
+		newSet := test.a.MakeIntersectionWith(test.b)
+
+		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+	}
+}
+
+func TestMakeUnionWith(t *testing.T) {
+	tests := []struct {
+		name         string
+		a            *Set[string]
+		b            *Set[string]
+		intersection *Set[string]
+	}{
+		{
+			name:         "first empty",
+			a:            New[string](),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "Second empty",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string](),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "equal",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "first shorter",
+			a:            New[string]("bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "second shorter",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("bar", "baz"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "No overlap",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("1", "2"),
+			intersection: New[string]("foo", "bar", "baz", "1", "2"),
+		},
+	}
+
+	for _, test := range tests {
+		newSet := test.a.MakeUnionWith(test.b)
+
+		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+	}
+}
+
+func TestMakeDifferenceWith(t *testing.T) {
+	tests := []struct {
+		name         string
+		a            *Set[string]
+		b            *Set[string]
+		intersection *Set[string]
+	}{
+		{
+			name:         "first empty",
+			a:            New[string](),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string](),
+		},
+		{
+			name:         "Second empty",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string](),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+		{
+			name:         "equal",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string](),
+		},
+		{
+			name:         "first shorter",
+			a:            New[string]("bar", "baz"),
+			b:            New[string]("foo", "bar", "baz"),
+			intersection: New[string](),
+		},
+		{
+			name:         "second shorter",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("bar", "baz"),
+			intersection: New[string]("foo"),
+		},
+		{
+			name:         "No overlap",
+			a:            New[string]("foo", "bar", "baz"),
+			b:            New[string]("1", "2"),
+			intersection: New[string]("foo", "bar", "baz"),
+		},
+	}
+
+	for _, test := range tests {
+		newSet := test.a.MakeDifferenceWith(test.b)
+
+		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+	}
+}
+
+// TODO: Compare lists after operations, to require correctnes
+func BenchmarkHashSetRemove(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int]()
+				for i := 0; i < n; i++ {
+					m.Add(i)
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Remove(utils.BasicComparator[int], i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make(map[int]struct{})
+				for i := 0; i < n; i++ {
+					m[i] = struct{}{}
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					delete(m, i)
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkContains(b, set, size)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkHashSetContains1000(b *testing.B) {
+func BenchmarkHashSetAdd(b *testing.B) {
 	b.StopTimer()
-	size := 1000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int]()
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Add(i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make(map[int]struct{})
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m[i] = struct{}{}
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkContains(b, set, size)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkHashSetContains10000(b *testing.B) {
+func BenchmarkHashSetGetValues(b *testing.B) {
 	b.StopTimer()
-	size := 10000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int]()
+				for i := 0; i < n; i++ {
+					m.Add(i)
+				}
+				b.StartTimer()
+				_ = m.GetValues()
+				b.StopTimer()
+			},
+		},
+		{
+			name: "golang.org_x_exp",
+			f: func(n int, name string) {
+				m := New[int]()
+				for i := 0; i < n; i++ {
+					m.Add(i)
+				}
+				b.StartTimer()
+				_ = maps.Keys(m.items)
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkContains(b, set, size)
-}
 
-func BenchmarkHashSetContains100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkContains(b, set, size)
-}
-
-func BenchmarkHashSetAdd100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	set := New()
-	b.StartTimer()
-	benchmarkAdd(b, set, size)
-}
-
-func BenchmarkHashSetAdd1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkAdd(b, set, size)
-}
-
-func BenchmarkHashSetAdd10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkAdd(b, set, size)
-}
-
-func BenchmarkHashSetAdd100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkAdd(b, set, size)
-}
-
-func BenchmarkHashSetRemove100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkRemove(b, set, size)
-}
-
-func BenchmarkHashSetRemove1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkRemove(b, set, size)
-}
-
-func BenchmarkHashSetRemove10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkRemove(b, set, size)
-}
-
-func BenchmarkHashSetRemove100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	set := New()
-	for n := 0; n < size; n++ {
-		set.Add(n)
-	}
-	b.StartTimer()
-	benchmarkRemove(b, set, size)
 }
