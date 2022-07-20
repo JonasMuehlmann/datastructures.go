@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/stacks"
 )
@@ -27,13 +28,44 @@ type Stack[T any] struct {
 }
 
 // New nnstantiates a new empty stack
-func New[T any]() *Stack[T] {
-	return &Stack[T]{list: &singlylinkedlist.List[T]{}}
+func New[T any](values ...T) *Stack[T] {
+	return &Stack[T]{list: singlylinkedlist.New[T](values...)}
+}
+
+// NewFromSlice instantiates a new stack containing the provided slice.
+func NewFromSlice[T any](slice []T) *Stack[T] {
+	list := &Stack[T]{list: singlylinkedlist.NewFromSlice(slice)}
+
+	return list
+}
+
+// NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Stack[T] {
+	list := &Stack[T]{list: singlylinkedlist.New[T]()}
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		list.Push(newItem)
+	}
+
+	return list
+}
+
+// NewFromIterators instantiates a new stack containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Stack[T] {
+	list := &Stack[T]{list: singlylinkedlist.New[T]()}
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		list.Push(newItem)
+	}
+
+	return list
 }
 
 // Push adds a value onto the top of the stack
 func (stack *Stack[T]) Push(value T) {
-	stack.list.Prepend(value)
+	stack.list.PushFront(value)
 }
 
 // Pop removes top element on stack and returns it, or nil if stack is empty.
