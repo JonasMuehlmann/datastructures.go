@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
 	"github.com/JonasMuehlmann/datastructures.go/stacks"
 )
@@ -27,13 +28,64 @@ type Stack[T any] struct {
 }
 
 // New instantiates a new empty stack
-func New[T any]() *Stack[T] {
-	return &Stack[T]{list: arraylist.New[T]()}
+func New[T any](values ...T) *Stack[T] {
+	return &Stack[T]{list: arraylist.New[T](values...)}
+}
+
+// NewFromSlice instantiates a new stack containing the provided slice.
+func NewFromSlice[T any](slice []T) *Stack[T] {
+	list := &Stack[T]{list: arraylist.NewFromSlice(slice)}
+	return list
+}
+
+// NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Stack[T] {
+	length := 0
+	sizedIterator, ok := it.(ds.SizedIterator)
+	if ok {
+		length = sizedIterator.Size()
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		elements = append(elements, newItem)
+	}
+
+	list := &Stack[T]{list: arraylist.NewFromSlice(elements)}
+
+	return list
+}
+
+// NewFromIterators instantiates a new stack containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Stack[T] {
+	length := 0
+	sizedFirst, ok := first.(ds.OrderedIterator)
+	sizedLast, ok2 := end.(ds.OrderedIterator)
+	if ok && ok2 {
+		length = -sizedFirst.DistanceTo(sizedLast)
+		if length < 0 {
+			length = 0
+		}
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		elements = append(elements, newItem)
+	}
+
+	list := &Stack[T]{list: arraylist.NewFromSlice(elements)}
+
+	return list
 }
 
 // Push adds a value onto the top of the stack
 func (stack *Stack[T]) Push(value T) {
-	stack.list.Add(value)
+	stack.list.PushBack(value)
 }
 
 // Pop removes top element on stack and returns it, or nil if stack is empty.
