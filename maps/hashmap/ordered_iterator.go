@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteUnordCompBidRandCollIterator[string, any] = (*OrderedIterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*OrderedIterator[string, any])(nil)
 
 type OrderedIterator[TKey comparable, TValue any] struct {
 	m          *Map[TKey, TValue]
@@ -32,32 +32,32 @@ func (m *Map[TKey, TValue]) NewOrderedIterator(m_ *Map[TKey, TValue], position i
 	}
 }
 
-// IsBegin implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsBegin() bool {
 	return it.index == -1
 }
 
-// IsEnd implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsEnd() bool {
 	return len(it.keys) == 0 || it.index == len(it.keys)
 }
 
-// IsFirst implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsFirst() bool {
 	return it.index == 0
 }
 
-// IsLast implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsLast() bool {
 	return it.index == len(it.keys)-1
 }
 
-// IsValid implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsValid() bool {
 	return len(it.keys) > 0 && it.index >= 0 && it.index < len(it.keys)
 }
 
-// IsEqual implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -67,7 +67,7 @@ func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bo
 	return it.DistanceTo(otherThis) == 0
 }
 
-// DistanceTo implements ds.ReadWriteUnordCompBidRandCollIterator
+// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -77,7 +77,7 @@ func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) in
 	return it.index - otherThis.index
 }
 
-// IsAfter implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -87,7 +87,7 @@ func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool 
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteUnordCompBidRandCollIterator
+// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -97,12 +97,12 @@ func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool
 	return it.DistanceTo(otherThis) < 0
 }
 
-// Size implements ds.ReadWriteUnordCompBidRandCollIterator
+// Size implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Size() int {
 	return len(it.keys)
 }
 
-// Index implements ds.ReadWriteUnordCompBidRandCollIterator
+// Index implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Index() (key TKey, found bool) {
 	if !it.IsValid() {
 		found = false
@@ -115,32 +115,32 @@ func (it *OrderedIterator[TKey, TValue]) Index() (key TKey, found bool) {
 	return
 }
 
-// Next implements ds.ReadWriteUnordCompBidRandCollIterator
+// Next implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Next() {
 	it.index++
 }
 
-// NextN implements ds.ReadWriteUnordCompBidRandCollIterator
+// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) NextN(i int) {
 	it.index += i
 }
 
-// Previous implements ds.ReadWriteUnordCompBidRandCollIterator
+// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Previous() {
 	it.index--
 }
 
-// PreviousN implements ds.ReadWriteUnordCompBidRandCollIterator
+// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) PreviousN(n int) {
 	it.index -= n
 }
 
-// MoveBy implements ds.ReadWriteUnordCompBidRandCollIterator
+// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) MoveBy(n int) {
 	it.index += n
 }
 
-// MoveTo implements ds.ReadWriteUnordCompBidRandCollIterator
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) bool {
 	for i, key := range it.keys {
 		if key == k {
@@ -152,7 +152,7 @@ func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) bool {
 	return false
 }
 
-// Get implements ds.ReadWriteUnordCompBidRandCollIterator
+// Get implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
 	if !it.IsValid() {
 		return
@@ -161,7 +161,7 @@ func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
 	return it.m.Get(it.keys[it.index])
 }
 
-// GetAt implements ds.ReadWriteUnordCompBidRandCollIterator
+// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) GetAt(i TKey) (value TValue, found bool) {
 	if !it.IsValid() {
 		return
@@ -170,7 +170,7 @@ func (it *OrderedIterator[TKey, TValue]) GetAt(i TKey) (value TValue, found bool
 	return it.m.Get(i)
 }
 
-// Set implements ds.ReadWriteUnordCompBidRandCollIterator
+// Set implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
 	if !it.IsValid() {
 		return false
@@ -181,7 +181,7 @@ func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
 	return true
 }
 
-// SetAt implements ds.ReadWriteUnordCompBidRandCollIterator
+// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *OrderedIterator[TKey, TValue]) SetAt(i TKey, value TValue) bool {
 	it.m.Put(i, value)
 

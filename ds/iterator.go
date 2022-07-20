@@ -6,7 +6,7 @@
 package ds
 
 // TODO: Implement Constructors for types, which take iterators to materialize
-// TODO: Can we use type parameters in interfaces to embed? This could simplify variant creation like BidirectionalIterator  vs UnorderedBidirectionalIterator
+// TODO: Can we use type parameters in interfaces to embed? This could simplify variant creation like BidirectionalIterator  vs OrderedBidirectionalIterator
 
 type BoundsSentinel int
 
