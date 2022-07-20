@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/sets"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -35,6 +36,44 @@ func New[T comparable](values ...T) *Set[T] {
 		set.Add(values...)
 	}
 	return set
+}
+
+// NewFromMap instantiates a new  set from the provided slice.
+func NewFromSlice[T comparable](slice []T) *Set[T] {
+	s := &Set[T]{items: make(map[T]struct{})}
+
+	for _, item := range slice {
+		s.items[item] = itemExists
+	}
+
+	return s
+}
+
+// NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
+func NewFromIterator[T comparable](it ds.ReadCompForIndexIterator[int, T]) *Set[T] {
+	s := &Set[T]{items: make(map[T]struct{})}
+
+	for ; !it.IsEnd(); it.Next() {
+		newValue, _ := it.Get()
+
+		s.items[newValue] = itemExists
+	}
+
+	return s
+}
+
+// NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T comparable](first ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
+	s := &Set[T]{items: make(map[T]struct{})}
+
+	for ; !first.IsEqual(end); first.Next() {
+		newValue, _ := first.Get()
+
+		s.items[newValue] = itemExists
+	}
+
+	return s
 }
 
 // Add adds the items (one or more) to the set.
