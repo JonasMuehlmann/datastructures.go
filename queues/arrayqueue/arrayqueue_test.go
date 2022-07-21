@@ -6,490 +6,406 @@
 package arrayqueue
 
 import (
-	"encoding/json"
-	"fmt"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/tests"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestQueueEnqueue(t *testing.T) {
-	queue := New()
-	if actualValue := queue.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	queue.Enqueue(1)
-	queue.Enqueue(2)
-	queue.Enqueue(3)
+// func TestArrayQueueContains(t *testing.T) {
+// 	tests := []struct {
+// 		name         string
+// 		originalList *Queue[string]
+// 		value        string
+// 		found        bool
+// 	}{
+// 		{
+// 			name:         "empty list",
+// 			originalList: New[string](),
+// 			value:        "foo",
+// 			found:        false,
+// 		},
+// 		{
+// 			name:         "3 items, not found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "golang",
+// 			found:        false,
+// 		},
+// 		{
+// 			name:         "3 items, found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "bar",
+// 			found:        true,
+// 		},
+// 	}
 
-	if actualValue := queue.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
-		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
+// 	for _, test := range tests {
+// 		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
+
+// 		assert.Equalf(t, test.found, found, test.name)
+// 	}
+// }
+
+// func TestArrayQueueIndexOf(t *testing.T) {
+// 	tests := []struct {
+// 		name         string
+// 		originalList *Queue[string]
+// 		value        string
+// 		position     int
+// 	}{
+// 		{
+// 			name:         "empty list",
+// 			originalList: New[string](),
+// 			value:        "foo",
+// 			position:     -1,
+// 		},
+// 		{
+// 			name:         "3 items, not found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "golang",
+// 			position:     -1,
+// 		},
+// 		{
+// 			name:         "3 items, found",
+// 			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+// 			value:        "bar",
+// 			position:     1,
+// 		},
+// 	}
+
+// 	for _, test := range tests {
+// 		position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+
+// 		assert.Equalf(t, test.position, position, test.name)
+// 	}
+// }
+
+func TestArrayQueueGetValues(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
 	}
-	if actualValue := queue.IsEmpty(); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := queue.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := queue.Peek(); actualValue != 1 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 1)
+
+	for _, test := range tests {
+		values := test.originalList.GetValues()
+
+		assert.Equalf(t, test.originalList.list.GetValues(), values, test.name)
 	}
 }
 
-func TestQueuePeek(t *testing.T) {
-	queue := New()
-	if actualValue, ok := queue.Peek(); actualValue != nil || ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
+func TestArrayQueueIsEmpty(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+		isEmpty      bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			isEmpty:      true,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+			isEmpty:      false,
+		},
 	}
-	queue.Enqueue(1)
-	queue.Enqueue(2)
-	queue.Enqueue(3)
-	if actualValue, ok := queue.Peek(); actualValue != 1 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 1)
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+
+		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
 	}
 }
 
-func TestQueueDequeue(t *testing.T) {
-	queue := New()
-	queue.Enqueue(1)
-	queue.Enqueue(2)
-	queue.Enqueue(3)
-	queue.Dequeue()
-	if actualValue, ok := queue.Peek(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
+func TestArrayQueueClear(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string]([]string{"foo", "bar", "baz"}),
+		},
 	}
-	if actualValue, ok := queue.Dequeue(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	if actualValue, ok := queue.Dequeue(); actualValue != 3 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := queue.Dequeue(); actualValue != nil || ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	if actualValue := queue.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := queue.GetValues(); len(actualValue) != 0 {
-		t.Errorf("Got %v expected %v", actualValue, "[]")
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+		assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
+
+		test.originalList.Clear()
+
+		isEmpty = test.originalList.IsEmpty()
+		assert.Truef(t, isEmpty, test.name)
 	}
 }
 
-func TestQueueIteratorOnEmpty(t *testing.T) {
-	queue := New()
-	it := queue.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty queue")
+func TestArrayQueueEnqueue(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+		valueToAdd   string
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo"},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			valueToAdd:   "bar",
+			newItems:     []string{"foo", "bar"},
+		},
+
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string]("foo", "bar", "baz"),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo", "bar", "baz", "foo"},
+		},
+	}
+
+	for _, test := range tests {
+		test.originalList.Enqueue(test.valueToAdd)
+
+		assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestQueueIteratorNext(t *testing.T) {
-	queue := New()
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
+func TestArrayQueueDequeue(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			newItems:     []string{},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			newItems:     []string{},
+		},
 
-	it := queue.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		index := it.Index()
-		value := it.Value()
-		switch index {
-		case 0:
-			if actualValue, expectedValue := value, "a"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 1:
-			if actualValue, expectedValue := value, "b"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := value, "c"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := index, count-1; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			newItems:     []string{"bar", "baz", "foo"},
+		},
 	}
 
-	queue.Clear()
-	it = queue.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty queue")
+	for _, test := range tests {
+		test.originalList.Dequeue()
+
+		assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestQueueIteratorPrev(t *testing.T) {
-	queue := New()
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
+func TestArrayQueuePeek(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+		found        bool
+		value        string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+			found:        false,
+		},
+		{
+			name:         "1 item",
+			originalList: New[string]("foo"),
+			found:        true,
+			value:        "foo",
+		},
 
-	it := queue.Iterator()
-	for it.Next() {
+		{
+			name:         "list with 4 items",
+			originalList: New[string]("foo", "bar", "baz", "foo"),
+			found:        true,
+			value:        "foo",
+		},
 	}
-	count := 0
-	for it.Prev() {
-		count++
-		index := it.Index()
-		value := it.Value()
-		switch index {
-		case 0:
-			if actualValue, expectedValue := value, "a"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 1:
-			if actualValue, expectedValue := value, "b"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := value, "c"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
+
+	for _, test := range tests {
+		value, found := test.originalList.Peek()
+
+		assert.Equalf(t, test.found, found, test.name)
+
+		if test.found {
+			assert.Equalf(t, test.value, value, test.name)
 		}
-		if actualValue, expectedValue := index, 3-count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+
 	}
 }
 
-func TestQueueIteratorBegin(t *testing.T) {
-	queue := New()
-	it := queue.Iterator()
-	it.Begin()
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
-	for it.Next() {
+func TestNewFromSlice(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
 	}
-	it.Begin()
-	it.Next()
-	if index, value := it.Index(), it.Value(); index != 0 || value != "a" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "a")
+
+	for _, test := range tests {
+		newList := NewFromSlice[string](test.originalList.GetValues())
+
+		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
+
 }
 
-func TestQueueIteratorEnd(t *testing.T) {
-	queue := New()
-	it := queue.Iterator()
-
-	if index := it.Index(); index != -1 {
-		t.Errorf("Got %v expected %v", index, -1)
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Queue[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](),
+		},
+		{
+			name:         "single item",
+			originalList: New[string]("foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string]("foo", "bar", "baz"),
+		},
 	}
 
-	it.End()
-	if index := it.Index(); index != 0 {
-		t.Errorf("Got %v expected %v", index, 0)
+	for _, test := range tests {
+		it := test.originalList.First()
+		newList := NewFromIterator[string](it)
+
+		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
 
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
-	it.End()
-	if index := it.Index(); index != queue.Size() {
-		t.Errorf("Got %v expected %v", index, queue.Size())
-	}
-
-	it.Prev()
-	if index, value := it.Index(), it.Value(); index != queue.Size()-1 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, queue.Size()-1, "c")
-	}
 }
 
-func TestQueueIteratorFirst(t *testing.T) {
-	queue := New()
-	it := queue.Iterator()
-	if actualValue, expectedValue := it.First(), false; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+// NOTE: Missing test case: unordered iterator, which prevents preallocation
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name              string
+		originalList      *Queue[string]
+		newList           *Queue[string]
+		iteratorInitFirst func(*Queue[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitEnd   func(*Queue[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+	}{
+		{
+			name:              "empty list",
+			originalList:      New[string](),
+			newList:           New[string](),
+			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitEnd:   (*Queue[string]).End,
+		},
+		{
+			name:              "single item",
+			originalList:      New[string]("foo"),
+			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitEnd:   (*Queue[string]).End,
+		},
+		{
+			name:              "3 items",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string]("foo", "bar", "baz"),
+			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitEnd:   (*Queue[string]).End,
+		},
+		{
+			name:              "3 items, end and first swapped",
+			originalList:      New[string]("foo", "bar", "baz"),
+			newList:           New[string](),
+			iteratorInitFirst: (*Queue[string]).End,
+			iteratorInitEnd:   (*Queue[string]).First,
+		},
 	}
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
-	if actualValue, expectedValue := it.First(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+
+	for _, test := range tests {
+		first := test.originalList.First()
+		end := test.originalList.End()
+		newList := NewFromIterators[string](first, end)
+
+		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
-	if index, value := it.Index(), it.Value(); index != 0 || value != "a" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "a")
-	}
+
 }
 
-func TestQueueIteratorLast(t *testing.T) {
-	queue := New()
-	it := queue.Iterator()
-	if actualValue, expectedValue := it.Last(), false; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
-	if actualValue, expectedValue := it.Last(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if index, value := it.Index(), it.Value(); index != 2 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "c")
-	}
-}
-
-func TestQueueIteratorNextTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index int, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// NextTo (empty)
-	{
-		queue := New()
-		it := queue.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-	}
-
-	// NextTo (not found)
-	{
-		queue := New()
-		queue.Enqueue("xx")
-		queue.Enqueue("yy")
-		it := queue.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-	}
-
-	// NextTo (found)
-	{
-		queue := New()
-		queue.Enqueue("aa")
-		queue.Enqueue("bb")
-		queue.Enqueue("cc")
-		it := queue.Iterator()
-		it.Begin()
-		if !it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-		if index, value := it.Index(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Next() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Index(), it.Value(); index != 2 || value.(string) != "cc" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "cc")
-		}
-		if it.Next() {
-			t.Errorf("Should not go past last element")
-		}
-	}
-}
-
-func TestQueueIteratorPrevTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index int, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// PrevTo (empty)
-	{
-		queue := New()
-		it := queue.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-	}
-
-	// PrevTo (not found)
-	{
-		queue := New()
-		queue.Enqueue("xx")
-		queue.Enqueue("yy")
-		it := queue.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-	}
-
-	// PrevTo (found)
-	{
-		queue := New()
-		queue.Enqueue("aa")
-		queue.Enqueue("bb")
-		queue.Enqueue("cc")
-		it := queue.Iterator()
-		it.End()
-		if !it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty queue")
-		}
-		if index, value := it.Index(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Prev() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Index(), it.Value(); index != 0 || value.(string) != "aa" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "aa")
-		}
-		if it.Prev() {
-			t.Errorf("Should not go before first element")
-		}
-	}
-}
-
-func TestQueueSerialization(t *testing.T) {
-	queue := New()
-	queue.Enqueue("a")
-	queue.Enqueue("b")
-	queue.Enqueue("c")
-
-	var err error
-	assert := func() {
-		if actualValue, expectedValue := fmt.Sprintf("%s%s%s", queue.GetValues()...), "abc"; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if actualValue, expectedValue := queue.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
-	}
-
-	assert()
-
-	bytes, err := queue.ToJSON()
-	assert()
-
-	err = queue.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", queue})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`[1,2,3]`), &queue)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-}
-
-func TestQueueString(t *testing.T) {
-	c := New()
-	c.Enqueue(1)
-	if !strings.HasPrefix(c.ToString(), "ArrayQueue") {
-		t.Errorf("ToString should start with container name")
-	}
-}
-
-func benchmarkEnqueue(b *testing.B, queue *Queue, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			queue.Enqueue(n)
-		}
-	}
-}
-
-func benchmarkDequeue(b *testing.B, queue *Queue, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			queue.Dequeue()
-		}
-	}
-}
-
-func BenchmarkArrayQueueDequeue100(b *testing.B) {
+func BenchmarkArrayQueueDequeue(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[string]()
+				for i := 0; i < n; i++ {
+					m.Enqueue("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Dequeue()
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, m.Size(), name)
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m = m[:len(m)-1]
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), name)
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkDequeue(b, queue, size)
-}
 
-func BenchmarkArrayQueueDequeue1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkDequeue(b, queue, size)
-}
-
-func BenchmarkArrayQueueDequeue10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
-	}
-	b.StartTimer()
-	benchmarkDequeue(b, queue, size)
-}
-
-func BenchmarkArrayQueueDequeue100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
-	}
-	b.StartTimer()
-	benchmarkDequeue(b, queue, size)
-}
-
-func BenchmarkArrayQueueEnqueue100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	queue := New()
-	b.StartTimer()
-	benchmarkEnqueue(b, queue, size)
-}
-
-func BenchmarkArrayQueueEnqueue1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
-	}
-	b.StartTimer()
-	benchmarkEnqueue(b, queue, size)
-}
-
-func BenchmarkArrayQueueEnqueue10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
-	}
-	b.StartTimer()
-	benchmarkEnqueue(b, queue, size)
-}
-
-func BenchmarkArrayQueueEnqueue100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	queue := New()
-	for n := 0; n < size; n++ {
-		queue.Enqueue(n)
-	}
-	b.StartTimer()
-	benchmarkEnqueue(b, queue, size)
 }
