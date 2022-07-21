@@ -127,11 +127,18 @@ func (queue *Queue[T]) Enqueue(value T) {
 	if queue.Full() {
 		queue.Dequeue()
 	}
-	queue.values[queue.end] = value
-	queue.end = queue.end + 1
+
+	if queue.end < len(queue.values) {
+		queue.values[queue.end] = value
+	} else {
+		queue.values = append(queue.values, value)
+	}
+
+	queue.end += 1
 	if queue.end >= queue.maxSize {
 		queue.end = 0
 	}
+
 	if queue.end == queue.start {
 		queue.full = true
 	}
@@ -185,7 +192,7 @@ func (queue *Queue[T]) Size() int {
 
 // Clear removes all elements from the queue.
 func (queue *Queue[T]) Clear() {
-	queue.values = make([]T, queue.maxSize, queue.maxSize)
+	queue.values = make([]T, 0, queue.maxSize)
 	queue.start = 0
 	queue.end = 0
 	queue.full = false
@@ -194,10 +201,16 @@ func (queue *Queue[T]) Clear() {
 
 // Values returns all elements in the queue (FIFO order).
 func (queue *Queue[T]) GetValues() []T {
-	values := make([]T, queue.Size(), queue.Size())
-	for i := 0; i < queue.Size(); i++ {
-		values[i] = queue.values[(queue.start+i)%queue.maxSize]
+	values := make([]T, 0, queue.Size())
+
+	if queue.IsEmpty() {
+		return values
 	}
+
+	for i := 0; i < queue.Size(); i++ {
+		values = append(values, queue.values[(queue.start+i)%queue.maxSize])
+	}
+
 	return values
 }
 
@@ -209,6 +222,7 @@ func (queue *Queue[T]) ToString() string {
 		values = append(values, fmt.Sprintf("%v", value))
 	}
 	str += strings.Join(values, ", ")
+
 	return str
 }
 
