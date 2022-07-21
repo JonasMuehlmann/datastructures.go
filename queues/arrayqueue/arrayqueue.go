@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
 	"github.com/JonasMuehlmann/datastructures.go/queues"
 )
@@ -26,13 +27,63 @@ type Queue[T any] struct {
 }
 
 // New instantiates a new empty queue
-func New[T any]() *Queue[T] {
-	return &Queue[T]{list: arraylist.New[T]()}
+func New[T any](items ...T) *Queue[T] {
+	return &Queue[T]{list: arraylist.NewFromSlice[T](items)}
+}
+
+func NewFromSlice[T any](slice []T) *Queue[T] {
+	list := &Queue[T]{list: arraylist.NewFromSlice(slice)}
+	return list
+}
+
+// NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Queue[T] {
+	length := 0
+	sizedIterator, ok := it.(ds.SizedIterator)
+	if ok {
+		length = sizedIterator.Size()
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		elements = append(elements, newItem)
+	}
+
+	queue := &Queue[T]{list: arraylist.NewFromSlice(elements)}
+
+	return queue
+}
+
+// NewFromIterators instantiates a new queue containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
+	length := 0
+	sizedFirst, ok := first.(ds.OrderedIterator)
+	sizedLast, ok2 := end.(ds.OrderedIterator)
+	if ok && ok2 {
+		length = -sizedFirst.DistanceTo(sizedLast)
+		if length < 0 {
+			length = 0
+		}
+	}
+
+	elements := make([]T, 0, length)
+
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		elements = append(elements, newItem)
+	}
+
+	queue := &Queue[T]{list: arraylist.NewFromSlice(elements)}
+
+	return queue
 }
 
 // Enqueue adds a value to the end of the queue
 func (queue *Queue[T]) Enqueue(value T) {
-	queue.list.Add(value)
+	queue.list.PushBack(value)
 }
 
 // Dequeue removes first element of the queue and returns it, or nil if queue is empty.
@@ -40,7 +91,7 @@ func (queue *Queue[T]) Enqueue(value T) {
 func (queue *Queue[T]) Dequeue() (value T, ok bool) {
 	value, ok = queue.list.Get(0)
 	if ok {
-		queue.list.Remove(0)
+		queue.list.PopFront(1)
 	}
 	return
 }
