@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/queues"
 )
@@ -26,13 +27,44 @@ type Queue[T any] struct {
 }
 
 // New instantiates a new empty queue
-func New[T any]() *Queue[T] {
-	return &Queue[T]{list: &singlylinkedlist.List[T]{}}
+func New[T any](items ...T) *Queue[T] {
+	return &Queue[T]{list: singlylinkedlist.New[T](items...)}
+}
+
+// NewFromSlice instantiates a new stack containing the provided slice.
+func NewFromSlice[T any](slice []T) *Queue[T] {
+	list := &Queue[T]{list: singlylinkedlist.NewFromSlice(slice)}
+
+	return list
+}
+
+// NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
+func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Queue[T] {
+	list := &Queue[T]{list: singlylinkedlist.New[T]()}
+
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		list.Enqueue(newItem)
+	}
+
+	return list
+}
+
+// NewFromIterators instantiates a new stack containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
+	list := &Queue[T]{list: singlylinkedlist.New[T]()}
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		list.Enqueue(newItem)
+	}
+
+	return list
 }
 
 // Enqueue adds a value to the end of the queue
 func (queue *Queue[T]) Enqueue(value T) {
-	queue.list.Add(value)
+	queue.list.PushBack(value)
 }
 
 // Dequeue removes first element of the queue and returns it, or nil if queue is empty.
@@ -40,7 +72,7 @@ func (queue *Queue[T]) Enqueue(value T) {
 func (queue *Queue[T]) Dequeue() (value T, ok bool) {
 	value, ok = queue.list.Get(0)
 	if ok {
-		queue.list.Remove(0)
+		queue.list.PopFront(1)
 	}
 	return
 }
