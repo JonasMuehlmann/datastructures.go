@@ -252,7 +252,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalSet.OrderedFirst(utils.BasicComparator[string])
+		it := test.originalSet.OrderedBegin(utils.BasicComparator[string])
 
 		newSet := NewFromIterator[string](it)
 
@@ -281,7 +281,7 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalSet.OrderedFirst(utils.BasicComparator[string])
+		first := test.originalSet.OrderedBegin(utils.BasicComparator[string])
 		end := test.originalSet.OrderedEnd(utils.BasicComparator[string])
 
 		newSet := NewFromIterators[string](first, end)
