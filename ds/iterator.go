@@ -5,9 +5,6 @@
 
 package ds
 
-// TODO: Implement Constructors for types, which take iterators to materialize
-// TODO: Can we use type parameters in interfaces to embed? This could simplify variant creation like BidirectionalIterator  vs OrderedBidirectionalIterator
-
 type BoundsSentinel int
 
 const (
@@ -116,10 +113,10 @@ type ForwardIterator interface {
 	// ************************    Own methods    ***********************//
 
 	// Next moves the iterator forward by one position.
-	Next()
+	Next() bool
 
 	// NextN moves the iterator forward by n positions.
-	NextN(i int)
+	NextN(i int) bool
 
 	// Advance() bool
 	// Next() ForwardIterator
@@ -135,10 +132,10 @@ type BackwardIterator interface {
 	// ************************    Own methods    ***********************//
 
 	// Next moves the iterator backward  by one position.
-	Previous()
+	Previous() bool
 
 	// NextN moves the iterator backward by n positions.
-	PreviousN(n int)
+	PreviousN(n int) bool
 
 	// Recede() bool
 	// Previous() BackwardIterator
@@ -155,7 +152,7 @@ type BidirectionalIterator interface {
 	// ************************    Own methods    ***********************//
 
 	// Next moves the iterator forward/backward by n positions.
-	MoveBy(n int)
+	MoveBy(n int) bool
 	// Nth(n int) BidirectionalIterator
 }
 
