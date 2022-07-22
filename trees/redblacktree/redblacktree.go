@@ -13,8 +13,7 @@
 package redblacktree
 
 import (
-	"fmt"
-
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/trees"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -29,25 +28,55 @@ const (
 )
 
 // Tree holds elements of the red-black tree
-type Tree[TKey comparable, TValue any] struct {
+type Tree[TKey any, TValue any] struct {
 	Root       *Node[TKey, TValue]
 	size       int
 	Comparator utils.Comparator[TKey]
 }
 
-// Node is a single element within the tree
-type Node[TKey comparable, TValue any] struct {
-	Key    TKey
-	Value  TValue
-	color  color
-	Left   *Node[TKey, TValue]
-	Right  *Node[TKey, TValue]
-	Parent *Node[TKey, TValue]
+// NewWith instantiates a red-black tree with the custom comparator.
+func NewWith[TKey any, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
+	return &Tree[TKey, TValue]{Comparator: comparator}
 }
 
-// NewWith instantiates a red-black tree with the custom comparator.
-func NewWith[TKey comparable, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
-	return &Tree[TKey, TValue]{Comparator: comparator}
+// NewFromMap instantiates a new tree containing the provided map.
+func NewFromMapWith[TKey comparable, TValue any](comparator utils.Comparator[TKey], map_ map[TKey]TValue) *Tree[TKey, TValue] {
+	tree := NewWith[TKey, TValue](comparator)
+
+	for k, v := range map_ {
+		tree.Put(k, v)
+	}
+
+	return tree
+}
+
+// NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
+func NewFromIteratorWith[TKey any, TValue any](comparator utils.Comparator[TKey], it ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
+	tree := NewWith[TKey, TValue](comparator)
+
+	for ; !it.IsEnd(); it.Next() {
+		newKey, _ := it.Index()
+		newValue, _ := it.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
+}
+
+// NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIteratorsWith[TKey any, TValue any](comparator utils.Comparator[TKey], first ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
+	tree := NewWith[TKey, TValue](comparator)
+
+	for ; !first.IsEqual(end); first.Next() {
+		newKey, _ := first.Index()
+		newValue, _ := first.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
 }
 
 // Put inserts node into the tree.
@@ -97,7 +126,7 @@ func (tree *Tree[TKey, TValue]) Put(key TKey, value TValue) {
 // Second return parameter is true if key was found, otherwise false.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
-	node := tree.lookup(key)
+	node, _ := tree.lookup(key)
 	if node != nil {
 		return node.Value, true
 	}
@@ -107,14 +136,16 @@ func (tree *Tree[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
 // GetNode searches the node in the tree by key and returns its node or nil if key is not found in tree.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) GetNode(key TKey) *Node[TKey, TValue] {
-	return tree.lookup(key)
+	node, _ := tree.lookup(key)
+
+	return node
 }
 
 // Remove remove the node from the tree by key.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) Remove(key TKey) {
 	var child *Node[TKey, TValue]
-	node := tree.lookup(key)
+	node, _ := tree.lookup(key)
 	if node == nil {
 		return
 	}
@@ -152,28 +183,12 @@ func (tree *Tree[TKey, TValue]) Size() int {
 	return tree.size
 }
 
-// Size returns the number of elements stored in the subtree.
-// Computed dynamically on each call, i.e. the subtree is traversed to count the number of the nodes.
-func (node *Node[TKey, TValue]) Size() int {
-	if node == nil {
-		return 0
-	}
-	size := 1
-	if node.Left != nil {
-		size += node.Left.Size()
-	}
-	if node.Right != nil {
-		size += node.Right.Size()
-	}
-	return size
-}
-
 // GetKeys returns all keys in-order
 func (tree *Tree[TKey, TValue]) GetKeys() []TKey {
 	keys := make([]TKey, tree.size)
-	it := tree.Iterator()
-	for i := 0; it.Next(); i++ {
-		keys[i] = it.Key[TKey]()
+	it := tree.First()
+	for i := 0; !it.IsEnd(); i++ {
+		keys[i], _ = it.Index()
 	}
 	return keys
 }
@@ -181,9 +196,9 @@ func (tree *Tree[TKey, TValue]) GetKeys() []TKey {
 // Values returns all values in-order based on the key.
 func (tree *Tree[TKey, TValue]) GetValues() []TValue {
 	values := make([]TValue, tree.size)
-	it := tree.Iterator()
-	for i := 0; it.Next(); i++ {
-		values[i] = it.Value[TValue]()
+	it := tree.First()
+	for i := 0; !it.IsEnd(); i++ {
+		values[i], _ = it.Get()
 	}
 	return values
 }
@@ -283,11 +298,7 @@ func (tree *Tree[TKey, TValue]) ToString() string {
 	return str
 }
 
-func (node *Node[TKey, TValue]) String() string {
-	return fmt.Sprintf("%v", node.Key)
-}
-
-func output[TKey comparable, TValue any](node *Node[TKey, TValue], prefix string, isTail bool, str *string) {
+func output[TKey any, TValue any](node *Node[TKey, TValue], prefix string, isTail bool, str *string) {
 	if node.Right != nil {
 		newPrefix := prefix
 		if isTail {
@@ -315,44 +326,47 @@ func output[TKey comparable, TValue any](node *Node[TKey, TValue], prefix string
 	}
 }
 
-func (tree *Tree[TKey, TValue]) lookup(key TKey) *Node[TKey, TValue] {
-	node := tree.Root
+func (tree *Tree[TKey, TValue]) lookup(key TKey) (node *Node[TKey, TValue], index int) {
+	node = tree.Root
 	for node != nil {
 		compare := tree.Comparator(key, node.Key)
 		switch {
 		case compare == 0:
-			return node
+			return
 		case compare < 0:
 			node = node.Left
+			index++
 		case compare > 0:
 			node = node.Right
+			index++
 		}
 	}
-	return nil
+	node = nil
+	index = -1
+
+	return
 }
 
-func (node *Node[TKey, TValue]) grandparent() *Node[TKey, TValue] {
-	if node != nil && node.Parent != nil {
-		return node.Parent.Parent
+func (tree *Tree[TKey, TValue]) lookupFrom(from *Node[TKey, TValue], to TKey) (node *Node[TKey, TValue], distance int) {
+	node = from
+	for node != nil {
+		compare := tree.Comparator(to, node.Key)
+		switch {
+		case compare == 0:
+			return
+		case compare < 0:
+			node = node.Left
+			distance++
+		case compare > 0:
+			node = node.Right
+			distance++
+		}
 	}
-	return nil
-}
 
-func (node *Node[TKey, TValue]) uncle() *Node[TKey, TValue] {
-	if node == nil || node.Parent == nil || node.Parent.Parent == nil {
-		return nil
-	}
-	return node.Parent.sibling()
-}
+	node = nil
+	distance = 0
 
-func (node *Node[TKey, TValue]) sibling() *Node[TKey, TValue] {
-	if node == nil || node.Parent == nil {
-		return nil
-	}
-	if node == node.Parent.Left {
-		return node.Parent.Right
-	}
-	return node.Parent.Left
+	return
 }
 
 func (tree *Tree[TKey, TValue]) rotateLeft(node *Node[TKey, TValue]) {
@@ -442,16 +456,6 @@ func (tree *Tree[TKey, TValue]) insertCase5(node *Node[TKey, TValue]) {
 	}
 }
 
-func (node *Node[TKey, TValue]) maximumNode() *Node[TKey, TValue] {
-	if node == nil {
-		return nil
-	}
-	for node.Right != nil {
-		node = node.Right
-	}
-	return node
-}
-
 func (tree *Tree[TKey, TValue]) deleteCase1(node *Node[TKey, TValue]) {
 	if node.Parent == nil {
 		return
@@ -532,9 +536,35 @@ func (tree *Tree[TKey, TValue]) deleteCase6(node *Node[TKey, TValue]) {
 	}
 }
 
-func nodeColor[TKey comparable, TValue any](node *Node[TKey, TValue]) color {
+func nodeColor[TKey any, TValue any](node *Node[TKey, TValue]) color {
 	if node == nil {
 		return black
 	}
 	return node.color
+}
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewIterator(tree, -1)
+}
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) End() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewIterator(tree, tree.Size())
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (tree *Tree[TKey, TValue]) First() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewIterator(tree, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (tree *Tree[TKey, TValue]) Last() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewIterator(tree, tree.Size()-1)
 }

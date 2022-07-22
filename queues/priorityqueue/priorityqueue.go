@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/queues"
 	"github.com/JonasMuehlmann/datastructures.go/trees/binaryheap"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
@@ -35,8 +36,37 @@ type Queue[T any] struct {
 }
 
 // NewWith instantiates a new empty queue with the custom comparator.
-func NewWitha[T any](comparator utils.Comparator[T]) *Queue[T] {
+func NewWith[T any](comparator utils.Comparator[T]) *Queue[T] {
 	return &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+}
+
+// NewFromSlice instantiates a new queue containing the provided slice.
+func NewFromSliceWith[T any](comparator utils.Comparator[T], slice []T) *Queue[T] {
+	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+	return list
+}
+
+// NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
+func NewFromIteratorWith[T any](comparator utils.Comparator[T], it ds.ReadCompForIterator[T]) *Queue[T] {
+	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+	for ; !it.IsEnd(); it.Next() {
+		newItem, _ := it.Get()
+		list.Enqueue(newItem)
+	}
+
+	return list
+}
+
+// NewFromIterators instantiates a new queue containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIteratorsWith[T any](comparator utils.Comparator[T], first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
+	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+	for ; !first.IsEqual(end); first.Next() {
+		newItem, _ := first.Get()
+		list.Enqueue(newItem)
+	}
+
+	return list
 }
 
 // Enqueue adds a value to the end of the queue
@@ -85,4 +115,30 @@ func (queue *Queue[T]) ToString() string {
 	}
 	str += strings.Join(values, ", ")
 	return str
+}
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (stack *Queue[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return stack.NewIterator(stack, -1)
+}
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (stack *Queue[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return stack.NewIterator(stack, stack.Size())
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (stack *Queue[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return stack.NewIterator(stack, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (stack *Queue[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return stack.NewIterator(stack, stack.Size()-1)
 }

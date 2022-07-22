@@ -6,855 +6,737 @@
 package redblacktree
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/JonasMuehlmann/datastructures.go/utils"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestRedBlackTreeGet(t *testing.T) {
-	tree := NewWithIntComparator()
+func TestRemove(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		newMap      *Tree[string, int]
+		toRemove    string
+	}{
 
-	if actualValue := tree.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			newMap:      NewWith[string, int](utils.BasicComparator[string]),
+			toRemove:    "foo",
+		},
+		{
+			name:        "single item",
+			toRemove:    "foo",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      NewWith[string, int](utils.BasicComparator[string]),
+		},
+		{
+			name:        "single item, target does not exist",
+			toRemove:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			toRemove:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
+		},
 	}
 
-	if actualValue := tree.GetNode(2).Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
+	for _, test := range tests {
+		test.originalMap.Remove(test.toRemove)
 
-	tree.Put(1, "x") // 1->x
-	tree.Put(2, "b") // 1->x, 2->b (in order)
-	tree.Put(1, "a") // 1->a, 2->b (in order, replacement)
-	tree.Put(3, "c") // 1->a, 2->b, 3->c (in order)
-	tree.Put(4, "d") // 1->a, 2->b, 3->c, 4->d (in order)
-	tree.Put(5, "e") // 1->a, 2->b, 3->c, 4->d, 5->e (in order)
-	tree.Put(6, "f") // 1->a, 2->b, 3->c, 4->d, 5->e, 6->f (in order)
-
-	fmt.Println(tree)
-	//
-	//  RedBlackTree
-	//  │           ┌── 6
-	//  │       ┌── 5
-	//  │   ┌── 4
-	//  │   │   └── 3
-	//  └── 2
-	//       └── 1
-
-	if actualValue := tree.Size(); actualValue != 6 {
-		t.Errorf("Got %v expected %v", actualValue, 6)
-	}
-
-	if actualValue := tree.GetNode(4).Size(); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-
-	if actualValue := tree.GetNode(2).Size(); actualValue != 6 {
-		t.Errorf("Got %v expected %v", actualValue, 6)
-	}
-
-	if actualValue := tree.GetNode(8).Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
+		assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
 	}
 }
 
-func TestRedBlackTreePut(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x")
-	tree.Put(2, "b")
-	tree.Put(1, "a") //overwrite
+func TestPut(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		newMap      *Tree[string, int]
+		keyToAdd    string
+		valueToAdd  int
+	}{
 
-	if actualValue := tree.Size(); actualValue != 7 {
-		t.Errorf("Got %v expected %v", actualValue, 7)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d%d%d%d", tree.GetKeys()...), "1234567"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s%s%s%s", tree.GetValues()...), "abcdefg"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+		},
+		{
+			name:        "single item",
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+		},
+		{
+			name:        "single item, overwrite",
+			keyToAdd:    "foo",
+			valueToAdd:  2,
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 2}),
+		},
+		{
+			name:        "3 items",
+			keyToAdd:    "bar",
+			valueToAdd:  2,
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
+			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
 
-	tests1 := [][]interface{}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
-		{5, "e", true},
-		{6, "f", true},
-		{7, "g", true},
-		{8, nil, false},
+	for _, test := range tests {
+		test.originalMap.Put(test.keyToAdd, test.valueToAdd)
+
+		assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
+	}
+}
+
+func TestGet(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		keyToGet    string
+		value       int
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			keyToGet:    "foo",
+			found:       false,
+		},
+		{
+			name:        "single item",
+			keyToGet:    "foo",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			value:       1,
+			found:       true,
+		},
+		{
+			name:        "single item, target does not exist",
+			keyToGet:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			found:       false,
+		},
+		{
+			name:        "3 items",
+			keyToGet:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			value:       2,
+			found:       true,
+		},
 	}
 
-	for _, test := range tests1 {
-		// retrievals
-		actualValue, actualFound := tree.Get(test[0])
-		if actualValue != test[1] || actualFound != test[2] {
-			t.Errorf("Got %v expected %v", actualValue, test[1])
+	for _, test := range tests {
+		value, found := test.originalMap.Get(test.keyToGet)
+
+		assert.Equalf(t, test.value, value, test.name)
+		assert.Equalf(t, test.found, found, test.name)
+	}
+}
+
+func TestGetNode(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		keyToGet    string
+		value       int
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			keyToGet:    "foo",
+			found:       false,
+		},
+		{
+			name:        "single item",
+			keyToGet:    "foo",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			value:       1,
+			found:       true,
+		},
+		{
+			name:        "single item, target does not exist",
+			keyToGet:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			found:       false,
+		},
+		{
+			name:        "3 items",
+			keyToGet:    "bar",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			value:       2,
+			found:       true,
+		},
+	}
+
+	for _, test := range tests {
+		node := test.originalMap.GetNode(test.keyToGet)
+
+		assert.Equalf(t, test.found, node != nil, test.name)
+		if test.found {
+			assert.Equalf(t, test.value, node.Value, test.name)
 		}
 	}
 }
 
-func TestRedBlackTreeRemove(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x")
-	tree.Put(2, "b")
-	tree.Put(1, "a") //overwrite
+func TestRight(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[int, string]
+		value       string
+		found       bool
+	}{
 
-	tree.Remove(5)
-	tree.Remove(6)
-	tree.Remove(7)
-	tree.Remove(8)
-	tree.Remove(5)
-
-	if actualValue, expectedValue := fmt.Sprintf("%d%d%d%d", tree.GetKeys()...), "1234"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.GetValues()...), "abcd"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s%s%s%s", tree.GetValues()...), "abcd"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := tree.Size(); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, 7)
+		{
+			name:        "empty list",
+			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			found:       false,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			value:       "foo",
+			found:       true,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			value:       "baz",
+			found:       true,
+		},
 	}
 
-	tests2 := [][]interface{}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
-		{5, nil, false},
-		{6, nil, false},
-		{7, nil, false},
-		{8, nil, false},
-	}
+	for _, test := range tests {
+		node := test.originalMap.Right()
 
-	for _, test := range tests2 {
-		actualValue, actualFound := tree.Get(test[0])
-		if actualValue != test[1] || actualFound != test[2] {
-			t.Errorf("Got %v expected %v", actualValue, test[1])
-		}
-	}
-
-	tree.Remove(1)
-	tree.Remove(4)
-	tree.Remove(2)
-	tree.Remove(3)
-	tree.Remove(2)
-	tree.Remove(2)
-
-	if actualValue, expectedValue := fmt.Sprintf("%s", tree.GetKeys()), "[]"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", tree.GetValues()), "[]"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if empty, size := tree.IsEmpty(), tree.Size(); empty != true || size != -0 {
-		t.Errorf("Got %v expected %v", empty, true)
-	}
-
-}
-
-func TestRedBlackTreeLeftAndRight(t *testing.T) {
-	tree := NewWithIntComparator()
-
-	if actualValue := tree.Left(); actualValue != nil {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	if actualValue := tree.Right(); actualValue != nil {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-
-	tree.Put(1, "a")
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x") // overwrite
-	tree.Put(2, "b")
-
-	if actualValue, expectedValue := fmt.Sprintf("%d", tree.Left().Key), "1"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", tree.Left().Value), "x"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-
-	if actualValue, expectedValue := fmt.Sprintf("%d", tree.Right().Key), "7"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", tree.Right().Value), "g"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeCeilingAndFloor(t *testing.T) {
-	tree := NewWith(utils.IntComparator)
-
-	if node, found := tree.Floor(0); node != nil || found {
-		t.Errorf("Got %v expected %v", node, "<nil>")
-	}
-	if node, found := tree.Ceiling(0); node != nil || found {
-		t.Errorf("Got %v expected %v", node, "<nil>")
-	}
-
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x")
-	tree.Put(2, "b")
-
-	if node, found := tree.Floor(4); node.Key != 4 || !found {
-		t.Errorf("Got %v expected %v", node.Key, 4)
-	}
-	if node, found := tree.Floor(0); node != nil || found {
-		t.Errorf("Got %v expected %v", node, "<nil>")
-	}
-
-	if node, found := tree.Ceiling(4); node.Key != 4 || !found {
-		t.Errorf("Got %v expected %v", node.Key, 4)
-	}
-	if node, found := tree.Ceiling(8); node != nil || found {
-		t.Errorf("Got %v expected %v", node, "<nil>")
-	}
-}
-
-func TestRedBlackTreeIteratorNextOnEmpty(t *testing.T) {
-	tree := NewWithIntComparator()
-	it := tree.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty tree")
-	}
-}
-
-func TestRedBlackTreeIteratorPrevOnEmpty(t *testing.T) {
-	tree := NewWithIntComparator()
-	it := tree.Iterator()
-	for it.Prev() {
-		t.Errorf("Shouldn't iterate on empty tree")
-	}
-}
-
-func TestRedBlackTreeIterator1Next(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x")
-	tree.Put(2, "b")
-	tree.Put(1, "a") //overwrite
-	// │   ┌── 7
-	// └── 6
-	//     │   ┌── 5
-	//     └── 4
-	//         │   ┌── 3
-	//         └── 2
-	//             └── 1
-	it := tree.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		key := it.Key()
-		if actualValue, expectedValue := key, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, tree.Size(); actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator1Prev(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(5, "e")
-	tree.Put(6, "f")
-	tree.Put(7, "g")
-	tree.Put(3, "c")
-	tree.Put(4, "d")
-	tree.Put(1, "x")
-	tree.Put(2, "b")
-	tree.Put(1, "a") //overwrite
-	// │   ┌── 7
-	// └── 6
-	//     │   ┌── 5
-	//     └── 4
-	//         │   ┌── 3
-	//         └── 2
-	//             └── 1
-	it := tree.Iterator()
-	for it.Next() {
-	}
-	countDown := tree.size
-	for it.Prev() {
-		key := it.Key()
-		if actualValue, expectedValue := key, countDown; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		countDown--
-	}
-	if actualValue, expectedValue := countDown, 0; actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator2Next(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it := tree.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		key := it.Key()
-		if actualValue, expectedValue := key, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, tree.Size(); actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator2Prev(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it := tree.Iterator()
-	for it.Next() {
-	}
-	countDown := tree.size
-	for it.Prev() {
-		key := it.Key()
-		if actualValue, expectedValue := key, countDown; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		countDown--
-	}
-	if actualValue, expectedValue := countDown, 0; actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator3Next(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(1, "a")
-	it := tree.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		key := it.Key()
-		if actualValue, expectedValue := key, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, tree.Size(); actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator3Prev(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(1, "a")
-	it := tree.Iterator()
-	for it.Next() {
-	}
-	countDown := tree.size
-	for it.Prev() {
-		key := it.Key()
-		if actualValue, expectedValue := key, countDown; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		countDown--
-	}
-	if actualValue, expectedValue := countDown, 0; actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator4Next(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(13, 5)
-	tree.Put(8, 3)
-	tree.Put(17, 7)
-	tree.Put(1, 1)
-	tree.Put(11, 4)
-	tree.Put(15, 6)
-	tree.Put(25, 9)
-	tree.Put(6, 2)
-	tree.Put(22, 8)
-	tree.Put(27, 10)
-	// │           ┌── 27
-	// │       ┌── 25
-	// │       │   └── 22
-	// │   ┌── 17
-	// │   │   └── 15
-	// └── 13
-	//     │   ┌── 11
-	//     └── 8
-	//         │   ┌── 6
-	//         └── 1
-	it := tree.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		value := it.Value()
-		if actualValue, expectedValue := value, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, tree.Size(); actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIterator4Prev(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(13, 5)
-	tree.Put(8, 3)
-	tree.Put(17, 7)
-	tree.Put(1, 1)
-	tree.Put(11, 4)
-	tree.Put(15, 6)
-	tree.Put(25, 9)
-	tree.Put(6, 2)
-	tree.Put(22, 8)
-	tree.Put(27, 10)
-	// │           ┌── 27
-	// │       ┌── 25
-	// │       │   └── 22
-	// │   ┌── 17
-	// │   │   └── 15
-	// └── 13
-	//     │   ┌── 11
-	//     └── 8
-	//         │   ┌── 6
-	//         └── 1
-	it := tree.Iterator()
-	count := tree.Size()
-	for it.Next() {
-	}
-	for it.Prev() {
-		value := it.Value()
-		if actualValue, expectedValue := value, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		count--
-	}
-	if actualValue, expectedValue := count, 0; actualValue != expectedValue {
-		t.Errorf("Size different. Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestRedBlackTreeIteratorBegin(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it := tree.Iterator()
-
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	it.Begin()
-
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	for it.Next() {
-	}
-
-	it.Begin()
-
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	it.Next()
-	if key, value := it.Key(), it.Value(); key != 1 || value != "a" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 1, "a")
-	}
-}
-
-func TestRedBlackTreeIteratorEnd(t *testing.T) {
-	tree := NewWithIntComparator()
-	it := tree.Iterator()
-
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	it.End()
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it.End()
-	if it.node != nil {
-		t.Errorf("Got %v expected %v", it.node, nil)
-	}
-
-	it.Prev()
-	if key, value := it.Key(), it.Value(); key != 3 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 3, "c")
-	}
-}
-
-func TestRedBlackTreeIteratorFirst(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it := tree.Iterator()
-	if actualValue, expectedValue := it.First(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if key, value := it.Key(), it.Value(); key != 1 || value != "a" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 1, "a")
-	}
-}
-
-func TestRedBlackTreeIteratorLast(t *testing.T) {
-	tree := NewWithIntComparator()
-	tree.Put(3, "c")
-	tree.Put(1, "a")
-	tree.Put(2, "b")
-	it := tree.Iterator()
-	if actualValue, expectedValue := it.Last(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if key, value := it.Key(), it.Value(); key != 3 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 3, "c")
-	}
-}
-
-func TestRedBlackTreeIteratorNextTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// NextTo (empty)
-	{
-		tree := NewWithIntComparator()
-		it := tree.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-	}
-
-	// NextTo (not found)
-	{
-		tree := NewWithIntComparator()
-		tree.Put(0, "xx")
-		tree.Put(1, "yy")
-		it := tree.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-	}
-
-	// NextTo (found)
-	{
-		tree := NewWithIntComparator()
-		tree.Put(2, "cc")
-		tree.Put(0, "aa")
-		tree.Put(1, "bb")
-		it := tree.Iterator()
-		it.Begin()
-		if !it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Next() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Key(), it.Value(); index != 2 || value.(string) != "cc" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "cc")
-		}
-		if it.Next() {
-			t.Errorf("Should not go past last element")
+		assert.Equalf(t, test.found, node != nil, test.name)
+		if test.found {
+			assert.Equalf(t, test.value, node.Value, test.name)
 		}
 	}
 }
 
-func TestRedBlackTreeIteratorPrevTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
+func TestLeft(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[int, string]
+		value       string
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			found:       false,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			value:       "foo",
+			found:       true,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			value:       "foo",
+			found:       true,
+		},
 	}
 
-	// PrevTo (empty)
-	{
-		tree := NewWithIntComparator()
-		it := tree.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-	}
+	for _, test := range tests {
+		node := test.originalMap.Left()
 
-	// PrevTo (not found)
-	{
-		tree := NewWithIntComparator()
-		tree.Put(0, "xx")
-		tree.Put(1, "yy")
-		it := tree.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-	}
-
-	// PrevTo (found)
-	{
-		tree := NewWithIntComparator()
-		tree.Put(2, "cc")
-		tree.Put(0, "aa")
-		tree.Put(1, "bb")
-		it := tree.Iterator()
-		it.End()
-		if !it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty tree")
-		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Prev() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Key(), it.Value(); index != 0 || value.(string) != "aa" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "aa")
-		}
-		if it.Prev() {
-			t.Errorf("Should not go before first element")
+		assert.Equalf(t, test.found, node != nil, test.name)
+		if test.found {
+			assert.Equalf(t, test.value, node.Value, test.name)
 		}
 	}
 }
 
-func TestRedBlackTreeSerialization(t *testing.T) {
-	tree := NewWithStringComparator()
-	tree.Put("c", "3")
-	tree.Put("b", "2")
-	tree.Put("a", "1")
+func TestCeiling(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[int, string]
+		key         int
+		value       string
+		found       bool
+	}{
 
-	var err error
-	assert := func() {
-		if actualValue, expectedValue := tree.Size(), 3; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		if actualValue := tree.GetKeys(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
-			t.Errorf("Got %v expected %v", actualValue, "[a,b,c]")
-		}
-		if actualValue := tree.GetValues(); actualValue[0].(string) != "1" || actualValue[1].(string) != "2" || actualValue[2].(string) != "3" {
-			t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
+		{
+			name:        "empty list",
+			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			key:         1,
+			found:       false,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			value:       "foo",
+			found:       true,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{0: "foo", 2: "bar", 3: "baz"}),
+			key:         1,
+			value:       "bar",
+			found:       true,
+		},
+		{
+			name:        "3 items, no ceilling",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			key:         4,
+			found:       false,
+		},
 	}
 
-	assert()
+	for _, test := range tests {
+		node, found := test.originalMap.Ceiling(test.key)
 
-	bytes, err := tree.ToJSON()
-	assert()
-
-	err = tree.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", tree})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`{"a":1,"b":2}`), &tree)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-}
-
-func TestRedBlackTreeString(t *testing.T) {
-	c := NewWithStringComparator()
-	c.Put("a", 1)
-	if !strings.HasPrefix(c.ToString(), "RedBlackTree") {
-		t.Errorf("ToString should start with container name")
-	}
-}
-
-func benchmarkGet(b *testing.B, tree *Tree, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			tree.Get(n)
+		assert.Equalf(t, test.found, found, test.name)
+		if test.found {
+			assert.Equalf(t, test.value, node.Value, test.name)
 		}
 	}
 }
 
-func benchmarkPut(b *testing.B, tree *Tree, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			tree.Put(n, struct{}{})
+func TestFloor(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[int, string]
+		key         int
+		value       string
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			key:         1,
+			found:       false,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			key:         1,
+			value:       "foo",
+			found:       true,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 4: "baz"}),
+			key:         3,
+			value:       "bar",
+			found:       true,
+		},
+		{
+			name:        "3 items, no floor",
+			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			key:         0,
+			found:       false,
+		},
+	}
+
+	for _, test := range tests {
+		node, found := test.originalMap.Floor(test.key)
+
+		assert.Equalf(t, test.found, found, test.name)
+		if test.found {
+			assert.Equalf(t, test.value, node.Value, test.name)
 		}
 	}
 }
 
-func benchmarkRemove(b *testing.B, tree *Tree, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			tree.Remove(n)
-		}
+func TestGetKeys(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		keys        []string
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			keys:        []string{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			keys:        []string{"foo"},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			keys:        []string{"foo", "bar", "baz"},
+		},
+	}
+
+	for _, test := range tests {
+		keys := test.originalMap.GetKeys()
+
+		assert.ElementsMatch(t, test.keys, keys, test.name)
 	}
 }
 
-func BenchmarkRedBlackTreeGet100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
+func TestGetValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		values      []int
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			values:      []int{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			values:      []int{1},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			values:      []int{1, 2, 3},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, tree, size)
+
+	for _, test := range tests {
+		values := test.originalMap.GetValues()
+
+		assert.ElementsMatch(t, test.values, values, test.name)
+	}
 }
 
-func BenchmarkRedBlackTreeGet1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
+func TestIsEmpty(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Tree[string, int]
+		isEmpty     bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			isEmpty:     true,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			isEmpty:     false,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmpty:     false,
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, tree, size)
+
+	for _, test := range tests {
+		isEmpty := test.originalMap.IsEmpty()
+
+		assert.Equal(t, test.isEmpty, isEmpty, test.name)
+	}
 }
 
-func BenchmarkRedBlackTreeGet10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
+func TestClear(t *testing.T) {
+	tests := []struct {
+		name          string
+		originalMap   *Tree[string, int]
+		isEmptyBefore bool
+		isEmptyAfter  bool
+	}{
+
+		{
+			name:          "empty list",
+			originalMap:   NewWith[string, int](utils.BasicComparator[string]),
+			isEmptyBefore: true,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "single item",
+			originalMap:   NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "3 items",
+			originalMap:   NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, tree, size)
+
+	for _, test := range tests {
+		isEmptyBefore := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+
+		test.originalMap.Clear()
+
+		isEmptAfter := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+	}
 }
 
-func BenchmarkRedBlackTreeGet100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
+func TestNewFromIteratorWith(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *hashmap.Map[string, int]
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: hashmap.New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: hashmap.NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: hashmap.NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, tree, size)
+
+	for _, test := range tests {
+		it := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+
+		newMap := NewFromIteratorWith[string, int](utils.BasicComparator[string], it)
+
+		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+	}
+
 }
 
-func BenchmarkRedBlackTreePut100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	tree := NewWithIntComparator()
-	b.StartTimer()
-	benchmarkPut(b, tree, size)
+func TestNewFromIteratorsWith(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *hashmap.Map[string, int]
+	}{
+		{
+			name:        "empty list",
+			originalMap: hashmap.New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: hashmap.NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: hashmap.NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
+	}
+
+	for _, test := range tests {
+		first := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
+
+		newMap := NewFromIteratorsWith[string, int](utils.BasicComparator[string], first, end)
+
+		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+	}
+
 }
 
-func BenchmarkRedBlackTreePut1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, tree, size)
-}
+// TODO: Compare lists after operations, to require correctnes
+// func BenchmarkHashMapRemove(b *testing.B) {
+// 	b.StopTimer()
+// 	variants := []struct {
+// 		name string
+// 		f    func(n int, name string)
+// 	}{
+// 		{
+// 			name: "Ours",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[string])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					m.Remove(utils.BasicComparator[int], i)
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 		{
+// 			name: "Raw",
+// 			f: func(n int, name string) {
+// 				m := make(map[int]string)
+// 				for i := 0; i < n; i++ {
+// 					m[i] = "foo"
+// 				}
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					delete(m, i)
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 	}
+// 	for _, variant := range variants {
+// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 	}
+// }
 
-func BenchmarkRedBlackTreePut10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, tree, size)
-}
+// func BenchmarkHashMapGet(b *testing.B) {
+// 	b.StopTimer()
+// 	variants := []struct {
+// 		name string
+// 		f    func(n int, name string)
+// 	}{
+// 		{
+// 			name: "Ours",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					_, _ = m.Get(i)
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 		{
+// 			name: "Raw",
+// 			f: func(n int, name string) {
+// 				m := make(map[int]string)
+// 				for i := 0; i < n; i++ {
+// 					m[i] = "foo"
+// 				}
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					_, _ = m[i]
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 	}
 
-func BenchmarkRedBlackTreePut100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, tree, size)
-}
+// 	for _, variant := range variants {
+// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 	}
+// }
 
-func BenchmarkRedBlackTreeRemove100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, tree, size)
-}
+// func BenchmarkHashMapPut(b *testing.B) {
+// 	b.StopTimer()
+// 	variants := []struct {
+// 		name string
+// 		f    func(n int, name string)
+// 	}{
+// 		{
+// 			name: "Ours",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 		{
+// 			name: "Raw",
+// 			f: func(n int, name string) {
+// 				m := make(map[int]string)
+// 				b.StartTimer()
+// 				for i := 0; i < n; i++ {
+// 					m[i] = "foo"
+// 				}
+// 				b.StopTimer()
+// 			},
+// 		},
+// 	}
+// 	for _, variant := range variants {
+// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 	}
+// }
 
-func BenchmarkRedBlackTreeRemove1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, tree, size)
-}
+// func BenchmarkHashMapGetKeys(b *testing.B) {
+// 	b.StopTimer()
+// 	variants := []struct {
+// 		name string
+// 		f    func(n int, name string)
+// 	}{
+// 		{
+// 			name: "Ours",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				_ = m.GetKeys()
+// 				b.StopTimer()
+// 			},
+// 		},
+// 		{
+// 			name: "golang.org_x_exp",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				_ = maps.Keys(m.)
+// 				b.StopTimer()
+// 			},
+// 		},
+// 	}
 
-func BenchmarkRedBlackTreeRemove10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, tree, size)
-}
+// 	for _, variant := range variants {
+// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 	}
+// }
 
-func BenchmarkRedBlackTreeRemove100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	tree := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		tree.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, tree, size)
-}
+// func BenchmarkHashMapGetValues(b *testing.B) {
+// 	b.StopTimer()
+// 	variants := []struct {
+// 		name string
+// 		f    func(n int, name string)
+// 	}{
+// 		{
+// 			name: "Ours",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				_ = m.GetValues()
+// 				b.StopTimer()
+// 			},
+// 		},
+// 		{
+// 			name: "golang.org_x_exp",
+// 			f: func(n int, name string) {
+// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				for i := 0; i < n; i++ {
+// 					m.Put(i, "foo")
+// 				}
+// 				b.StartTimer()
+// 				_ = maps.Values(m.m)
+// 				b.StopTimer()
+// 			},
+// 		},
+// 	}
+
+// 	for _, variant := range variants {
+// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 	}
+// }
