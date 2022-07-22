@@ -13,6 +13,8 @@ package utils
 import (
 	"fmt"
 	"strconv"
+
+	"golang.org/x/exp/constraints"
 )
 
 // ToString converts a value to string.
@@ -45,4 +47,20 @@ func ToString(value interface{}) string {
 	default:
 		return fmt.Sprintf("%+v", value)
 	}
+}
+
+func Min[T constraints.Ordered](a T, b T) T {
+	if a <= b {
+		return a
+	}
+
+	return b
+}
+
+func Max[T constraints.Ordered](a T, b T) T {
+	if a >= b {
+		return a
+	}
+
+	return b
 }
