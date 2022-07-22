@@ -5,7 +5,10 @@
 
 package doublylinkedlist
 
-import "github.com/JonasMuehlmann/datastructures.go/ds"
+import (
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+)
 
 // Assert Iterator implementation
 var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
@@ -15,11 +18,13 @@ type Iterator[T any] struct {
 	list    *List[T]
 	index   int
 	element *element[T]
+	// Redundant but stored for better locality
+	size int
 }
 
 // Iterator returns a stateful iterator whose values can be fetched by an index.
 func (list *List[T]) NewIterator(l *List[T], position int) *Iterator[T] {
-	it := &Iterator[T]{list: l}
+	it := &Iterator[T]{list: l, index: position, size: l.Size()}
 
 	it.element = l.first
 	it.MoveTo(position)
@@ -29,7 +34,7 @@ func (list *List[T]) NewIterator(l *List[T], position int) *Iterator[T] {
 
 // IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsValid() bool {
-	return it.list.size > 0 && it.list.withinRange(it.index)
+	return it.list.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
 // Get implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -38,10 +43,7 @@ func (it *Iterator[T]) Get() (value T, found bool) {
 		return
 	}
 
-	value = it.element.value
-	found = true
-
-	return
+	return it.element.value, true
 }
 
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -132,115 +134,99 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 }
 
 // Next implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Next() {
-	it.index++
+func (it *Iterator[T]) Next() bool {
+	it.index = utils.Min(it.index+1, it.size)
 
 	if !it.IsValid() {
-		it.element = nil
-
-		return
-	}
-
-	// We are now entering the valid bound from beyond the left
-	if it.IsFirst() {
-		it.element = it.list.first
-
-		return
-	}
-
-	// We are still beyond the left bound
-	if it.index < 0 {
-		return
-	}
-
-	it.element = it.element.next
-}
-
-// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) NextN(n int) {
-	if n < 0 {
-		return
-	}
-
-	it.index += n
-
-	if !it.IsValid() {
-		it.element = nil
-
-		return
-	}
-
-	if it.IsLast() {
-		it.element = it.list.last
-
-		return
-	}
-
-	// We are moving from beyond the left bound into the valid bound
-	// Start at first prevent null pointer dereferences
-	if it.index-n < 0 {
-		n -= n - it.index
-		it.element = it.list.first
-	}
-
-	// We should be guaranteed to be in bounds here
-	for i := 0; i < n; i++ {
-		it.element = it.element.next
-	}
-}
-
-// Next implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Previous() {
-	it.index--
-
-	if !it.IsValid() {
-		it.element = nil
-
-		return
+		return false
 	}
 
 	if !it.IsFirst() {
-		it.element = it.element.prev
+		it.element = it.element.next
 	}
-}
-
-// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) PreviousN(n int) {
-	if n < 0 {
-		return
-	}
-
-	it.index -= n
-
-	if !it.IsValid() {
-		it.element = nil
-
-		return
-	}
-	if it.IsFirst() {
-		it.element = it.list.first
-
-		return
-	}
-
-	for i := 0; i < n; i++ {
-		it.element = it.element.prev
-	}
-}
-
-// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveTo(n int) bool {
-	it.MoveBy(n - it.index)
 
 	return true
 }
 
 // NextN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveBy(n int) {
+func (it *Iterator[T]) NextN(n int) bool {
 	if n < 0 {
-		it.PreviousN(-n)
+		return false
+	}
+
+	n = utils.Min(it.index+n, it.size) - it.index
+	it.index += n
+
+	if !it.IsValid() {
+		return false
+	}
+
+	if it.IsLast() {
+		it.element = it.list.last
+
+		return true
+	}
+
+	for i := 0; i < n; i++ {
+		it.element = it.element.next
+	}
+
+	return true
+}
+
+// Next implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) Previous() bool {
+	it.index = utils.Max(it.index-1, -1)
+
+	if !it.IsValid() {
+		return false
+	}
+
+	if !it.IsEnd() {
+		it.element = it.element.prev
+	}
+
+	return true
+}
+
+// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) PreviousN(n int) bool {
+	if n < 0 {
+		return false
+	}
+
+	n = it.index - utils.Max(it.index-n, -1)
+	it.index -= n
+
+	if !it.IsValid() {
+		return false
+	}
+
+	if it.IsFirst() {
+		it.element = it.list.first
+
+		return true
+	}
+
+	for i := 0; i < n; i++ {
+		it.element = it.element.prev
+	}
+
+	return true
+}
+
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveTo(n int) bool {
+	return it.MoveBy(n - it.index)
+
+}
+
+// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveBy(n int) bool {
+	if n < 0 {
+		return it.PreviousN(-n)
 	} else {
-		it.NextN(n)
+		return it.NextN(n)
 	}
 }
 
