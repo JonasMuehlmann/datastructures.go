@@ -81,23 +81,27 @@ func TestArrayListReverseIteratorIndex(t *testing.T) {
 		name         string
 		list         *List[int]
 		position     int
+		valid        bool
 		iteratorInit func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
 			list:         New[int](),
 			position:     0,
+			valid:        false,
 			iteratorInit: (*List[int]).ReverseBegin,
 		},
 		{
 			name:         "One element, begin",
 			list:         New[int](1),
+			valid:        false,
 			position:     1,
 			iteratorInit: (*List[int]).ReverseBegin,
 		},
 		{
 			name:         "One element, end",
 			list:         New[int](1),
+			valid:        false,
 			position:     -1,
 			iteratorInit: (*List[int]).ReverseEnd,
 		},
@@ -105,18 +109,21 @@ func TestArrayListReverseIteratorIndex(t *testing.T) {
 			name:         "One element, first",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*List[int]).ReverseFirst,
 		},
 		{
 			name:         "One element, last",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*List[int]).ReverseLast,
 		},
 		{
 			name:         "3 elements, middle",
 			list:         New[int](1, 2, 3),
 			position:     3,
+			valid:        false,
 			iteratorInit: (*List[int]).ReverseBegin,
 		},
 	}
@@ -128,8 +135,10 @@ func TestArrayListReverseIteratorIndex(t *testing.T) {
 
 			position, valid := it.Index()
 
-			assert.Equalf(t, test.position, position, test.name)
-			assert.Truef(t, valid, test.name)
+			assert.Equalf(t, test.valid, valid, test.name)
+			if test.valid {
+				assert.Equalf(t, test.position, position, test.name)
+			}
 		})
 	}
 }
@@ -802,8 +811,8 @@ func TestArrayListReverseIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().ReverseBegin()
-			it2 := New[int]().ReverseBegin()
+			it1 := New[int](1, 2, 3, 4, 5).ReverseBegin()
+			it2 := New[int](1, 2, 3, 4, 5).ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -845,8 +854,8 @@ func TestArrayListReverseIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().ReverseBegin()
-			it2 := New[int]().ReverseBegin()
+			it1 := New[int](1, 2, 3, 4, 5).ReverseBegin()
+			it2 := New[int](1, 2, 3, 4, 5).ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -888,8 +897,8 @@ func TestArrayListReverseIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().ReverseBegin()
-			it2 := New[int]().ReverseBegin()
+			it1 := New[int](1, 2, 3, 4, 5).ReverseBegin()
+			it2 := New[int](1, 2, 3, 4, 5).ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -931,8 +940,8 @@ func TestArrayListReverseIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().ReverseBegin()
-			it2 := New[int]().ReverseBegin()
+			it1 := New[int](1, 2, 3, 4, 5).ReverseBegin()
+			it2 := New[int](1, 2, 3, 4, 5).ReverseBegin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
