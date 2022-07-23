@@ -86,42 +86,49 @@ func TestLinkedHashSetIteratorIndex(t *testing.T) {
 		name         string
 		list         *Set[int]
 		position     int
+		valid        bool
 		iteratorInit func(*Set[int], utils.Comparator[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
 			list:         New[int](),
 			position:     0,
+			valid:        false,
 			iteratorInit: (*Set[int]).First,
 		},
 		{
 			name:         "One element, begin",
 			list:         New[int](1),
 			position:     -1,
+			valid:        false,
 			iteratorInit: (*Set[int]).Begin,
 		},
 		{
 			name:         "One element, end",
 			list:         New[int](1),
 			position:     1,
+			valid:        false,
 			iteratorInit: (*Set[int]).End,
 		},
 		{
 			name:         "One element, first",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*Set[int]).First,
 		},
 		{
 			name:         "One element, last",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*Set[int]).Last,
 		},
 		{
 			name:         "3 elements, first",
 			list:         New[int](1, 2, 3),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*Set[int]).First,
 		},
 	}
@@ -132,9 +139,9 @@ func TestLinkedHashSetIteratorIndex(t *testing.T) {
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
 
 			position, valid := it.Index()
-
+			assert.Equalf(t, test.valid, valid, test.name)
 			assert.Equalf(t, test.position, position, test.name)
-			assert.Truef(t, valid, test.name)
+
 		})
 	}
 }
@@ -599,6 +606,81 @@ func TestLinkedHashSetIteratorMoveBy(t *testing.T) {
 	}
 }
 
+func TestLinkedHashSetIteratorMoveTo(t *testing.T) {
+	tests := []struct {
+		name          string
+		list          *Set[int]
+		position      int
+		isValidBefore bool
+		isValidAfter  bool
+		iteratorInit  func(*Set[int], utils.Comparator[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+	}{
+		{
+			name:          "Empty",
+			list:          New[int](),
+			position:      5,
+			isValidBefore: false,
+			isValidAfter:  false,
+			iteratorInit:  (*Set[int]).Begin,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      0,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*Set[int]).Begin,
+		},
+		{
+			name:          "One element, end",
+			list:          New[int](1),
+			position:      0,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*Set[int]).End,
+		},
+		{
+			name:          "One element, first",
+			list:          New[int](1),
+			position:      0,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*Set[int]).First,
+		},
+		{
+			name:          "One element, last",
+			list:          New[int](1),
+			position:      0,
+			isValidBefore: true,
+			isValidAfter:  true,
+			iteratorInit:  (*Set[int]).Last,
+		},
+		{
+			name:          "3 elements, middle",
+			list:          New[int](1, 2, 3),
+			position:      1,
+			isValidBefore: false,
+			isValidAfter:  true,
+			iteratorInit:  (*Set[int]).Begin,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			it := test.iteratorInit(test.list, utils.BasicComparator[int])
+
+			isValidBefore := it.IsValid()
+			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
+
+			it.MoveTo(test.position)
+
+			isValidAfter := it.IsValid()
+			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+		})
+	}
+}
+
 func TestLinkedHashSetIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -808,8 +890,8 @@ func TestLinkedHashSetIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin(utils.BasicComparator[int])
-			it2 := New[int]().Begin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -851,8 +933,8 @@ func TestLinkedHashSetIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin(utils.BasicComparator[int])
-			it2 := New[int]().Begin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -894,8 +976,8 @@ func TestLinkedHashSetIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin(utils.BasicComparator[int])
-			it2 := New[int]().Begin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -937,8 +1019,8 @@ func TestLinkedHashSetIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin(utils.BasicComparator[int])
-			it2 := New[int]().Begin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
