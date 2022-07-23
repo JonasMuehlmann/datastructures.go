@@ -145,6 +145,7 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
+		value         int
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
@@ -161,6 +162,7 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 			position:      NoMoveMagicPosition,
 			isValidBefore: false,
 			isValidAfter:  true,
+			value:         1,
 			iteratorInit:  (*List[int]).Begin,
 		},
 		{
@@ -193,13 +195,13 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 			position:      1,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         3,
+			iteratorInit:  (*List[int]).Begin,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -211,9 +213,11 @@ func TestDoublyLinkedlistIteratorNext(t *testing.T) {
 			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
 
 			it.Next()
+			value, _ := it.Get()
 
 			isValidAfter := it.IsValid()
 			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+			assert.Equalf(t, test.value, value, test.name)
 		})
 	}
 }
@@ -226,6 +230,7 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
+		value         int
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
@@ -236,6 +241,16 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 			isValidBefore: false,
 			isValidAfter:  false,
 			iteratorInit:  (*List[int]).First,
+		},
+		{
+			name:          "One element, begin",
+			list:          New[int](1),
+			position:      NoMoveMagicPosition,
+			n:             1,
+			isValidBefore: false,
+			isValidAfter:  true,
+			value:         1,
+			iteratorInit:  (*List[int]).Begin,
 		},
 		{
 			name:          "One element, end",
@@ -271,7 +286,8 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 			n:             1,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         3,
+			iteratorInit:  (*List[int]).Begin,
 		},
 		{
 			name:          "3 elements, middle, move out of bounds",
@@ -280,7 +296,7 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 			n:             5,
 			isValidBefore: true,
 			isValidAfter:  false,
-			iteratorInit:  (*List[int]).First,
+			iteratorInit:  (*List[int]).Begin,
 		},
 	}
 
@@ -297,9 +313,11 @@ func TestDoublyLinkedlistIteratorNextN(t *testing.T) {
 			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
 
 			it.NextN(test.n)
+			value, _ := it.Get()
 
 			isValidAfter := it.IsValid()
 			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+			assert.Equalf(t, test.value, value, test.name)
 		})
 	}
 }
@@ -311,6 +329,7 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
+		value         int
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
@@ -335,6 +354,7 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			position:      NoMoveMagicPosition,
 			isValidBefore: false,
 			isValidAfter:  true,
+			value:         1,
 			iteratorInit:  (*List[int]).End,
 		},
 		{
@@ -359,7 +379,8 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			position:      1,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         1,
+			iteratorInit:  (*List[int]).Begin,
 		},
 		{
 			name:          "5 elements, middle",
@@ -367,7 +388,8 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			position:      2,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         2,
+			iteratorInit:  (*List[int]).Begin,
 		},
 	}
 
@@ -384,9 +406,11 @@ func TestDoublyLinkedlistIteratorPrevious(t *testing.T) {
 			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name+" valid before")
 
 			it.Previous()
+			value, _ := it.Get()
 
 			isValidAfter := it.IsValid()
 			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name+" valid after")
+			assert.Equalf(t, test.value, value, test.name+" value")
 		})
 	}
 }
@@ -399,6 +423,7 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
+		value         int
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
@@ -426,6 +451,7 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 			n:             1,
 			isValidBefore: false,
 			isValidAfter:  true,
+			value:         1,
 			iteratorInit:  (*List[int]).End,
 		},
 		{
@@ -453,15 +479,18 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 			n:             1,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         1,
+			iteratorInit:  (*List[int]).Begin,
 		},
 		{
 			name:          "5 elements, middle",
 			list:          New[int](1, 2, 3, 4, 5),
 			position:      2,
+			n:             1,
 			isValidBefore: true,
 			isValidAfter:  true,
-			iteratorInit:  (*List[int]).First,
+			value:         2,
+			iteratorInit:  (*List[int]).Begin,
 		},
 
 		{
@@ -471,7 +500,7 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 			n:             5,
 			isValidBefore: true,
 			isValidAfter:  false,
-			iteratorInit:  (*List[int]).First,
+			iteratorInit:  (*List[int]).Begin,
 		},
 	}
 
@@ -488,9 +517,11 @@ func TestDoublyLinkedlistIteratorPreviousN(t *testing.T) {
 			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
 
 			it.PreviousN(test.n)
+			value, _ := it.Get()
 
 			isValidAfter := it.IsValid()
 			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
+			assert.Equalf(t, test.value, value, test.name)
 		})
 	}
 }
