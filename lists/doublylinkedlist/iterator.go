@@ -141,7 +141,9 @@ func (it *Iterator[T]) Next() bool {
 		return false
 	}
 
-	if !it.IsFirst() {
+	if it.IsFirst() {
+		it.element = it.list.first
+	} else {
 		it.element = it.element.next
 	}
 
@@ -156,6 +158,10 @@ func (it *Iterator[T]) NextN(n int) bool {
 
 	n = utils.Min(it.index+n, it.size) - it.index
 	it.index += n
+
+	if it.index-n == -1 {
+		n -= 1
+	}
 
 	if !it.IsValid() {
 		return false
@@ -182,7 +188,9 @@ func (it *Iterator[T]) Previous() bool {
 		return false
 	}
 
-	if !it.IsEnd() {
+	if it.IsLast() {
+		it.element = it.list.last
+	} else {
 		it.element = it.element.prev
 	}
 
