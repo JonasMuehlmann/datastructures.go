@@ -85,43 +85,43 @@ func TestArrayQueueIteratorIndex(t *testing.T) {
 		name         string
 		list         *Queue[int]
 		position     int
+		valid        bool
 		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
 			list:         New[int](),
 			position:     -1,
+			valid:        false,
 			iteratorInit: (*Queue[int]).Begin,
 		},
 		{
 			name:         "One element, begin",
 			list:         New[int](1),
 			position:     -1,
+			valid:        false,
 			iteratorInit: (*Queue[int]).Begin,
 		},
 		{
 			name:         "One element, end",
 			list:         New[int](1),
 			position:     1,
+			valid:        false,
 			iteratorInit: (*Queue[int]).End,
 		},
 		{
 			name:         "One element, first",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*Queue[int]).First,
 		},
 		{
 			name:         "One element, last",
 			list:         New[int](1),
 			position:     0,
+			valid:        true,
 			iteratorInit: (*Queue[int]).Last,
-		},
-		{
-			name:         "3 elements, middle",
-			list:         New[int](1, 2, 3),
-			position:     -1,
-			iteratorInit: (*Queue[int]).Begin,
 		},
 	}
 
@@ -132,8 +132,10 @@ func TestArrayQueueIteratorIndex(t *testing.T) {
 
 			position, valid := it.Index()
 
-			assert.Equalf(t, test.position, position, test.name)
-			assert.Truef(t, valid, test.name)
+			assert.Equalf(t, test.valid, valid, test.name)
+			if test.valid {
+				assert.Equalf(t, test.position, position, test.name)
+			}
 		})
 	}
 }
@@ -807,8 +809,8 @@ func TestArrayQueueIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -850,8 +852,8 @@ func TestArrayQueueIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -893,8 +895,8 @@ func TestArrayQueueIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -936,8 +938,8 @@ func TestArrayQueueIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)

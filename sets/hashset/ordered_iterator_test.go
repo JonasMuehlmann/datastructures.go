@@ -817,8 +817,8 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().OrderedBegin(utils.BasicComparator[int])
-			it2 := New[int]().OrderedBegin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -860,8 +860,8 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().OrderedBegin(utils.BasicComparator[int])
-			it2 := New[int]().OrderedBegin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -903,8 +903,8 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().OrderedBegin(utils.BasicComparator[int])
-			it2 := New[int]().OrderedBegin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -946,8 +946,8 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().OrderedBegin(utils.BasicComparator[int])
-			it2 := New[int]().OrderedBegin(utils.BasicComparator[int])
+			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
+			it2 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)

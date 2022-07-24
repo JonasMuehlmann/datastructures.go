@@ -61,11 +61,11 @@ func NewFromSlice[T comparable](slice []T) *Set[T] {
 }
 
 // NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
-func NewFromIterator[T comparable](it ds.ReadCompForIndexIterator[int, T]) *Set[T] {
+func NewFromIterator[T comparable](begin ds.ReadCompForIndexIterator[int, T]) *Set[T] {
 	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
 
-	for ; !it.IsEnd(); it.Next() {
-		newValue, _ := it.Get()
+	for begin.Next() {
+		newValue, _ := begin.Get()
 
 		s.table[newValue] = itemExists
 		s.ordering.PushBack(newValue)
@@ -76,11 +76,11 @@ func NewFromIterator[T comparable](it ds.ReadCompForIndexIterator[int, T]) *Set[
 
 // NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[T comparable](first ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
+func NewFromIterators[T comparable](begin ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
 	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
 
-	for ; !first.IsEqual(end); first.Next() {
-		newValue, _ := first.Get()
+	for !begin.IsEqual(end) && begin.Next() {
+		newValue, _ := begin.Get()
 
 		s.table[newValue] = itemExists
 		s.ordering.PushBack(newValue)

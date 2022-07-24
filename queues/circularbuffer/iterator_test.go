@@ -807,8 +807,8 @@ func TestCircularBufferIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int](5).Begin()
-			it2 := New[int](5).Begin()
+			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
+			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -850,8 +850,8 @@ func TestCircularBufferIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int](5).Begin()
-			it2 := New[int](5).Begin()
+			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
+			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -893,8 +893,8 @@ func TestCircularBufferIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int](5).Begin()
-			it2 := New[int](5).Begin()
+			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
+			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -936,8 +936,8 @@ func TestCircularBufferIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int](5).Begin()
-			it2 := New[int](5).Begin()
+			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
+			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)

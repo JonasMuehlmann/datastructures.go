@@ -85,11 +85,11 @@ func NewFromSlice[T any](slice []T) *List[T] {
 }
 
 // NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
-func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *List[T] {
+func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *List[T] {
 	list := &List[T]{}
 
-	for ; !it.IsEnd(); it.Next() {
-		newItem, _ := it.Get()
+	for begin.Next() {
+		newItem, _ := begin.Get()
 		list.PushBack(newItem)
 	}
 
@@ -98,10 +98,10 @@ func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *List[T] {
 
 // NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *List[T] {
+func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *List[T] {
 	list := &List[T]{}
-	for ; !first.IsEqual(end); first.Next() {
-		newItem, _ := first.Get()
+	for !begin.IsEqual(end) && begin.Next() {
+		newItem, _ := begin.Get()
 		list.PushBack(newItem)
 	}
 
@@ -365,6 +365,12 @@ func (list *List[T]) withinRange(index int) bool {
 //******************************************************************//
 //                             Iterator                             //
 //******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (list *List[T]) Begin() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
+	return list.NewIterator(list, -1)
+}
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.

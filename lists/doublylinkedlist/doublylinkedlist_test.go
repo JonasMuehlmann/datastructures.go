@@ -616,14 +616,14 @@ func TestNewFromIterator(t *testing.T) {
 
 	for _, test := range tests {
 		originalValues := arraylist.New[string]()
-		it := test.originalList.First()
+		it := test.originalList.Begin()
 
-		for ; !it.IsEnd(); it.Next() {
+		for it.Next() {
 			newValue, _ := it.Get()
 			originalValues.PushBack(newValue)
 		}
 
-		newList := NewFromIterator[string](originalValues.First())
+		newList := NewFromIterator[string](originalValues.Begin())
 
 		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
@@ -635,35 +635,36 @@ func TestNewFromIterators(t *testing.T) {
 		name              string
 		originalList      *List[string]
 		newList           *List[string]
-		iteratorInitFirst func(*List[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitBegin func(*List[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
 		iteratorInitEnd   func(*List[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
 	}{
 		{
 			name:              "empty list",
 			originalList:      New[string](),
 			newList:           New[string](),
-			iteratorInitFirst: (*List[string]).First,
+			iteratorInitBegin: (*List[string]).Begin,
 			iteratorInitEnd:   (*List[string]).End,
 		},
 		{
 			name:              "single item",
 			originalList:      New[string]("foo"),
-			iteratorInitFirst: (*List[string]).First,
+			newList:           New[string]("foo"),
+			iteratorInitBegin: (*List[string]).Begin,
 			iteratorInitEnd:   (*List[string]).End,
 		},
 		{
 			name:              "3 items",
 			originalList:      New[string]("foo", "bar", "baz"),
 			newList:           New[string]("foo", "bar", "baz"),
-			iteratorInitFirst: (*List[string]).First,
+			iteratorInitBegin: (*List[string]).Begin,
 			iteratorInitEnd:   (*List[string]).End,
 		},
 		{
 			name:              "3 items, end and first swapped",
 			originalList:      New[string]("foo", "bar", "baz"),
 			newList:           New[string](),
-			iteratorInitFirst: (*List[string]).End,
-			iteratorInitEnd:   (*List[string]).First,
+			iteratorInitBegin: (*List[string]).End,
+			iteratorInitEnd:   (*List[string]).Begin,
 		},
 	}
 
@@ -671,14 +672,14 @@ func TestNewFromIterators(t *testing.T) {
 		originalValues := arraylist.New[string]()
 		it := test.originalList.First()
 
-		for ; !it.IsEnd(); it.Next() {
+		for !it.IsEnd() && it.Next() {
 			newValue, _ := it.Get()
 			originalValues.PushBack(newValue)
 		}
 
-		newList := NewFromIterators[string](originalValues.First(), originalValues.End())
+		newList := NewFromIterators[string](test.iteratorInitBegin(test.originalList), test.iteratorInitEnd(test.originalList))
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		assert.ElementsMatchf(t, test.newList.GetValues(), newList.GetValues(), test.name)
 	}
 
 }

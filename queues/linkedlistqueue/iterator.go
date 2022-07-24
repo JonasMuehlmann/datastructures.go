@@ -5,48 +5,27 @@
 
 package linkedlistqueue
 
-import "github.com/JonasMuehlmann/datastructures.go/ds"
+import (
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/lists/singlylinkedlist"
+)
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
+var _ ds.ReadWriteOrdCompForRandCollIterator[int, any] = (*Iterator[any])(nil)
 
 // Iterator holding the iterator's state
 type Iterator[T any] struct {
-	stack *Queue[T]
-	index int
+	*singlylinkedlist.Iterator[T]
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
 func (list *Queue[T]) NewIterator(list_ *Queue[T], index int) *Iterator[T] {
-	return &Iterator[T]{stack: list_, index: index}
+	return &Iterator[T]{list.list.NewIterator(list.list, index)}
 }
 
-// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) IsValid() bool {
-	return it.stack.withinRange(it.index)
-}
+// NOTE: The following methods need to be reimplemented because of the type assertions they contain
 
-// Get implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Get() (value T, found bool) {
-	if it.stack.Size() == 0 || !it.IsValid() {
-		return
-	}
-
-	return it.stack.list.Get(it.index)
-}
-
-// Set implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Set(value T) bool {
-	if it.stack.Size() == 0 || !it.IsValid() {
-		return false
-	}
-
-	it.stack.list.Set(it.index, value)
-
-	return true
-}
-
-// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+// DistanceTo implements ds.ReadWriteOrdCompForRandCollIterator
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*Iterator[T])
@@ -54,10 +33,13 @@ func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 		panic(ds.CanOnlyCompareEqualIteratorTypes)
 	}
 
-	return it.index - otherThis.index
+	thisIndex, _ := it.Index()
+	otherThisIndex, _ := otherThis.Index()
+
+	return thisIndex - otherThisIndex
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+// IsAfter implements ds.ReadWriteOrdCompForRandCollIterator
 func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -67,7 +49,7 @@ func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+// IsBefore implements ds.ReadWriteOrdCompForRandCollIterator
 func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -77,7 +59,7 @@ func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+// IsEqual implements ds.ReadWriteOrdCompForRandCollIterator
 func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -87,83 +69,163 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	return it.DistanceTo(otherThis) == 0
 }
 
-// Next implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Next() {
-	it.index++
-}
+// NOTE: Turns out that struct embedings remove the need for the redundant implementation below.
+// In case it is needed again, it will probably stay here
 
-// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) NextN(i int) {
-	it.index += i
-}
+// // Iterator holding the iterator's state
+// type Iterator[T any] struct {
+// 	stack *Queue[T]
+// 	index int
+// }
 
-// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Previous() {
-	it.index--
-}
+// // NewIterator returns a stateful iterator whose values can be fetched by an index.
+// func (list *Queue[T]) NewIterator(list_ *Queue[T], index int) *Iterator[T] {
+// 	return &Iterator[T]{stack: list_, index: index}
+// }
 
-// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) PreviousN(n int) {
-	it.index -= n
-}
+// // IsValid implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsValid() bool {
+// 	return it.stack.withinRange(it.index)
+// }
 
-// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveBy(n int) {
-	it.index += n
-}
+// // Get implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Get() (value T, found bool) {
+// 	if it.stack.Size() == 0 || !it.IsValid() {
+// 		return
+// 	}
 
-// Size implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Size() int {
-	return it.stack.Size()
-}
+// 	return it.stack.list.Get(it.index)
+// }
 
-// Index implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Index() (int, bool) {
-	return it.index, true
-}
+// // Set implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Set(value T) bool {
+// 	if it.stack.Size() == 0 || !it.IsValid() {
+// 		return false
+// 	}
 
-// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveTo(i int) bool {
-	it.index = i
+// 	it.stack.list.Set(it.index, value)
 
-	return true
-}
+// 	return true
+// }
 
-// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) IsBegin() bool {
-	return it.index == -1
-}
+// // DistanceTo implements ds.ReadWriteOrdCompForRandCollIterator
+// // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
+// func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
+// 	otherThis, ok := other.(*Iterator[T])
+// 	if !ok {
+// 		panic(ds.CanOnlyCompareEqualIteratorTypes)
+// 	}
 
-// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) IsEnd() bool {
-	return it.stack.Size() == 0 || it.index == it.stack.Size()
-}
+// 	return it.index - otherThis.index
+// }
 
-// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) IsFirst() bool {
-	return it.index == 0
-}
+// // IsAfter implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
+// 	otherThis, ok := other.(*Iterator[T])
+// 	if !ok {
+// 		panic(ds.CanOnlyCompareEqualIteratorTypes)
+// 	}
 
-// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) IsLast() bool {
-	return it.index == it.stack.Size()-1
-}
+// 	return it.DistanceTo(otherThis) > 0
+// }
 
-// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
-	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
-		return
-	}
+// // IsBefore implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
+// 	otherThis, ok := other.(*Iterator[T])
+// 	if !ok {
+// 		panic(ds.CanOnlyCompareEqualIteratorTypes)
+// 	}
 
-	return it.stack.list.Get(i)
-}
+// 	return it.DistanceTo(otherThis) < 0
+// }
 
-// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) SetAt(i int, value T) bool {
-	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
-		return false
-	}
-	it.stack.list.Set(i, value)
+// // IsEqual implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
+// 	otherThis, ok := other.(*Iterator[T])
+// 	if !ok {
+// 		panic(ds.CanOnlyCompareEqualIteratorTypes)
+// 	}
 
-	return true
-}
+// 	return it.DistanceTo(otherThis) == 0
+// }
+
+// // Next implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Next() {
+// 	it.index++
+// }
+
+// // NextN implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) NextN(i int) {
+// 	it.index += i
+// }
+
+// // Previous implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Previous() {
+// 	it.index--
+// }
+
+// // PreviousN implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) PreviousN(n int) {
+// 	it.index -= n
+// }
+
+// // MoveBy implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) MoveBy(n int) {
+// 	it.index += n
+// }
+
+// // Size implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Size() int {
+// 	return it.stack.Size()
+// }
+
+// // Index implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) Index() (int, bool) {
+// 	return it.index, true
+// }
+
+// // MoveTo implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) MoveTo(i int) bool {
+// 	it.index = i
+
+// 	return true
+// }
+
+// // IsBegin implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsBegin() bool {
+// 	return it.index == -1
+// }
+
+// // IsEnd implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsEnd() bool {
+// 	return it.stack.Size() == 0 || it.index == it.stack.Size()
+// }
+
+// // IsFirst implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsFirst() bool {
+// 	return it.index == 0
+// }
+
+// // IsLast implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) IsLast() bool {
+// 	return it.index == it.stack.Size()-1
+// }
+
+// // GetAt implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
+// 	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
+// 		return
+// 	}
+
+// 	return it.stack.list.Get(i)
+// }
+
+// // SetAt implements ds.ReadWriteOrdCompForRandCollIterator
+// func (it *Iterator[T]) SetAt(i int, value T) bool {
+// 	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
+// 		return false
+// 	}
+// 	it.stack.list.Set(i, value)
+
+// 	return true
+// }

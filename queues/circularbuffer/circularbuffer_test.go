@@ -309,7 +309,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalList.First()
+		it := test.originalList.Begin()
 		newList := NewFromIterator[string](10, it)
 
 		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -328,31 +328,31 @@ func TestNewFromIterators(t *testing.T) {
 		{
 			name:              "empty list",
 			originalList:      New[string](10),
-			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitFirst: (*Queue[string]).Begin,
 			iteratorInitEnd:   (*Queue[string]).End,
 		},
 		{
 			name:              "single item",
 			originalList:      NewFromSlice[string](10, []string{"foo"}),
-			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitFirst: (*Queue[string]).Begin,
 			iteratorInitEnd:   (*Queue[string]).End,
 		},
 		{
 			name:              "3 items",
 			originalList:      NewFromSlice[string](10, []string{"foo", "bar", "baz"}),
-			iteratorInitFirst: (*Queue[string]).First,
+			iteratorInitFirst: (*Queue[string]).Begin,
 			iteratorInitEnd:   (*Queue[string]).End,
 		},
 		{
 			name:              "3 items, end and first swapped",
 			originalList:      NewFromSlice[string](10, []string{"foo", "bar", "baz"}),
 			iteratorInitFirst: (*Queue[string]).End,
-			iteratorInitEnd:   (*Queue[string]).First,
+			iteratorInitEnd:   (*Queue[string]).Begin,
 		},
 	}
 
 	for _, test := range tests {
-		first := test.originalList.First()
+		first := test.originalList.Begin()
 		end := test.originalList.End()
 		newList := NewFromIterators[string](10, first, end)
 
