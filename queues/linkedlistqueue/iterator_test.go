@@ -18,7 +18,7 @@ func TestArrayQueueIteratorIsValid(t *testing.T) {
 		list         *Queue[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -85,7 +85,7 @@ func TestArrayQueueIteratorIndex(t *testing.T) {
 		name         string
 		list         *Queue[int]
 		position     int
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -145,7 +145,7 @@ func TestArrayQueueIteratorNext(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -225,7 +225,7 @@ func TestArrayQueueIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -305,292 +305,6 @@ func TestArrayQueueIteratorNextN(t *testing.T) {
 			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
 
 			it.NextN(test.n)
-
-			isValidAfter := it.IsValid()
-			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
-		})
-	}
-}
-
-func TestArrayQueueIteratorPrevious(t *testing.T) {
-	tests := []struct {
-		name          string
-		list          *Queue[int]
-		position      int
-		isValidBefore bool
-		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
-	}{
-		{
-			name:          "Empty",
-			list:          New[int](),
-			position:      NoMoveMagicPosition,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, begin",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, end",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			isValidBefore: false,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).End,
-		},
-		{
-			name:          "One element, first",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).First,
-		},
-		{
-			name:          "One element, last",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Last,
-		},
-		{
-			name:          "3 elements, middle",
-			list:          New[int](1, 2, 3),
-			position:      1,
-			isValidBefore: true,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
-			it := test.iteratorInit(test.list)
-
-			if test.position != NoMoveMagicPosition {
-				it.MoveTo(test.position)
-			}
-
-			isValidBefore := it.IsValid()
-			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
-
-			it.Previous()
-
-			isValidAfter := it.IsValid()
-			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
-		})
-	}
-}
-
-func TestArrayQueueIteratorPreviousN(t *testing.T) {
-	tests := []struct {
-		name          string
-		list          *Queue[int]
-		position      int
-		n             int
-		isValidBefore bool
-		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
-	}{
-		{
-			name:          "Empty",
-			list:          New[int](),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, begin",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, end",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).End,
-		},
-		{
-			name:          "One element, first",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).First,
-		},
-		{
-			name:          "One element, last",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Last,
-		},
-		{
-			name:          "3 elements, middle",
-			list:          New[int](1, 2, 3),
-			position:      1,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "3 elements, middle, move out of bounds",
-			list:          New[int](1, 2, 3),
-			position:      1,
-			n:             5,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
-			it := test.iteratorInit(test.list)
-
-			if test.position != NoMoveMagicPosition {
-				it.MoveTo(test.position)
-			}
-
-			isValidBefore := it.IsValid()
-			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
-
-			it.PreviousN(test.n)
-
-			isValidAfter := it.IsValid()
-			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
-		})
-	}
-}
-
-func TestArrayQueueIteratorMoveBy(t *testing.T) {
-	tests := []struct {
-		name          string
-		list          *Queue[int]
-		position      int
-		n             int
-		isValidBefore bool
-		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
-	}{
-		{
-			name:          "Empty",
-			list:          New[int](),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, begin",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "One element, end",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: false,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).End,
-		},
-		{
-			name:          "One element, first",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).First,
-		},
-		{
-			name:          "One element, last",
-			list:          New[int](1),
-			position:      NoMoveMagicPosition,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Last,
-		},
-		{
-			name:          "3 elements, middle",
-			list:          New[int](1, 2, 3),
-			position:      1,
-			n:             1,
-			isValidBefore: true,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "5 elements, middle, forward by 2",
-			list:          New[int](1, 2, 3, 4, 5),
-			position:      2,
-			n:             2,
-			isValidBefore: true,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		}, {
-			name:          "5 elements, middle, backward by 2",
-			list:          New[int](1, 2, 3, 4, 5),
-			position:      2,
-			n:             -2,
-			isValidBefore: true,
-			isValidAfter:  true,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-		{
-			name:          "3 elements, middle, move out of bounds",
-			list:          New[int](1, 2, 3),
-			position:      1,
-			n:             5,
-			isValidBefore: true,
-			isValidAfter:  false,
-			iteratorInit:  (*Queue[int]).Begin,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
-			it := test.iteratorInit(test.list)
-
-			if test.position != NoMoveMagicPosition {
-				it.MoveTo(test.position)
-			}
-
-			isValidBefore := it.IsValid()
-			assert.Equalf(t, test.isValidBefore, isValidBefore, test.name)
-
-			it.MoveBy(test.n)
 
 			isValidAfter := it.IsValid()
 			assert.Equalf(t, test.isValidAfter, isValidAfter, test.name)
@@ -691,91 +405,6 @@ func TestArrayQueueIteratorSet(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorGetAt(t *testing.T) {
-	tests := []struct {
-		name     string
-		list     *Queue[int]
-		position int
-		value    int
-		found    bool
-	}{
-		{
-			name:     "Empty",
-			list:     New[int](),
-			position: 0,
-			found:    false,
-		},
-		{
-			name:     "One element, begin",
-			list:     New[int](1),
-			position: -1,
-			found:    false,
-		},
-		{
-			name:     "One element, first",
-			list:     New[int](1),
-			position: 0,
-			value:    1,
-			found:    true,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
-			it := test.list.Begin()
-
-			value, found := it.GetAt(test.position)
-
-			assert.Equalf(t, test.found, found, test.name)
-			assert.Equalf(t, test.value, value, test.name)
-		})
-	}
-}
-
-func TestArrayQueueIteratorSetAt(t *testing.T) {
-	tests := []struct {
-		name        string
-		list        *Queue[int]
-		position    int
-		value       int
-		successfull bool
-	}{
-		{
-			name:        "Empty",
-			list:        New[int](),
-			position:    0,
-			value:       1,
-			successfull: false,
-		},
-		{
-			name:        "One element, begin",
-			list:        New[int](1),
-			position:    -1,
-			value:       1,
-			successfull: false,
-		},
-		{
-			name:        "One element, first",
-			list:        New[int](1),
-			position:    0,
-			value:       1,
-			successfull: true,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer testCommon.HandlePanic(t, test.name)
-			it := test.list.Begin()
-
-			successfull := it.SetAt(test.position, test.value)
-
-			assert.Equalf(t, test.successfull, successfull, test.name)
-		})
-	}
-}
-
 // NOTE: Missing test case: other does not implement IndexedIterator
 func TestArrayQueueIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
@@ -807,8 +436,8 @@ func TestArrayQueueIteratorDistanceTo(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -850,8 +479,8 @@ func TestArrayQueueIteratorIsAfter(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -893,8 +522,8 @@ func TestArrayQueueIteratorIsBefore(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -936,8 +565,8 @@ func TestArrayQueueIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
-			it1 := New[int]().Begin()
-			it2 := New[int]().Begin()
+			it1 := New[int](1, 2, 3, 4, 5).Begin()
+			it2 := New[int](1, 2, 3, 4, 5).Begin()
 
 			it1.MoveTo(test.position1)
 			it2.MoveTo(test.position2)
@@ -952,28 +581,28 @@ func TestArrayQueueIteratorIsEqual(t *testing.T) {
 func TestArrayQueueIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[int, int]) bool
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompForRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Begin",
 			iteratorInit:  (*Queue[int]).Begin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*Queue[int]).End,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsEnd,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*Queue[int]).First,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsFirst,
 		},
 		{
 			name:          "Last",
 			iteratorInit:  (*Queue[int]).Last,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[int, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsLast,
 		},
 	}
 
@@ -990,7 +619,7 @@ func TestArrayQueueIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Queue[int]
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 		size         int
 	}{
 		{
