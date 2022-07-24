@@ -5,7 +5,10 @@
 
 package circularbuffer
 
-import "github.com/JonasMuehlmann/datastructures.go/ds"
+import (
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+)
 
 // Assert Iterator implementation
 var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
@@ -14,41 +17,42 @@ var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
 type Iterator[T any] struct {
 	stack *Queue[T]
 	index int
+	// Redundant but has better locality
+	value T
+	size  int
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
 func (list *Queue[T]) NewIterator(list_ *Queue[T], index int) *Iterator[T] {
-	return &Iterator[T]{stack: list_, index: index}
+	it := &Iterator[T]{stack: list_, index: 0, size: list.size}
+
+	it.MoveTo(index)
+
+	return it
 }
 
 // IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsValid() bool {
-	return it.stack.withinRange(it.index)
+	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
 // Get implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Get() (value T, found bool) {
-	if it.stack.Size() == 0 || !it.IsValid() {
+	if !it.IsValid() {
 		return
 	}
 
-	value = it.stack.values[it.index]
-	found = it.stack.withinRange(it.index)
-
-	return
+	return it.value, true
 }
 
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Set(value T) bool {
-	if it.stack.Size() == 0 || !it.IsValid() {
-		return false
-	}
-
-	if !it.stack.withinRange(it.index) {
+	if !it.IsValid() {
 		return false
 	}
 
 	it.stack.values[it.index] = value
+	it.value = value
 
 	return true
 }
@@ -95,45 +99,79 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 }
 
 // Next implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Next() {
-	it.index++
+func (it *Iterator[T]) Next() bool {
+	it.index = utils.Min(it.index+1, it.size)
+
+	if !it.IsValid() {
+		return false
+	}
+
+	it.value = it.stack.values[it.index]
+
+	return true
 }
 
 // NextN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) NextN(i int) {
-	it.index += i
+func (it *Iterator[T]) NextN(i int) bool {
+	it.index = utils.Min(it.index+i, it.size)
+
+	if !it.IsValid() {
+		return false
+	}
+
+	it.value = it.stack.values[it.index]
+
+	return true
 }
 
 // Previous implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) Previous() {
-	it.index--
+func (it *Iterator[T]) Previous() bool {
+	it.index = utils.Max(it.index-1, -1)
+
+	if !it.IsValid() {
+		return false
+	}
+
+	it.value = it.stack.values[it.index]
+
+	return true
 }
 
 // PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) PreviousN(n int) {
-	it.index -= n
+func (it *Iterator[T]) PreviousN(n int) bool {
+	it.index = utils.Max(it.index-n, -1)
+
+	if !it.IsValid() {
+		return false
+	}
+
+	it.value = it.stack.values[it.index]
+
+	return true
 }
 
 // MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveBy(n int) {
-	it.index += n
+func (it *Iterator[T]) MoveBy(n int) bool {
+	if n > 0 {
+		return it.NextN(n)
+	}
+
+	return it.PreviousN(-n)
+}
+
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[T]) MoveTo(i int) bool {
+	return it.MoveBy(i - it.index)
 }
 
 // Size implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Size() int {
-	return it.stack.Size()
+	return it.size
 }
 
 // Index implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) Index() (int, bool) {
 	return it.index, true
-}
-
-// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
-func (it *Iterator[T]) MoveTo(i int) bool {
-	it.index = i
-
-	return true
 }
 
 // IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -143,7 +181,7 @@ func (it *Iterator[T]) IsBegin() bool {
 
 // IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsEnd() bool {
-	return it.stack.Size() == 0 || it.index == it.stack.Size()
+	return it.size == 0 || it.index == it.stack.Size()
 }
 
 // IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -153,12 +191,12 @@ func (it *Iterator[T]) IsFirst() bool {
 
 // IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsLast() bool {
-	return it.index == it.stack.Size()-1
+	return it.index == it.size-1
 }
 
 // GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
-	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
+	if !it.stack.withinRange(i) {
 		return
 	}
 
@@ -170,7 +208,7 @@ func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 
 // SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) SetAt(i int, value T) bool {
-	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
+	if !it.stack.withinRange(i) {
 		return false
 	}
 

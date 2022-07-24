@@ -16,10 +16,10 @@ var _ ds.ReadWriteOrdCompBidRandCollIterator[int, any] = (*Iterator[any])(nil)
 // Iterator holding the iterator's state
 type Iterator[T any] struct {
 	list  *List[T]
-	value T
 	index int
 	// Redundant but has better locality
-	size int
+	value T
+	size  int
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
@@ -44,7 +44,7 @@ func (it *Iterator[T]) Get() (value T, found bool) {
 		return
 	}
 
-	return it.list.elements[it.index], true
+	return it.value, true
 }
 
 // Set implements ds.ReadWriteOrdCompBidRandCollIterator
@@ -53,6 +53,7 @@ func (it *Iterator[T]) Set(value T) bool {
 		return false
 	}
 	it.list.elements[it.index] = value
+	it.value = value
 
 	return true
 }
