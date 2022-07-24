@@ -22,6 +22,8 @@ func (list *Stack[T]) NewIterator(list_ *Stack[T], index int) *Iterator[T] {
 	return &Iterator[T]{list_.list.NewIterator(list_.list, index)}
 }
 
+// NOTE: The following methods need to be reimplemented because of the type assertions they contain
+
 // DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
