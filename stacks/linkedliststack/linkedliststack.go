@@ -40,11 +40,11 @@ func NewFromSlice[T any](slice []T) *Stack[T] {
 }
 
 // NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
-func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Stack[T] {
+func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Stack[T] {
 	list := &Stack[T]{list: singlylinkedlist.New[T]()}
 
-	for ; !it.IsEnd(); it.Next() {
-		newItem, _ := it.Get()
+	for ; !begin.IsEnd(); begin.Next() {
+		newItem, _ := begin.Get()
 		list.Push(newItem)
 	}
 
@@ -53,10 +53,10 @@ func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Stack[T] {
 
 // NewFromIterators instantiates a new stack containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Stack[T] {
+func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Stack[T] {
 	list := &Stack[T]{list: singlylinkedlist.New[T]()}
-	for ; !first.IsEqual(end); first.Next() {
-		newItem, _ := first.Get()
+	for ; !begin.IsEqual(end); begin.Next() {
+		newItem, _ := begin.Get()
 		list.Push(newItem)
 	}
 
@@ -124,22 +124,22 @@ func (stack *Stack[T]) withinRange(index int) bool {
 
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
-func (stack *Stack[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+func (stack *Stack[T]) Begin() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
 	return stack.NewIterator(stack, -1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
-func (stack *Stack[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+func (stack *Stack[T]) End() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
 	return stack.NewIterator(stack, stack.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
-func (stack *Stack[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+func (stack *Stack[T]) First() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
 	return stack.NewIterator(stack, 0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
-func (stack *Stack[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+func (stack *Stack[T]) Last() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
 	return stack.NewIterator(stack, stack.Size()-1)
 }
