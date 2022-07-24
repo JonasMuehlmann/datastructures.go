@@ -334,7 +334,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
 		newMap := NewFromIterator[string, int](it)
 
@@ -363,7 +363,7 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		first := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
 		newMap := NewFromIterators[string, int](first, end)
