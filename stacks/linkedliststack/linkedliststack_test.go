@@ -325,8 +325,8 @@ func TestNewFromIterators(t *testing.T) {
 		name              string
 		originalList      *Stack[string]
 		newList           *Stack[string]
-		iteratorInitFirst func(*Stack[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
-		iteratorInitEnd   func(*Stack[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitFirst func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
+		iteratorInitEnd   func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
 	}{
 		{
 			name:              "empty list",
