@@ -37,17 +37,17 @@ func NewFromSlice[T any](slice []T) *Queue[T] {
 }
 
 // NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
-func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Queue[T] {
+func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Queue[T] {
 	length := 0
-	sizedIterator, ok := it.(ds.SizedIterator)
+	sizedIterator, ok := begin.(ds.SizedIterator)
 	if ok {
 		length = sizedIterator.Size()
 	}
 
 	elements := make([]T, 0, length)
 
-	for ; !it.IsEnd(); it.Next() {
-		newItem, _ := it.Get()
+	for ; !begin.IsEnd(); begin.Next() {
+		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}
 
@@ -58,9 +58,9 @@ func NewFromIterator[T any](it ds.ReadCompForIterator[T]) *Queue[T] {
 
 // NewFromIterators instantiates a new queue containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
+func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
 	length := 0
-	sizedFirst, ok := first.(ds.OrderedIterator)
+	sizedFirst, ok := begin.(ds.OrderedIterator)
 	sizedLast, ok2 := end.(ds.OrderedIterator)
 	if ok && ok2 {
 		length = -sizedFirst.DistanceTo(sizedLast)
@@ -71,8 +71,8 @@ func NewFromIterators[T any](first ds.ReadCompForIterator[T], end ds.ComparableI
 
 	elements := make([]T, 0, length)
 
-	for ; !first.IsEqual(end); first.Next() {
-		newItem, _ := first.Get()
+	for ; !begin.IsEqual(end); begin.Next() {
+		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}
 
