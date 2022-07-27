@@ -28,20 +28,20 @@ const (
 )
 
 // Tree holds elements of the red-black tree
-type Tree[TKey any, TValue any] struct {
+type Tree[TKey comparable, TValue any] struct {
 	Root       *Node[TKey, TValue]
 	size       int
 	Comparator utils.Comparator[TKey]
 }
 
 // NewWith instantiates a red-black tree with the custom comparator.
-func NewWith[TKey any, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
+func New[TKey comparable, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
 	return &Tree[TKey, TValue]{Comparator: comparator}
 }
 
 // NewFromMap instantiates a new tree containing the provided map.
-func NewFromMapWith[TKey comparable, TValue any](comparator utils.Comparator[TKey], map_ map[TKey]TValue) *Tree[TKey, TValue] {
-	tree := NewWith[TKey, TValue](comparator)
+func NewFromMap[TKey comparable, TValue any](comparator utils.Comparator[TKey], map_ map[TKey]TValue) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
 
 	for k, v := range map_ {
 		tree.Put(k, v)
@@ -51,12 +51,12 @@ func NewFromMapWith[TKey comparable, TValue any](comparator utils.Comparator[TKe
 }
 
 // NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
-func NewFromIteratorWith[TKey any, TValue any](comparator utils.Comparator[TKey], it ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
-	tree := NewWith[TKey, TValue](comparator)
+func NewFromIterator[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
 
-	for ; !it.IsEnd(); it.Next() {
-		newKey, _ := it.Index()
-		newValue, _ := it.Get()
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
 
 		tree.Put(newKey, newValue)
 	}
@@ -66,12 +66,12 @@ func NewFromIteratorWith[TKey any, TValue any](comparator utils.Comparator[TKey]
 
 // NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIteratorsWith[TKey any, TValue any](comparator utils.Comparator[TKey], first ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
-	tree := NewWith[TKey, TValue](comparator)
+func NewFromIterators[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
 
-	for ; !first.IsEqual(end); first.Next() {
-		newKey, _ := first.Index()
-		newValue, _ := first.Get()
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
 
 		tree.Put(newKey, newValue)
 	}
@@ -83,6 +83,7 @@ func NewFromIteratorsWith[TKey any, TValue any](comparator utils.Comparator[TKey
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) Put(key TKey, value TValue) {
 	var insertedNode *Node[TKey, TValue]
+
 	if tree.Root == nil {
 		// Assert key is of comparator's type for initial tree
 		tree.Comparator(key, key)
@@ -91,8 +92,10 @@ func (tree *Tree[TKey, TValue]) Put(key TKey, value TValue) {
 	} else {
 		node := tree.Root
 		loop := true
+
 		for loop {
 			compare := tree.Comparator(key, node.Key)
+
 			switch {
 			case compare == 0:
 				node.Key = key
@@ -116,8 +119,10 @@ func (tree *Tree[TKey, TValue]) Put(key TKey, value TValue) {
 				}
 			}
 		}
+
 		insertedNode.Parent = node
 	}
+
 	tree.insertCase1(insertedNode)
 	tree.size++
 }
@@ -126,17 +131,18 @@ func (tree *Tree[TKey, TValue]) Put(key TKey, value TValue) {
 // Second return parameter is true if key was found, otherwise false.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
-	node, _ := tree.lookup(key)
+	node := tree.lookup(key)
 	if node != nil {
 		return node.Value, true
 	}
+
 	return
 }
 
 // GetNode searches the node in the tree by key and returns its node or nil if key is not found in tree.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) GetNode(key TKey) *Node[TKey, TValue] {
-	node, _ := tree.lookup(key)
+	node := tree.lookup(key)
 
 	return node
 }
@@ -145,7 +151,8 @@ func (tree *Tree[TKey, TValue]) GetNode(key TKey) *Node[TKey, TValue] {
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (tree *Tree[TKey, TValue]) Remove(key TKey) {
 	var child *Node[TKey, TValue]
-	node, _ := tree.lookup(key)
+
+	node := tree.lookup(key)
 	if node == nil {
 		return
 	}
@@ -170,6 +177,7 @@ func (tree *Tree[TKey, TValue]) Remove(key TKey) {
 			child.color = black
 		}
 	}
+
 	tree.size--
 }
 
@@ -185,43 +193,57 @@ func (tree *Tree[TKey, TValue]) Size() int {
 
 // GetKeys returns all keys in-order
 func (tree *Tree[TKey, TValue]) GetKeys() []TKey {
-	keys := make([]TKey, tree.size)
-	it := tree.First()
-	for i := 0; !it.IsEnd(); i++ {
-		keys[i], _ = it.Index()
+	keys := make([]TKey, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newIndex, _ := it.Index()
+		keys = append(keys, newIndex)
 	}
+
 	return keys
 }
 
 // Values returns all values in-order based on the key.
 func (tree *Tree[TKey, TValue]) GetValues() []TValue {
-	values := make([]TValue, tree.size)
-	it := tree.First()
-	for i := 0; !it.IsEnd(); i++ {
-		values[i], _ = it.Get()
+	values := make([]TValue, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newValue, _ := it.Get()
+		values = append(values, newValue)
 	}
+
 	return values
 }
 
 // Left returns the left-most (min) node or nil if tree is empty.
 func (tree *Tree[TKey, TValue]) Left() *Node[TKey, TValue] {
 	var parent *Node[TKey, TValue]
+
 	current := tree.Root
+
 	for current != nil {
 		parent = current
 		current = current.Left
 	}
+
 	return parent
 }
 
 // Right returns the right-most (max) node or nil if tree is empty.
 func (tree *Tree[TKey, TValue]) Right() *Node[TKey, TValue] {
 	var parent *Node[TKey, TValue]
+
 	current := tree.Root
+
 	for current != nil {
 		parent = current
 		current = current.Right
 	}
+
 	return parent
 }
 
@@ -236,6 +258,7 @@ func (tree *Tree[TKey, TValue]) Right() *Node[TKey, TValue] {
 func (tree *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], found bool) {
 	found = false
 	node := tree.Root
+
 	for node != nil {
 		compare := tree.Comparator(key, node.Key)
 		switch {
@@ -248,9 +271,11 @@ func (tree *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], foun
 			node = node.Right
 		}
 	}
+
 	if found {
 		return floor, true
 	}
+
 	return nil, false
 }
 
@@ -265,6 +290,7 @@ func (tree *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], foun
 func (tree *Tree[TKey, TValue]) Ceiling(key TKey) (ceiling *Node[TKey, TValue], found bool) {
 	found = false
 	node := tree.Root
+
 	for node != nil {
 		compare := tree.Comparator(key, node.Key)
 		switch {
@@ -277,9 +303,11 @@ func (tree *Tree[TKey, TValue]) Ceiling(key TKey) (ceiling *Node[TKey, TValue], 
 			node = node.Right
 		}
 	}
+
 	if found {
 		return ceiling, true
 	}
+
 	return nil, false
 }
 
@@ -292,90 +320,135 @@ func (tree *Tree[TKey, TValue]) Clear() {
 // String returns a string representation of container
 func (tree *Tree[TKey, TValue]) ToString() string {
 	str := "RedBlackTree\n"
+
 	if !tree.IsEmpty() {
 		output(tree.Root, "", true, &str)
 	}
+
 	return str
 }
 
-func output[TKey any, TValue any](node *Node[TKey, TValue], prefix string, isTail bool, str *string) {
+func output[TKey comparable, TValue any](node *Node[TKey, TValue], prefix string, isTail bool, str *string) {
 	if node.Right != nil {
 		newPrefix := prefix
+
 		if isTail {
 			newPrefix += "│   "
 		} else {
 			newPrefix += "    "
 		}
+
 		output(node.Right, newPrefix, false, str)
 	}
+
 	*str += prefix
+
 	if isTail {
 		*str += "└── "
 	} else {
 		*str += "┌── "
 	}
+
 	*str += node.String() + "\n"
+
 	if node.Left != nil {
 		newPrefix := prefix
+
 		if isTail {
 			newPrefix += "    "
 		} else {
 			newPrefix += "│   "
 		}
+
 		output(node.Left, newPrefix, true, str)
 	}
 }
 
-func (tree *Tree[TKey, TValue]) lookup(key TKey) (node *Node[TKey, TValue], index int) {
-	node = tree.Root
+func (tree *Tree[TKey, TValue]) lookup(key TKey) *Node[TKey, TValue] {
+	node := tree.Root
+
 	for node != nil {
 		compare := tree.Comparator(key, node.Key)
+
 		switch {
 		case compare == 0:
-			return
+			return node
 		case compare < 0:
 			node = node.Left
-			index++
 		case compare > 0:
 			node = node.Right
-			index++
 		}
 	}
-	node = nil
-	index = -1
 
-	return
+	return nil
 }
 
-func (tree *Tree[TKey, TValue]) lookupFrom(from *Node[TKey, TValue], to TKey) (node *Node[TKey, TValue], distance int) {
-	node = from
-	for node != nil {
-		compare := tree.Comparator(to, node.Key)
-		switch {
-		case compare == 0:
-			return
-		case compare < 0:
-			node = node.Left
-			distance++
-		case compare > 0:
-			node = node.Right
-			distance++
-		}
+func findLowestCommonAncestor[TKey comparable, TValue any](start, node1, node2 *Node[TKey, TValue]) *Node[TKey, TValue] {
+	if start == nil {
+		return nil
 	}
 
-	node = nil
-	distance = 0
+	if start == node1 || start == node2 {
+		return start
+	}
 
-	return
+	leftChild := findLowestCommonAncestor(start.Left, node1, node2)
+	rightChild := findLowestCommonAncestor(start.Right, node1, node2)
+
+	if leftChild != nil && rightChild != nil {
+		return start
+	}
+
+	if leftChild == nil {
+		return rightChild
+	}
+
+	return leftChild
+}
+
+func getDistanceFromLCA[TKey comparable, TValue any](comparator utils.Comparator[TKey], lca, child *Node[TKey, TValue], distance int, originalToTargetOrdering int, isOriginal bool) int {
+	if lca == child {
+		return distance
+	}
+
+	if child == lca.Left || child == lca.Right {
+		return distance + 1
+	}
+
+	newDistance := distance
+
+	if comparator(child.Key, lca.Key) < 0 {
+		if originalToTargetOrdering < 0 {
+			newDistance += 1
+		}
+
+		return getDistanceFromLCA(comparator, lca.Left, child, newDistance, originalToTargetOrdering, true)
+	}
+	if originalToTargetOrdering > 0 {
+		newDistance += 1
+	}
+
+	return getDistanceFromLCA(comparator, lca.Right, child, newDistance, originalToTargetOrdering, true)
+
+}
+
+func distanceBetween[TKey comparable, TValue any](comparator utils.Comparator[TKey], root, original, target *Node[TKey, TValue]) int {
+	distance := 0
+
+	lca := findLowestCommonAncestor(root, original, target)
+
+	return getDistanceFromLCA(comparator, lca, original, distance, comparator(original.Key, target.Key), true) + getDistanceFromLCA(comparator, lca, target, distance, comparator(original.Key, target.Key), false)
 }
 
 func (tree *Tree[TKey, TValue]) rotateLeft(node *Node[TKey, TValue]) {
 	right := node.Right
 	tree.replaceNode(node, right)
 	node.Right = right.Left
+
 	if right.Left != nil {
 		right.Left.Parent = node
 	}
+
 	right.Left = node
 	node.Parent = right
 }
@@ -384,9 +457,11 @@ func (tree *Tree[TKey, TValue]) rotateRight(node *Node[TKey, TValue]) {
 	left := node.Left
 	tree.replaceNode(node, left)
 	node.Left = left.Right
+
 	if left.Right != nil {
 		left.Right.Parent = node
 	}
+
 	left.Right = node
 	node.Parent = left
 }
@@ -401,6 +476,7 @@ func (tree *Tree[TKey, TValue]) replaceNode(old *Node[TKey, TValue], new *Node[T
 			old.Parent.Right = new
 		}
 	}
+
 	if new != nil {
 		new.Parent = old.Parent
 	}
@@ -418,11 +494,13 @@ func (tree *Tree[TKey, TValue]) insertCase2(node *Node[TKey, TValue]) {
 	if nodeColor(node.Parent) == black {
 		return
 	}
+
 	tree.insertCase3(node)
 }
 
 func (tree *Tree[TKey, TValue]) insertCase3(node *Node[TKey, TValue]) {
 	uncle := node.uncle()
+
 	if nodeColor(uncle) == red {
 		node.Parent.color = black
 		uncle.color = black
@@ -435,6 +513,7 @@ func (tree *Tree[TKey, TValue]) insertCase3(node *Node[TKey, TValue]) {
 
 func (tree *Tree[TKey, TValue]) insertCase4(node *Node[TKey, TValue]) {
 	grandparent := node.grandparent()
+
 	if node == node.Parent.Right && node.Parent == grandparent.Left {
 		tree.rotateLeft(node.Parent)
 		node = node.Left
@@ -449,6 +528,7 @@ func (tree *Tree[TKey, TValue]) insertCase5(node *Node[TKey, TValue]) {
 	node.Parent.color = black
 	grandparent := node.grandparent()
 	grandparent.color = red
+
 	if node == node.Parent.Left && node.Parent == grandparent.Left {
 		tree.rotateRight(grandparent)
 	} else if node == node.Parent.Right && node.Parent == grandparent.Right {
@@ -460,6 +540,7 @@ func (tree *Tree[TKey, TValue]) deleteCase1(node *Node[TKey, TValue]) {
 	if node.Parent == nil {
 		return
 	}
+
 	tree.deleteCase2(node)
 }
 
@@ -474,11 +555,13 @@ func (tree *Tree[TKey, TValue]) deleteCase2(node *Node[TKey, TValue]) {
 			tree.rotateRight(node.Parent)
 		}
 	}
+
 	tree.deleteCase3(node)
 }
 
 func (tree *Tree[TKey, TValue]) deleteCase3(node *Node[TKey, TValue]) {
 	sibling := node.sibling()
+
 	if nodeColor(node.Parent) == black &&
 		nodeColor(sibling) == black &&
 		nodeColor(sibling.Left) == black &&
@@ -492,6 +575,7 @@ func (tree *Tree[TKey, TValue]) deleteCase3(node *Node[TKey, TValue]) {
 
 func (tree *Tree[TKey, TValue]) deleteCase4(node *Node[TKey, TValue]) {
 	sibling := node.sibling()
+
 	if nodeColor(node.Parent) == red &&
 		nodeColor(sibling) == black &&
 		nodeColor(sibling.Left) == black &&
@@ -505,6 +589,7 @@ func (tree *Tree[TKey, TValue]) deleteCase4(node *Node[TKey, TValue]) {
 
 func (tree *Tree[TKey, TValue]) deleteCase5(node *Node[TKey, TValue]) {
 	sibling := node.sibling()
+
 	if node == node.Parent.Left &&
 		nodeColor(sibling) == black &&
 		nodeColor(sibling.Left) == red &&
@@ -520,6 +605,7 @@ func (tree *Tree[TKey, TValue]) deleteCase5(node *Node[TKey, TValue]) {
 		sibling.Right.color = black
 		tree.rotateLeft(sibling)
 	}
+
 	tree.deleteCase6(node)
 }
 
@@ -527,6 +613,7 @@ func (tree *Tree[TKey, TValue]) deleteCase6(node *Node[TKey, TValue]) {
 	sibling := node.sibling()
 	sibling.color = nodeColor(node.Parent)
 	node.Parent.color = black
+
 	if node == node.Parent.Left && nodeColor(sibling.Right) == red {
 		sibling.Right.color = black
 		tree.rotateLeft(node.Parent)
@@ -536,10 +623,11 @@ func (tree *Tree[TKey, TValue]) deleteCase6(node *Node[TKey, TValue]) {
 	}
 }
 
-func nodeColor[TKey any, TValue any](node *Node[TKey, TValue]) color {
+func nodeColor[TKey comparable, TValue any](node *Node[TKey, TValue]) color {
 	if node == nil {
 		return black
 	}
+
 	return node.color
 }
 
@@ -549,22 +637,22 @@ func nodeColor[TKey any, TValue any](node *Node[TKey, TValue]) color {
 
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
-func (tree *Tree[TKey, TValue]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewIterator(tree, -1)
+func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, -1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
-func (tree *Tree[TKey, TValue]) End() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewIterator(tree, tree.Size())
+func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
-func (tree *Tree[TKey, TValue]) First() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewIterator(tree, 0)
+func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, 0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
-func (tree *Tree[TKey, TValue]) Last() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewIterator(tree, tree.Size()-1)
+func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size()-1)
 }

@@ -173,7 +173,7 @@ func TestGetKeys(t *testing.T) {
 	for _, test := range tests {
 		keys := test.originalMap.GetKeys()
 
-		assert.ElementsMatch(t, test.keys, keys, test.name)
+		assert.Equalf(t, test.keys, keys, test.name)
 	}
 }
 
@@ -204,7 +204,7 @@ func TestGetValues(t *testing.T) {
 	for _, test := range tests {
 		values := test.originalMap.GetValues()
 
-		assert.ElementsMatch(t, test.values, values, test.name)
+		assert.Equalf(t, test.values, values, test.name)
 	}
 }
 

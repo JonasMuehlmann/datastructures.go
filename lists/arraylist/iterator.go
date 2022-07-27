@@ -182,7 +182,7 @@ func (it *Iterator[T]) IsBegin() bool {
 
 // IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
 func (it *Iterator[T]) IsEnd() bool {
-	return it.list.Size() == 0 || it.index == it.size
+	return it.size == 0 || it.index == it.size
 }
 
 // IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator

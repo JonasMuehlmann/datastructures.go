@@ -19,9 +19,11 @@ var _ ds.JSONDeserializer = (*Tree[string, any])(nil)
 // ToJSON outputs the JSON representation of the tree.
 func (tree *Tree[TKey, TValue]) ToJSON() ([]byte, error) {
 	elements := make(map[string]TValue)
-	it := tree.Iterator()
+	it := tree.OrderedBegin()
 	for it.Next() {
-		elements[utils.ToString(it.Key())] = it.Value()
+		index, _ := it.Index()
+		value, _ := it.Get()
+		elements[utils.ToString(index)] = value
 	}
 	return json.Marshal(&elements)
 }
