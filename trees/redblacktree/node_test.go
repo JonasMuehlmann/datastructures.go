@@ -53,7 +53,7 @@ func TestNodeSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		tree := NewWith[int, string](utils.BasicComparator[int])
+		tree := New[int, string](utils.BasicComparator[int])
 
 		for _, pair := range test.pairs {
 			tree.Put(pair.Key, pair.Value)

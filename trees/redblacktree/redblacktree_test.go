@@ -23,27 +23,27 @@ func TestRemove(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
-			newMap:      NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
+			newMap:      New[string, int](utils.BasicComparator[string]),
 			toRemove:    "foo",
 		},
 		{
 			name:        "single item",
 			toRemove:    "foo",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
-			newMap:      NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      New[string, int](utils.BasicComparator[string]),
 		},
 		{
 			name:        "single item, target does not exist",
 			toRemove:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 		},
 		{
 			name:        "3 items",
 			toRemove:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
 		},
 	}
 
@@ -65,8 +65,8 @@ func TestPut(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: New[string, int](utils.BasicComparator[string]),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			keyToAdd:    "foo",
 			valueToAdd:  1,
 		},
@@ -74,22 +74,22 @@ func TestPut(t *testing.T) {
 			name:        "single item",
 			keyToAdd:    "foo",
 			valueToAdd:  1,
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 		},
 		{
 			name:        "single item, overwrite",
 			keyToAdd:    "foo",
 			valueToAdd:  2,
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 2}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 2}),
 		},
 		{
 			name:        "3 items",
 			keyToAdd:    "bar",
 			valueToAdd:  2,
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
-			newMap:      NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "baz": 3}),
+			newMap:      NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 		},
 	}
 
@@ -111,27 +111,27 @@ func TestGet(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 			keyToGet:    "foo",
 			found:       false,
 		},
 		{
 			name:        "single item",
 			keyToGet:    "foo",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			value:       1,
 			found:       true,
 		},
 		{
 			name:        "single item, target does not exist",
 			keyToGet:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			found:       false,
 		},
 		{
 			name:        "3 items",
 			keyToGet:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			value:       2,
 			found:       true,
 		},
@@ -156,27 +156,27 @@ func TestGetNode(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 			keyToGet:    "foo",
 			found:       false,
 		},
 		{
 			name:        "single item",
 			keyToGet:    "foo",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			value:       1,
 			found:       true,
 		},
 		{
 			name:        "single item, target does not exist",
 			keyToGet:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			found:       false,
 		},
 		{
 			name:        "3 items",
 			keyToGet:    "bar",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			value:       2,
 			found:       true,
 		},
@@ -202,18 +202,18 @@ func TestRight(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			originalMap: New[int, string](utils.BasicComparator[int]),
 			found:       false,
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
 			value:       "foo",
 			found:       true,
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
 			value:       "baz",
 			found:       true,
 		},
@@ -239,18 +239,18 @@ func TestLeft(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			originalMap: New[int, string](utils.BasicComparator[int]),
 			found:       false,
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
 			value:       "foo",
 			found:       true,
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
 			value:       "foo",
 			found:       true,
 		},
@@ -277,26 +277,26 @@ func TestCeiling(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			originalMap: New[int, string](utils.BasicComparator[int]),
 			key:         1,
 			found:       false,
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
 			value:       "foo",
 			found:       true,
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{0: "foo", 2: "bar", 3: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{0: "foo", 2: "bar", 3: "baz"}),
 			key:         1,
 			value:       "bar",
 			found:       true,
 		},
 		{
 			name:        "3 items, no ceilling",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
 			key:         4,
 			found:       false,
 		},
@@ -323,27 +323,27 @@ func TestFloor(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[int, string](utils.BasicComparator[int]),
+			originalMap: New[int, string](utils.BasicComparator[int]),
 			key:         1,
 			found:       false,
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo"}),
 			key:         1,
 			value:       "foo",
 			found:       true,
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 4: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 4: "baz"}),
 			key:         3,
 			value:       "bar",
 			found:       true,
 		},
 		{
 			name:        "3 items, no floor",
-			originalMap: NewFromMapWith[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
+			originalMap: NewFromMap[int, string](utils.BasicComparator[int], map[int]string{1: "foo", 2: "bar", 3: "baz"}),
 			key:         0,
 			found:       false,
 		},
@@ -368,17 +368,17 @@ func TestGetKeys(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 			keys:        []string{},
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			keys:        []string{"foo"},
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			keys:        []string{"foo", "bar", "baz"},
 		},
 	}
@@ -399,17 +399,17 @@ func TestGetValues(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 			values:      []int{},
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			values:      []int{1},
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			values:      []int{1, 2, 3},
 		},
 	}
@@ -430,17 +430,17 @@ func TestIsEmpty(t *testing.T) {
 
 		{
 			name:        "empty list",
-			originalMap: NewWith[string, int](utils.BasicComparator[string]),
+			originalMap: New[string, int](utils.BasicComparator[string]),
 			isEmpty:     true,
 		},
 		{
 			name:        "single item",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			isEmpty:     false,
 		},
 		{
 			name:        "3 items",
-			originalMap: NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			isEmpty:     false,
 		},
 	}
@@ -462,19 +462,19 @@ func TestClear(t *testing.T) {
 
 		{
 			name:          "empty list",
-			originalMap:   NewWith[string, int](utils.BasicComparator[string]),
+			originalMap:   New[string, int](utils.BasicComparator[string]),
 			isEmptyBefore: true,
 			isEmptyAfter:  true,
 		},
 		{
 			name:          "single item",
-			originalMap:   NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
+			originalMap:   NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1}),
 			isEmptyBefore: false,
 			isEmptyAfter:  true,
 		},
 		{
 			name:          "3 items",
-			originalMap:   NewFromMapWith[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			originalMap:   NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
 			isEmptyBefore: false,
 			isEmptyAfter:  true,
 		},
@@ -512,9 +512,9 @@ func TestNewFromIteratorWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
-		newMap := NewFromIteratorWith[string, int](utils.BasicComparator[string], it)
+		newMap := NewFromIterator[string, int](utils.BasicComparator[string], it)
 
 		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
 	}
@@ -541,10 +541,10 @@ func TestNewFromIteratorsWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		beign := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
-		newMap := NewFromIteratorsWith[string, int](utils.BasicComparator[string], first, end)
+		newMap := NewFromIterators[string, int](utils.BasicComparator[string], beign, end)
 
 		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
 	}
@@ -561,7 +561,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "Ours",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[string])
+// 				m := New[int, string](utils.BasicComparator[string])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
@@ -601,7 +601,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "Ours",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
@@ -642,7 +642,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "Ours",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				b.StartTimer()
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
@@ -676,7 +676,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "Ours",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
@@ -688,7 +688,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "golang.org_x_exp",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
@@ -713,7 +713,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "Ours",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
@@ -725,7 +725,7 @@ func TestNewFromIteratorsWith(t *testing.T) {
 // 		{
 // 			name: "golang.org_x_exp",
 // 			f: func(n int, name string) {
-// 				m := NewWith[int, string](utils.BasicComparator[int])
+// 				m := New[int, string](utils.BasicComparator[int])
 // 				for i := 0; i < n; i++ {
 // 					m.Put(i, "foo")
 // 				}
