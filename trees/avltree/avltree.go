@@ -10,8 +10,7 @@
 package avltree
 
 import (
-	"fmt"
-
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/trees"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -26,18 +25,49 @@ type Tree[TKey comparable, TValue any] struct {
 	size       int                    // Total number of keys in the tree
 }
 
-// Node is a single element within the tree
-type Node[TKey comparable, TValue any] struct {
-	Key      TKey
-	Value    TValue
-	Parent   *Node[TKey, TValue]    // Parent node
-	Children [2]*Node[TKey, TValue] // Children nodes
-	b        int8
+// NewWith instantiates an AVL tree with the custom comparator.
+func New[TKey comparable, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
+	return &Tree[TKey, TValue]{Comparator: comparator}
 }
 
-// NewWith instantiates an AVL tree with the custom comparator.
-func NewWith[TKey comparable, TValue any](comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
-	return &Tree[TKey, TValue]{Comparator: comparator}
+// NewFromMap instantiates a new tree containing the provided map.
+func NewFromMap[TKey comparable, TValue any](comparator utils.Comparator[TKey], map_ map[TKey]TValue) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
+
+	for k, v := range map_ {
+		tree.Put(k, v)
+	}
+
+	return tree
+}
+
+// NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
+func NewFromIterator[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
+
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
+}
+
+// NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](comparator)
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
 }
 
 // Put inserts node into the tree.
@@ -91,39 +121,31 @@ func (t *Tree[TKey, TValue]) Size() int {
 	return t.size
 }
 
-// Size returns the number of elements stored in the subtree.
-// Computed dynamically on each call, i.e. the subtree is traversed to count the number of the nodes.
-func (n *Node[TKey, TValue]) Size() int {
-	if n == nil {
-		return 0
-	}
-	size := 1
-	if n.Children[0] != nil {
-		size += n.Children[0].Size()
-	}
-	if n.Children[1] != nil {
-		size += n.Children[1].Size()
-	}
-	return size
-}
-
 // GetKeys returns all keys in-order
-func (t *Tree[TKey, TValue]) GetKeys() []TKey {
-	keys := make([]TKey, t.size)
-	it := t.Iterator()
-	for i := 0; it.Next(); i++ {
-		keys[i] = it.Key()
+func (tree *Tree[TKey, TValue]) GetKeys() []TKey {
+	keys := make([]TKey, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newIndex, _ := it.Index()
+		keys = append(keys, newIndex)
 	}
+
 	return keys
 }
 
 // Values returns all values in-order based on the key.
-func (t *Tree[TKey, TValue]) GetValues() []TValue {
-	values := make([]TValue, t.size)
-	it := t.Iterator()
-	for i := 0; it.Next(); i++ {
-		values[i] = it.Value()
+func (tree *Tree[TKey, TValue]) GetValues() []TValue {
+	values := make([]TValue, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newValue, _ := it.Get()
+		values = append(values, newValue)
 	}
+
 	return values
 }
 
@@ -149,9 +171,11 @@ func (t *Tree[TKey, TValue]) Right() *Node[TKey, TValue] {
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (t *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], found bool) {
 	found = false
+
 	n := t.Root
 	for n != nil {
 		c := t.Comparator(key, n.Key)
+
 		switch {
 		case c == 0:
 			return n, true
@@ -162,9 +186,11 @@ func (t *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], found b
 			n = n.Children[1]
 		}
 	}
+
 	if found {
 		return
 	}
+
 	return nil, false
 }
 
@@ -178,9 +204,11 @@ func (t *Tree[TKey, TValue]) Floor(key TKey) (floor *Node[TKey, TValue], found b
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (t *Tree[TKey, TValue]) Ceiling(key TKey) (floor *Node[TKey, TValue], found bool) {
 	found = false
+
 	n := t.Root
 	for n != nil {
 		c := t.Comparator(key, n.Key)
+
 		switch {
 		case c == 0:
 			return n, true
@@ -191,9 +219,11 @@ func (t *Tree[TKey, TValue]) Ceiling(key TKey) (floor *Node[TKey, TValue], found
 			n = n.Children[1]
 		}
 	}
+
 	if found {
 		return
 	}
+
 	return nil, false
 }
 
@@ -206,14 +236,12 @@ func (t *Tree[TKey, TValue]) Clear() {
 // String returns a string representation of container
 func (t *Tree[TKey, TValue]) ToString() string {
 	str := "AVLTree\n"
+
 	if !t.IsEmpty() {
 		output(t.Root, "", true, &str)
 	}
-	return str
-}
 
-func (n *Node[TKey, TValue]) String() string {
-	return fmt.Sprintf("%v", n.Key)
+	return str
 }
 
 func (t *Tree[TKey, TValue]) put(key TKey, value TValue, p *Node[TKey, TValue], qp **Node[TKey, TValue]) bool {
@@ -221,6 +249,7 @@ func (t *Tree[TKey, TValue]) put(key TKey, value TValue, p *Node[TKey, TValue], 
 	if q == nil {
 		t.size++
 		*qp = &Node[TKey, TValue]{Key: key, Value: value, Parent: p}
+
 		return true
 	}
 
@@ -228,6 +257,7 @@ func (t *Tree[TKey, TValue]) put(key TKey, value TValue, p *Node[TKey, TValue], 
 	if c == 0 {
 		q.Key = key
 		q.Value = value
+
 		return false
 	}
 
@@ -236,12 +266,15 @@ func (t *Tree[TKey, TValue]) put(key TKey, value TValue, p *Node[TKey, TValue], 
 	} else {
 		c = 1
 	}
+
 	a := (c + 1) / 2
 	var fix bool
+
 	fix = t.put(key, value, q, &q.Children[a])
 	if fix {
 		return putFix(int8(c), qp)
 	}
+
 	return false
 }
 
@@ -258,13 +291,17 @@ func (t *Tree[TKey, TValue]) remove(key TKey, qp **Node[TKey, TValue]) bool {
 			if q.Children[0] != nil {
 				q.Children[0].Parent = q.Parent
 			}
+
 			*qp = q.Children[0]
+
 			return true
 		}
+
 		fix := removeMin(&q.Children[1], &q.Key, &q.Value)
 		if fix {
 			return removeFix(-1, qp)
 		}
+
 		return false
 	}
 
@@ -274,6 +311,7 @@ func (t *Tree[TKey, TValue]) remove(key TKey, qp **Node[TKey, TValue]) bool {
 		c = 1
 	}
 	a := (c + 1) / 2
+
 	fix := t.remove(key, &q.Children[a])
 	if fix {
 		return removeFix(int8(-c), qp)
@@ -286,16 +324,22 @@ func removeMin[TKey comparable, TValue any](qp **Node[TKey, TValue], minKey *TKe
 	if q.Children[0] == nil {
 		*minKey = q.Key
 		*minVal = q.Value
+
 		if q.Children[1] != nil {
 			q.Children[1].Parent = q.Parent
 		}
+
 		*qp = q.Children[1]
+
 		return true
 	}
+
 	fix := removeMin(&q.Children[0], minKey, minVal)
+
 	if fix {
 		return removeFix(1, qp)
 	}
+
 	return false
 }
 
@@ -303,11 +347,13 @@ func putFix[TKey comparable, TValue any](c int8, t **Node[TKey, TValue]) bool {
 	s := *t
 	if s.b == 0 {
 		s.b = c
+
 		return true
 	}
 
 	if s.b == -c {
 		s.b = 0
+
 		return false
 	}
 
@@ -316,7 +362,9 @@ func putFix[TKey comparable, TValue any](c int8, t **Node[TKey, TValue]) bool {
 	} else {
 		s = doublerot(c, s)
 	}
+
 	*t = s
+
 	return false
 }
 
@@ -324,11 +372,13 @@ func removeFix[TKey comparable, TValue any](c int8, t **Node[TKey, TValue]) bool
 	s := *t
 	if s.b == 0 {
 		s.b = c
+
 		return false
 	}
 
 	if s.b == -c {
 		s.b = 0
+
 		return true
 	}
 
@@ -337,6 +387,7 @@ func removeFix[TKey comparable, TValue any](c int8, t **Node[TKey, TValue]) bool
 		s = rotate(c, s)
 		s.b = -c
 		*t = s
+
 		return false
 	}
 
@@ -345,7 +396,9 @@ func removeFix[TKey comparable, TValue any](c int8, t **Node[TKey, TValue]) bool
 	} else {
 		s = doublerot(c, s)
 	}
+
 	*t = s
+
 	return true
 }
 
@@ -353,6 +406,7 @@ func singlerot[TKey comparable, TValue any](c int8, s *Node[TKey, TValue]) *Node
 	s.b = 0
 	s = rotate(c, s)
 	s.b = 0
+
 	return s
 }
 
@@ -375,19 +429,23 @@ func doublerot[TKey comparable, TValue any](c int8, s *Node[TKey, TValue]) *Node
 	}
 
 	p.b = 0
+
 	return p
 }
 
 func rotate[TKey comparable, TValue any](c int8, s *Node[TKey, TValue]) *Node[TKey, TValue] {
 	a := (c + 1) / 2
 	r := s.Children[a]
+
 	s.Children[a] = r.Children[a^1]
 	if s.Children[a] != nil {
 		s.Children[a].Parent = s
 	}
+
 	r.Children[a^1] = s
 	r.Parent = s.Parent
 	s.Parent = r
+
 	return r
 }
 
@@ -400,66 +458,144 @@ func (t *Tree[TKey, TValue]) bottom(d int) *Node[TKey, TValue] {
 	for c := n.Children[d]; c != nil; c = n.Children[d] {
 		n = c
 	}
+
 	return n
-}
-
-// Prev returns the previous element in an inorder
-// walk of the AVL tree.
-func (n *Node[TKey, TValue]) Prev() *Node[TKey, TValue] {
-	return n.walk1(0)
-}
-
-// Next returns the next element in an inorder
-// walk of the AVL tree.
-func (n *Node[TKey, TValue]) Next() *Node[TKey, TValue] {
-	return n.walk1(1)
-}
-
-func (n *Node[TKey, TValue]) walk1(a int) *Node[TKey, TValue] {
-	if n == nil {
-		return nil
-	}
-
-	if n.Children[a] != nil {
-		n = n.Children[a]
-		for n.Children[a^1] != nil {
-			n = n.Children[a^1]
-		}
-		return n
-	}
-
-	p := n.Parent
-	for p != nil && p.Children[a] == n {
-		n = p
-		p = p.Parent
-	}
-	return p
 }
 
 func output[TKey comparable, TValue any](node *Node[TKey, TValue], prefix string, isTail bool, str *string) {
 	if node.Children[1] != nil {
 		newPrefix := prefix
+
 		if isTail {
 			newPrefix += "│   "
 		} else {
 			newPrefix += "    "
 		}
+
 		output(node.Children[1], newPrefix, false, str)
 	}
+
 	*str += prefix
+
 	if isTail {
 		*str += "└── "
 	} else {
 		*str += "┌── "
 	}
+
 	*str += node.String() + "\n"
+
 	if node.Children[0] != nil {
 		newPrefix := prefix
+
 		if isTail {
 			newPrefix += "    "
 		} else {
 			newPrefix += "│   "
 		}
+
 		output(node.Children[0], newPrefix, true, str)
 	}
+}
+
+func (tree *Tree[TKey, TValue]) lookup(key TKey) *Node[TKey, TValue] {
+	node := tree.Root
+
+	for node != nil {
+		compare := tree.Comparator(key, node.Key)
+
+		switch {
+		case compare == 0:
+			return node
+		case compare < 0:
+			node = node.Children[0]
+		case compare > 0:
+			node = node.Children[1]
+		}
+	}
+
+	return nil
+}
+
+func findLowestCommonAncestor[TKey comparable, TValue any](start, node1, node2 *Node[TKey, TValue]) *Node[TKey, TValue] {
+	if start == nil {
+		return nil
+	}
+
+	if start == node1 || start == node2 {
+		return start
+	}
+
+	leftChild := findLowestCommonAncestor(start.Children[0], node1, node2)
+	rightChild := findLowestCommonAncestor(start.Children[1], node1, node2)
+
+	if leftChild != nil && rightChild != nil {
+		return start
+	}
+
+	if leftChild == nil {
+		return rightChild
+	}
+
+	return leftChild
+}
+
+func getDistanceFromLCA[TKey comparable, TValue any](comparator utils.Comparator[TKey], lca, child *Node[TKey, TValue], distance int, originalToTargetOrdering int, isOriginal bool) int {
+	if lca == child {
+		return distance
+	}
+
+	if child == lca.Children[0] || child == lca.Children[1] {
+		return distance + 1
+	}
+
+	newDistance := distance
+
+	if comparator(child.Key, lca.Key) < 0 {
+		if originalToTargetOrdering < 0 {
+			newDistance += 1
+		}
+
+		return getDistanceFromLCA(comparator, lca.Children[0], child, newDistance, originalToTargetOrdering, true)
+	}
+	if originalToTargetOrdering > 0 {
+		newDistance += 1
+	}
+
+	return getDistanceFromLCA(comparator, lca.Children[1], child, newDistance, originalToTargetOrdering, true)
+
+}
+
+func distanceBetween[TKey comparable, TValue any](comparator utils.Comparator[TKey], root, original, target *Node[TKey, TValue]) int {
+	distance := 0
+
+	lca := findLowestCommonAncestor(root, original, target)
+
+	return getDistanceFromLCA(comparator, lca, original, distance, comparator(original.Key, target.Key), true) + getDistanceFromLCA(comparator, lca, target, distance, comparator(original.Key, target.Key), false)
+}
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, -1)
+}
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size())
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size()-1)
 }
