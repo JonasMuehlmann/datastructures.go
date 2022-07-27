@@ -42,7 +42,7 @@ func NewFromSlice[T any](slice []T) *Queue[T] {
 func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Queue[T] {
 	list := &Queue[T]{list: singlylinkedlist.New[T]()}
 
-	for ; !begin.IsEnd(); begin.Next() {
+	for begin.Next() {
 		newItem, _ := begin.Get()
 		list.Enqueue(newItem)
 	}
@@ -54,7 +54,7 @@ func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Queue[T] {
 // end is a sentinel and not included.
 func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
 	list := &Queue[T]{list: singlylinkedlist.New[T]()}
-	for ; !begin.IsEqual(end); begin.Next() {
+	for !begin.IsEqual(end) && begin.Next() {
 		newItem, _ := begin.Get()
 		list.Enqueue(newItem)
 	}

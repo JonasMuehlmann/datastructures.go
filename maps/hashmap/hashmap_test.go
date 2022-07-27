@@ -173,7 +173,7 @@ func TestGetKeys(t *testing.T) {
 	for _, test := range tests {
 		keys := test.originalMap.GetKeys()
 
-		assert.ElementsMatch(t, test.keys, keys, test.name)
+		assert.Equalf(t, test.keys, keys, test.name)
 	}
 }
 
@@ -204,7 +204,7 @@ func TestGetValues(t *testing.T) {
 	for _, test := range tests {
 		values := test.originalMap.GetValues()
 
-		assert.ElementsMatch(t, test.values, values, test.name)
+		assert.Equalf(t, test.values, values, test.name)
 	}
 }
 
@@ -334,7 +334,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
 		newMap := NewFromIterator[string, int](it)
 
@@ -363,7 +363,7 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalMap.OrderedFirst(utils.BasicComparator[string])
+		first := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
 		newMap := NewFromIterators[string, int](first, end)

@@ -73,7 +73,7 @@ func NewFromIterator[T any](maxSize int, begin ds.ReadCompForIterator[T]) *Queue
 
 	elements := make([]T, 0, length)
 
-	for ; !begin.IsEnd(); begin.Next() {
+	for begin.Next() {
 		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}
@@ -107,7 +107,7 @@ func NewFromIterators[T any](maxSize int, begin ds.ReadCompForIterator[T], end d
 
 	elements := make([]T, 0, maxSize)
 
-	for ; !begin.IsEqual(end); begin.Next() {
+	for !begin.IsEqual(end) && begin.Next() {
 		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}

@@ -46,7 +46,7 @@ func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Queue[T] {
 
 	elements := make([]T, 0, length)
 
-	for ; !begin.IsEnd(); begin.Next() {
+	for begin.Next() {
 		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}
@@ -71,7 +71,7 @@ func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableI
 
 	elements := make([]T, 0, length)
 
-	for ; !begin.IsEqual(end); begin.Next() {
+	for !begin.IsEqual(end) && begin.Next() {
 		newItem, _ := begin.Get()
 		elements = append(elements, newItem)
 	}

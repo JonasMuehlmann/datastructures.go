@@ -48,12 +48,12 @@ func NewFromMap[TKey comparable, TValue any](map_ map[TKey]TValue) *Map[TKey, TV
 }
 
 // NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue any](it ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue any](begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
 	elements := make(map[TKey]TValue)
 
-	for ; !it.IsEnd(); it.Next() {
-		newKey, _ := it.Index()
-		newValue, _ := it.Get()
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
 
 		elements[newKey] = newValue
 	}
@@ -65,12 +65,12 @@ func NewFromIterator[TKey comparable, TValue any](it ds.ReadCompForIndexIterator
 
 // NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[TKey comparable, TValue any](first ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+func NewFromIterators[TKey comparable, TValue any](begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
 	elements := make(map[TKey]TValue)
 
-	for ; !first.IsEqual(end); first.Next() {
-		newKey, _ := first.Index()
-		newValue, _ := first.Get()
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
 
 		elements[newKey] = newValue
 	}
