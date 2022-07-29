@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/trees"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
@@ -37,25 +38,52 @@ type Tree[TKey comparable, TValue any] struct {
 	m          int                    // order (maximum number of children)
 }
 
-// Node is a single element within the tree
-type Node[TKey comparable, TValue any] struct {
-	Parent   *Node[TKey, TValue]
-	Entries  []*Entry[TKey, TValue] // Contained keys in node
-	Children []*Node[TKey, TValue]  // Children nodes
-}
-
-// Entry represents the key-value pair contained within nodes
-type Entry[TKey comparable, TValue any] struct {
-	Key   TKey
-	Value TValue
-}
-
 // NewWith instantiates a B-tree with the order (maximum number of children) and a custom key comparator.
-func NewWith[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
+func New[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey]) *Tree[TKey, TValue] {
 	if order < 3 {
 		panic("Invalid order, should be at least 3")
 	}
 	return &Tree[TKey, TValue]{m: order, Comparator: comparator}
+}
+
+// NewFromMap instantiates a new tree containing the provided map.
+func NewFromMap[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], map_ map[TKey]TValue) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](order, comparator)
+
+	for k, v := range map_ {
+		tree.Put(k, v)
+	}
+
+	return tree
+}
+
+// NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
+func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](order, comparator)
+
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
+}
+
+// NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
+	tree := New[TKey, TValue](order, comparator)
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
 }
 
 // Put inserts key-value pair node into the tree.
@@ -113,36 +141,31 @@ func (tree *Tree[TKey, TValue]) Size() int {
 	return tree.size
 }
 
-// Size returns the number of elements stored in the subtree.
-// Computed dynamically on each call, i.e. the subtree is traversed to count the number of the nodes.
-func (node *Node[TKey, TValue]) Size() int {
-	if node == nil {
-		return 0
-	}
-	size := 1
-	for _, child := range node.Children {
-		size += child.Size()
-	}
-	return size
-}
-
 // GetKeys returns all keys in-order
-func (tree *Tree[TKey, TValue]) GetKeys() []interface{} {
-	keys := make([]interface{}, tree.size)
-	it := tree.Iterator()
-	for i := 0; it.Next(); i++ {
-		keys[i] = it.Key()
+func (tree *Tree[TKey, TValue]) GetKeys() []TKey {
+	keys := make([]TKey, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newIndex, _ := it.Index()
+		keys = append(keys, newIndex)
 	}
+
 	return keys
 }
 
 // Values returns all values in-order based on the key.
-func (tree *Tree[TKey, TValue]) GetValues() []interface{} {
-	values := make([]interface{}, tree.size)
-	it := tree.Iterator()
-	for i := 0; it.Next(); i++ {
-		values[i] = it.Value()
+func (tree *Tree[TKey, TValue]) GetValues() []TValue {
+	values := make([]TValue, 0, tree.size)
+
+	it := tree.OrderedBegin()
+
+	for it.Next() {
+		newValue, _ := it.Get()
+		values = append(values, newValue)
 	}
+
 	return values
 }
 
@@ -163,19 +186,19 @@ func (tree *Tree[TKey, TValue]) Left() *Node[TKey, TValue] {
 }
 
 // LeftKey returns the left-most (min) key or nil if tree is empty.
-func (tree *Tree[TKey, TValue]) LeftKey() interface{} {
+func (tree *Tree[TKey, TValue]) LeftKey() (key TKey, found bool) {
 	if left := tree.Left(); left != nil {
-		return left.Entries[0].Key
+		return left.Entries[0].Key, true
 	}
-	return nil
+	return
 }
 
 // LeftValue returns the left-most value or nil if tree is empty.
-func (tree *Tree[TKey, TValue]) LeftValue() interface{} {
+func (tree *Tree[TKey, TValue]) LeftValue() (value TValue, found bool) {
 	if left := tree.Left(); left != nil {
-		return left.Entries[0].Value
+		return left.Entries[0].Value, true
 	}
-	return nil
+	return
 }
 
 // Right returns the right-most (max) node or nil if tree is empty.
@@ -184,19 +207,19 @@ func (tree *Tree[TKey, TValue]) Right() *Node[TKey, TValue] {
 }
 
 // RightKey returns the right-most (max) key or nil if tree is empty.
-func (tree *Tree[TKey, TValue]) RightKey() interface{} {
+func (tree *Tree[TKey, TValue]) RightKey() (key TKey, found bool) {
 	if right := tree.Right(); right != nil {
-		return right.Entries[len(right.Entries)-1].Key
+		return right.Entries[len(right.Entries)-1].Key, true
 	}
-	return nil
+	return
 }
 
 // RightValue returns the right-most value or nil if tree is empty.
-func (tree *Tree[TKey, TValue]) RightValue() interface{} {
+func (tree *Tree[TKey, TValue]) RightValue() (value TValue, found bool) {
 	if right := tree.Right(); right != nil {
-		return right.Entries[len(right.Entries)-1].Value
+		return right.Entries[len(right.Entries)-1].Value, true
 	}
-	return nil
+	return
 }
 
 // String returns a string representation of container (for debugging purposes)
@@ -209,10 +232,6 @@ func (tree *Tree[TKey, TValue]) ToString() string {
 	return buffer.String()
 }
 
-func (entry *Entry[TKey, TValue]) String() string {
-	return fmt.Sprintf("%v", entry.Key)
-}
-
 func (tree *Tree[TKey, TValue]) output(buffer *bytes.Buffer, node *Node[TKey, TValue], level int, isTail bool) {
 	for e := 0; e < len(node.Entries)+1; e++ {
 		if e < len(node.Children) {
@@ -223,17 +242,6 @@ func (tree *Tree[TKey, TValue]) output(buffer *bytes.Buffer, node *Node[TKey, TV
 			buffer.WriteString(fmt.Sprintf("%v", node.Entries[e].Key) + "\n")
 		}
 	}
-}
-
-func (node *Node[TKey, TValue]) height() int {
-	height := 0
-	for ; node != nil; node = node.Children[0] {
-		height++
-		if len(node.Children) == 0 {
-			break
-		}
-	}
-	return height
 }
 
 func (tree *Tree[TKey, TValue]) isLeaf(node *Node[TKey, TValue]) bool {
@@ -582,4 +590,111 @@ func (tree *Tree[TKey, TValue]) deleteChild(node *Node[TKey, TValue], index int)
 	copy(node.Children[index:], node.Children[index+1:])
 	node.Children[len(node.Children)-1] = nil
 	node.Children = node.Children[:len(node.Children)-1]
+}
+
+// func (tree *Tree[TKey, TValue]) lookup(key TKey) *Node[TKey, TValue] {
+// 	node := tree.Root
+
+// 	for node != nil {
+// 		compare := tree.Comparator(key, node.Key)
+
+// 		switch {
+// 		case compare == 0:
+// 			return node
+// 		case compare < 0:
+// 			node = node.Children[0]
+// 		case compare > 0:
+// 			node = node.Children[1]
+// 		}
+// 	}
+
+// 	return nil
+// }
+
+// func findLowestCommonAncestor[TKey comparable, TValue any](start, node1, node2 *Node[TKey, TValue]) *Node[TKey, TValue] {
+// 	if start == nil {
+// 		return nil
+// 	}
+
+// 	if start == node1 || start == node2 {
+// 		return start
+// 	}
+
+// 	leftChild := findLowestCommonAncestor(start.Children[0], node1, node2)
+// 	rightChild := findLowestCommonAncestor(start.Children[1], node1, node2)
+
+// 	if leftChild != nil && rightChild != nil {
+// 		return start
+// 	}
+
+// 	if leftChild == nil {
+// 		return rightChild
+// 	}
+
+// 	return leftChild
+// }
+
+// func getDistanceFromLCA[TKey comparable, TValue any](comparator utils.Comparator[TKey], lca, child *Node[TKey, TValue], distance int, originalToTargetOrdering int, isOriginal bool) int {
+// 	if lca == child {
+// 		return distance
+// 	}
+
+// for child := range lca.Children{
+//     if child.Key ==  lca {
+//
+//     }
+//
+//
+// 		return distance + 1
+// 	}
+
+// 	newDistance := distance
+
+// 	if comparator(child.Key, lca.Key) < 0 {
+// 		if originalToTargetOrdering < 0 {
+// 			newDistance += 1
+// 		}
+
+// 		return getDistanceFromLCA(comparator, lca.Children[0], child, newDistance, originalToTargetOrdering, true)
+// 	}
+// 	if originalToTargetOrdering > 0 {
+// 		newDistance += 1
+// 	}
+
+// 	return getDistanceFromLCA(comparator, lca.Children[1], child, newDistance, originalToTargetOrdering, true)
+
+// }
+
+// func distanceBetween[TKey comparable, TValue any](comparator utils.Comparator[TKey], root, original *Node[TKey, TValue], indexOriginal int, target *Node[TKey, TValue], indexTargetNode int) int {
+// 	distance := 0
+
+// 	lca, index, found := findLowestCommonAncestor(root, original, target)
+
+// 	return getDistanceFromLCA(comparator, lca, original, distance, comparator(original.Key, target.Key), true) + getDistanceFromLCA(comparator, lca, target, distance, comparator(original.Key, target.Key), false)
+// }
+
+//******************************************************************//
+//                             Iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, -1)
+}
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size())
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return tree.NewOrderedIterator(tree, tree.Size()-1)
 }
