@@ -43,7 +43,7 @@ func NewFromSlice[T any](slice []T) *Stack[T] {
 func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Stack[T] {
 	list := &Stack[T]{list: singlylinkedlist.New[T]()}
 
-	for ; !begin.IsEnd(); begin.Next() {
+	for begin.Next() {
 		newItem, _ := begin.Get()
 		list.Push(newItem)
 	}
@@ -55,7 +55,7 @@ func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Stack[T] {
 // end is a sentinel and not included.
 func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Stack[T] {
 	list := &Stack[T]{list: singlylinkedlist.New[T]()}
-	for ; !begin.IsEqual(end); begin.Next() {
+	for !begin.IsEqual(end) && begin.Next() {
 		newItem, _ := begin.Get()
 		list.Push(newItem)
 	}
