@@ -12,9 +12,9 @@ package treeset
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/sets"
 	rbt "github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
@@ -30,12 +30,50 @@ type Set[T comparable] struct {
 
 var itemExists = struct{}{}
 
-// NewWith instantiates a new empty set with the custom comparator.
-func NewWith[T comparable](comparator utils.Comparator[T], values ...T) *Set[T] {
-	set := &Set[T]{tree: rbt.NewWith[T, struct{}](comparator)}
+// New instantiates a new empty set with the custom comparator.
+func New[T comparable](comparator utils.Comparator[T], values ...T) *Set[T] {
+	set := &Set[T]{tree: rbt.New[T, struct{}](comparator)}
 	if len(values) > 0 {
 		set.Add(values...)
 	}
+	return set
+}
+
+// NewFromMap instantiates a new  set from the provided slice.
+func NewFromSlice[T comparable](comparator utils.Comparator[T], slice []T) *Set[T] {
+	set := &Set[T]{tree: rbt.New[T, struct{}](comparator)}
+
+	for _, value := range slice {
+		set.Add(value)
+	}
+
+	return set
+}
+
+// NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
+func NewFromIterator[T comparable](comparator utils.Comparator[T], begin ds.ReadCompForIndexIterator[int, T]) *Set[T] {
+	set := &Set[T]{tree: rbt.New[T, struct{}](comparator)}
+
+	for begin.Next() {
+		newValue, _ := begin.Get()
+
+		set.Add(newValue)
+	}
+
+	return set
+}
+
+// NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T comparable](comparator utils.Comparator[T], begin ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
+	set := &Set[T]{tree: rbt.New[T, struct{}](comparator)}
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newValue, _ := begin.Get()
+
+		set.Add(newValue)
+	}
+
 	return set
 }
 
@@ -101,26 +139,24 @@ func (set *Set[T]) ToString() string {
 // The two sets should have the same comparators, otherwise the result is empty set.
 // Ref: https://en.wikipedia.org/wiki/Intersection_(set_theory)
 func (set *Set[T]) MakeIntersectionWith(other sets.Set[T]) sets.Set[T] {
-	result := NewWith(set.tree.Comparator)
+	result := New(set.tree.Comparator)
 	concrete := other.(*Set[T])
-
-	setComparator := reflect.ValueOf(set.tree.Comparator)
-	otherComparator := reflect.ValueOf(concrete.tree.Comparator)
-	if setComparator.Pointer() != otherComparator.Pointer() {
-		return result
-	}
 
 	// Iterate over smaller set (optimization)
 	if set.Size() <= other.Size() {
-		for it := set.Iterator(); it.Next(); {
-			if other.Contains(it.Value()) {
-				result.Add(it.Value())
+		it := set.OrderedBegin(set.tree.Comparator)
+		for it.Next() {
+			value, _ := it.Get()
+			if other.Contains(value) {
+				result.Add(value)
 			}
 		}
 	} else {
-		for it := other.Iterator(); it.Next(); {
-			if set.Contains(it.Value()) {
-				result.Add(it.Value())
+		it := concrete.OrderedBegin(concrete.tree.Comparator)
+		for it.Next() {
+			value, _ := it.Get()
+			if set.Contains(value) {
+				result.Add(value)
 			}
 		}
 	}
@@ -133,20 +169,19 @@ func (set *Set[T]) MakeIntersectionWith(other sets.Set[T]) sets.Set[T] {
 // The two sets should have the same comparators, otherwise the result is empty set.
 // Ref: https://en.wikipedia.org/wiki/Union_(set_theory)
 func (set *Set[T]) MakeUnionWith(other sets.Set[T]) sets.Set[T] {
-	result := NewWith(set.tree.Comparator)
+	result := New(set.tree.Comparator)
 	concrete := other.(*Set[T])
 
-	setComparator := reflect.ValueOf(set.tree.Comparator)
-	otherComparator := reflect.ValueOf(concrete.tree.Comparator)
-	if setComparator.Pointer() != otherComparator.Pointer() {
-		return result
+	it := set.OrderedBegin(set.tree.Comparator)
+	for it.Next() {
+		value, _ := it.Get()
+		result.Add(value)
 	}
 
-	for it := set.Iterator(); it.Next(); {
-		result.Add(it.Value())
-	}
-	for it := other.Iterator(); it.Next(); {
-		result.Add(it.Value())
+	it = concrete.OrderedBegin(concrete.tree.Comparator)
+	for it.Next() {
+		value, _ := it.Get()
+		result.Add(value)
 	}
 
 	return result
@@ -157,20 +192,42 @@ func (set *Set[T]) MakeUnionWith(other sets.Set[T]) sets.Set[T] {
 // The new set consists of all elements that are in "set" but not in "other".
 // Ref: https://proofwiki.org/wiki/Definition:Set_Difference
 func (set *Set[T]) MakeDifferenceWith(other sets.Set[T]) sets.Set[T] {
-	result := NewWith(set.tree.Comparator)
+	result := New(set.tree.Comparator)
 	concrete := other.(*Set[T])
 
-	setComparator := reflect.ValueOf(set.tree.Comparator)
-	otherComparator := reflect.ValueOf(concrete.tree.Comparator)
-	if setComparator.Pointer() != otherComparator.Pointer() {
-		return result
-	}
-
-	for it := set.Iterator(); it.Next(); {
-		if !other.Contains(it.Value()) {
-			result.Add(it.Value())
+	it := set.OrderedBegin(set.tree.Comparator)
+	for it.Next() {
+		value, _ := it.Get()
+		if !concrete.Contains(value) {
+			result.Add(value)
 		}
 	}
 
 	return result
+}
+
+//******************************************************************//
+//                             iterator                             //
+//******************************************************************//
+
+// Begin returns an initialized, reversed iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (s *Set[T]) OrderedBegin(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return s.NewOrderedIterator(s, -1)
+}
+
+// End returns an initialized,reversed iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (s *Set[T]) OrderedEnd(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return s.NewOrderedIterator(s, s.Size())
+}
+
+// First returns an initialized, reversed iterator, which points to it's first element.
+func (s *Set[T]) OrderedFirst(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return s.NewOrderedIterator(s, 0)
+}
+
+// Last returns an initialized, reversed iterator, which points to it's last element.
+func (s *Set[T]) OrderedLast(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return s.NewOrderedIterator(s, s.Size()-1)
 }
