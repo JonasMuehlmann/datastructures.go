@@ -252,9 +252,11 @@ func (it *OrderedIterator[TKey, TValue]) PreviousN(n int) bool {
 func (it *OrderedIterator[TKey, TValue]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
-	} else {
+	} else if n < 0 {
 		return it.PreviousN(-n)
 	}
+
+	return it.IsValid()
 }
 
 // https://www.geeksforgeeks.org/find-distance-between-two-nodes-of-a-binary-tree/
