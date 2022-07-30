@@ -29,44 +29,57 @@ import (
 // Assert Queue implementation
 var _ queues.Queue[any] = (*Queue[any])(nil)
 
-// Queue holds elements in an array-list
+// Queue holds elements in an array-queue
 type Queue[T any] struct {
 	heap       *binaryheap.Heap[T]
 	Comparator utils.Comparator[T]
 }
 
-// NewWith instantiates a new empty queue with the custom comparator.
-func NewWith[T any](comparator utils.Comparator[T]) *Queue[T] {
-	return &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
+// New instantiates a new empty queue with the custom comparator.
+func New[T any](comparator utils.Comparator[T], values ...T) *Queue[T] {
+	queue := &Queue[T]{heap: binaryheap.New(comparator), Comparator: comparator}
+
+	for _, value := range values {
+		queue.Enqueue(value)
+	}
+
+	return queue
 }
 
 // NewFromSlice instantiates a new queue containing the provided slice.
-func NewFromSliceWith[T any](comparator utils.Comparator[T], slice []T) *Queue[T] {
-	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
-	return list
+func NewFromSlice[T any](comparator utils.Comparator[T], slice []T) *Queue[T] {
+	queue := &Queue[T]{heap: binaryheap.New(comparator), Comparator: comparator}
+
+	for _, value := range slice {
+		queue.Enqueue(value)
+	}
+
+	return queue
 }
 
 // NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
-func NewFromIteratorWith[T any](comparator utils.Comparator[T], it ds.ReadCompForIterator[T]) *Queue[T] {
-	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
-	for ; !it.IsEnd(); it.Next() {
-		newItem, _ := it.Get()
-		list.Enqueue(newItem)
+func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T]) *Queue[T] {
+	queue := &Queue[T]{heap: binaryheap.New(comparator), Comparator: comparator}
+
+	for begin.Next() {
+		newItem, _ := begin.Get()
+		queue.Enqueue(newItem)
 	}
 
-	return list
+	return queue
 }
 
 // NewFromIterators instantiates a new queue containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIteratorsWith[T any](comparator utils.Comparator[T], first ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
-	list := &Queue[T]{heap: binaryheap.NewWith(comparator), Comparator: comparator}
-	for ; !first.IsEqual(end); first.Next() {
-		newItem, _ := first.Get()
-		list.Enqueue(newItem)
+func NewFromIterators[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Queue[T] {
+	queue := &Queue[T]{heap: binaryheap.New(comparator), Comparator: comparator}
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newItem, _ := begin.Get()
+		queue.Enqueue(newItem)
 	}
 
-	return list
+	return queue
 }
 
 // Enqueue adds a value to the end of the queue
@@ -124,21 +137,21 @@ func (queue *Queue[T]) ToString() string {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (stack *Queue[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewIterator(stack, -1)
+	return stack.NewOrderedIterator(stack, -1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (stack *Queue[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewIterator(stack, stack.Size())
+	return stack.NewOrderedIterator(stack, stack.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (stack *Queue[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewIterator(stack, 0)
+	return stack.NewOrderedIterator(stack, 0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (stack *Queue[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewIterator(stack, stack.Size()-1)
+	return stack.NewOrderedIterator(stack, stack.Size()-1)
 }

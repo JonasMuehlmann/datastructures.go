@@ -134,13 +134,13 @@ func (heap *Heap[T]) Clear() {
 
 // Values returns all elements in the heap.
 func (heap *Heap[T]) GetValues() []T {
-	values := make([]T, heap.list.Size(), heap.list.Size())
+	values := make([]T, 0, heap.list.Size())
 
-	for it := heap.OrderedBegin(); it.Next(); {
-		index, _ := it.Index()
+	it := heap.OrderedBegin()
+	for it.Next() {
 		value, _ := it.Get()
 
-		values[index] = value
+		values = append(values, value)
 	}
 
 	return values
@@ -151,7 +151,8 @@ func (heap *Heap[T]) ToString() string {
 	str := "BinaryHeap\n"
 	values := []string{}
 
-	for it := heap.OrderedBegin(); it.Next(); {
+	it := heap.OrderedBegin()
+	for it.Next() {
 		value, _ := it.Get()
 		values = append(values, fmt.Sprintf("%v", value))
 	}
