@@ -6,515 +6,339 @@
 package binaryheap
 
 import (
-	"encoding/json"
-	"math/rand"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestBinaryHeapPush(t *testing.T) {
-	heap := NewWithIntComparator()
-
-	if actualValue := heap.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
+func TestArrayHeapGetValues(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+		},
+		{
+			name:         "3 items, not found",
+			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
+		},
 	}
 
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
+	for _, test := range tests {
+		values := test.originalList.GetValues()
 
-	if actualValue := heap.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
-		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
-	}
-	if actualValue := heap.IsEmpty(); actualValue != false {
-		t.Errorf("Got %v expected %v", actualValue, false)
-	}
-	if actualValue := heap.Size(); actualValue != 3 {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := heap.Peek(); actualValue != 1 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 1)
+		assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
 	}
 }
 
-func TestBinaryHeapPushBulk(t *testing.T) {
-	heap := NewWithIntComparator()
-
-	heap.Push(15, 20, 3, 1, 2)
-
-	if actualValue := heap.GetValues(); actualValue[0].(int) != 1 || actualValue[1].(int) != 2 || actualValue[2].(int) != 3 {
-		t.Errorf("Got %v expected %v", actualValue, "[1,2,3]")
+func TestArrayHeapIsEmpty(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+		isEmpty      bool
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+			isEmpty:      true,
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
+			isEmpty:      false,
+		},
 	}
-	if actualValue, ok := heap.Pop(); actualValue != 1 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 1)
+
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+
+		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
 	}
 }
 
-func TestBinaryHeapPop(t *testing.T) {
-	heap := NewWithIntComparator()
-
-	if actualValue := heap.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
+func TestArrayHeapClear(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+		},
+		{
+			name:         "3 items, found",
+			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
+		},
 	}
 
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
-	heap.Pop()
+	for _, test := range tests {
+		isEmpty := test.originalList.IsEmpty()
+		assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
-	if actualValue, ok := heap.Peek(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	if actualValue, ok := heap.Pop(); actualValue != 2 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 2)
-	}
-	if actualValue, ok := heap.Pop(); actualValue != 3 || !ok {
-		t.Errorf("Got %v expected %v", actualValue, 3)
-	}
-	if actualValue, ok := heap.Pop(); actualValue != nil || ok {
-		t.Errorf("Got %v expected %v", actualValue, nil)
-	}
-	if actualValue := heap.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
-	}
-	if actualValue := heap.GetValues(); len(actualValue) != 0 {
-		t.Errorf("Got %v expected %v", actualValue, "[]")
+		test.originalList.Clear()
+
+		isEmpty = test.originalList.IsEmpty()
+		assert.Truef(t, isEmpty, test.name)
 	}
 }
 
-func TestBinaryHeapRandom(t *testing.T) {
-	heap := NewWithIntComparator()
+func TestArrayHeapPush(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+		valueToAdd   string
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo"},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string](utils.BasicComparator[string], "foo"),
+			valueToAdd:   "bar",
+			newItems:     []string{"foo", "bar"},
+		},
 
-	rand.Seed(3)
-	for i := 0; i < 10000; i++ {
-		r := int(rand.Int31n(30))
-		heap.Push(r)
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			valueToAdd:   "foo",
+			newItems:     []string{"foo", "bar", "baz", "foo"},
+		},
 	}
 
-	prev, _ := heap.Pop()
-	for !heap.IsEmpty() {
-		curr, _ := heap.Pop()
-		if prev.(int) > curr.(int) {
-			t.Errorf("Heap property invalidated. prev: %v current: %v", prev, curr)
-		}
-		prev = curr
-	}
-}
+	for _, test := range tests {
+		test.originalList.Push(test.valueToAdd)
 
-func TestBinaryHeapIteratorOnEmpty(t *testing.T) {
-	heap := NewWithIntComparator()
-	it := heap.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty heap")
-	}
-}
-
-func TestBinaryHeapIteratorNext(t *testing.T) {
-	heap := NewWithIntComparator()
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
-
-	it := heap.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		index := it.Index()
-		value := it.Value()
-		switch index {
-		case 0:
-			if actualValue, expectedValue := value, 1; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 1:
-			if actualValue, expectedValue := value, 2; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := value, 3; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := index, count-1; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestBinaryHeapIteratorPrev(t *testing.T) {
-	heap := NewWithIntComparator()
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
+func TestArrayHeapPop(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+		newItems     []string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+			newItems:     []string{},
+		},
+		{
+			name:         "1 item",
+			originalList: New[string](utils.BasicComparator[string], "foo"),
+			newItems:     []string{},
+		},
 
-	it := heap.Iterator()
-	for it.Next() {
+		{
+			name:         "list with 4 items, remove 1",
+			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			newItems:     []string{"foo", "baz"},
+		},
 	}
-	count := 0
-	for it.Prev() {
-		count++
-		index := it.Index()
-		value := it.Value()
-		switch index {
-		case 0:
-			if actualValue, expectedValue := value, 1; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 1:
-			if actualValue, expectedValue := value, 2; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := value, 3; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := index, 3-count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+
+	for _, test := range tests {
+		test.originalList.Pop()
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
 	}
 }
 
-func TestBinaryHeapIteratorBegin(t *testing.T) {
-	heap := NewWithIntComparator()
-	it := heap.Iterator()
-	it.Begin()
-	heap.Push(2)
-	heap.Push(3)
-	heap.Push(1)
-	for it.Next() {
+func TestArrayHeapPeek(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+		found        bool
+		value        string
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+			found:        false,
+		},
+		{
+			name:         "1 item",
+			originalList: New[string](utils.BasicComparator[string], "foo"),
+			found:        true,
+			value:        "foo",
+		},
+
+		{
+			name:         "list with 4 items",
+			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			found:        true,
+			value:        "bar",
+		},
 	}
-	it.Begin()
-	it.Next()
-	if index, value := it.Index(), it.Value(); index != 0 || value != 1 {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, 1)
+
+	for _, test := range tests {
+		value, found := test.originalList.Peek()
+
+		assert.Equalf(t, test.found, found, test.name)
+
+		if test.found {
+			assert.Equalf(t, test.value, value, test.name)
+		}
+
 	}
 }
 
-func TestBinaryHeapIteratorEnd(t *testing.T) {
-	heap := NewWithIntComparator()
-	it := heap.Iterator()
-
-	if index := it.Index(); index != -1 {
-		t.Errorf("Got %v expected %v", index, -1)
+func TestNewFromSlice(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+		},
+		{
+			name:         "single item",
+			originalList: New[string](utils.BasicComparator[string], "foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+		},
 	}
 
-	it.End()
-	if index := it.Index(); index != 0 {
-		t.Errorf("Got %v expected %v", index, 0)
+	for _, test := range tests {
+		newList := NewFromSlice[string](utils.BasicComparator[string], test.originalList.GetValues())
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
 
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
-	it.End()
-	if index := it.Index(); index != heap.Size() {
-		t.Errorf("Got %v expected %v", index, heap.Size())
-	}
-
-	it.Prev()
-	if index, value := it.Index(), it.Value(); index != heap.Size()-1 || value != 3 {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, heap.Size()-1, 3)
-	}
 }
 
-func TestBinaryHeapIteratorFirst(t *testing.T) {
-	heap := NewWithIntComparator()
-	it := heap.Iterator()
-	if actualValue, expectedValue := it.First(), false; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name         string
+		originalList *Heap[string]
+	}{
+		{
+			name:         "empty list",
+			originalList: New[string](utils.BasicComparator[string]),
+		},
+		{
+			name:         "single item",
+			originalList: New[string](utils.BasicComparator[string], "foo"),
+		},
+		{
+			name:         "3 items",
+			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+		},
 	}
-	heap.Push(3)
-	heap.Push(2)
-	heap.Push(1)
-	if actualValue, expectedValue := it.First(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+
+	for _, test := range tests {
+		it := test.originalList.OrderedBegin()
+		newList := NewFromIterator[string](utils.BasicComparator[string], it)
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
-	if index, value := it.Index(), it.Value(); index != 0 || value != 1 {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 0, 1)
-	}
+
 }
 
-func TestBinaryHeapIteratorLast(t *testing.T) {
-	tree := NewWithIntComparator()
-	it := tree.Iterator()
-	if actualValue, expectedValue := it.Last(), false; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+// NOTE: Missing test case: unordered iterator, which prevents preallocation
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name                     string
+		originalList             *Heap[string]
+		newList                  *Heap[string]
+		iteratorInitOrderedFirst func(*Heap[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+		iteratorInitOrderedEnd   func(*Heap[string]) ds.ReadWriteOrdCompBidRandCollIterator[int, string]
+	}{
+		{
+			name:                     "empty list",
+			originalList:             New[string](utils.BasicComparator[string]),
+			newList:                  New[string](utils.BasicComparator[string]),
+			iteratorInitOrderedFirst: (*Heap[string]).OrderedFirst,
+			iteratorInitOrderedEnd:   (*Heap[string]).OrderedEnd,
+		},
+		{
+			name:                     "single item",
+			originalList:             New[string](utils.BasicComparator[string], "foo"),
+			iteratorInitOrderedFirst: (*Heap[string]).OrderedFirst,
+			iteratorInitOrderedEnd:   (*Heap[string]).OrderedEnd,
+		},
+		{
+			name:                     "3 items",
+			originalList:             New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			newList:                  New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			iteratorInitOrderedFirst: (*Heap[string]).OrderedFirst,
+			iteratorInitOrderedEnd:   (*Heap[string]).OrderedEnd,
+		},
+		{
+			name:                     "3 items, end and OrderedFirst swapped",
+			originalList:             New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
+			newList:                  New[string](utils.BasicComparator[string]),
+			iteratorInitOrderedFirst: (*Heap[string]).OrderedEnd,
+			iteratorInitOrderedEnd:   (*Heap[string]).OrderedFirst,
+		},
 	}
-	tree.Push(2)
-	tree.Push(3)
-	tree.Push(1)
-	if actualValue, expectedValue := it.Last(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+
+	for _, test := range tests {
+		OrderedFirst := test.originalList.OrderedBegin()
+		end := test.originalList.OrderedEnd()
+		newList := NewFromIterators[string](utils.BasicComparator[string], OrderedFirst, end)
+
+		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 	}
-	if index, value := it.Index(), it.Value(); index != 2 || value != 3 {
-		t.Errorf("Got %v,%v expected %v,%v", index, value, 2, 3)
-	}
+
 }
 
-func TestBinaryHeapIteratorNextTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index int, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// NextTo (empty)
-	{
-		tree := NewWithStringComparator()
-		it := tree.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-	}
-
-	// NextTo (not found)
-	{
-		tree := NewWithStringComparator()
-		tree.Push("xx")
-		tree.Push("yy")
-		it := tree.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-	}
-
-	// NextTo (found)
-	{
-		tree := NewWithStringComparator()
-		tree.Push("aa")
-		tree.Push("bb")
-		tree.Push("cc")
-		it := tree.Iterator()
-		it.Begin()
-		if !it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-		if index, value := it.Index(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Next() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Index(), it.Value(); index != 2 || value.(string) != "cc" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "cc")
-		}
-		if it.Next() {
-			t.Errorf("Should not go past last element")
-		}
-	}
-}
-
-func TestBinaryHeapIteratorPrevTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index int, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// PrevTo (empty)
-	{
-		tree := NewWithStringComparator()
-		it := tree.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-	}
-
-	// PrevTo (not found)
-	{
-		tree := NewWithStringComparator()
-		tree.Push("xx")
-		tree.Push("yy")
-		it := tree.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-	}
-
-	// PrevTo (found)
-	{
-		tree := NewWithStringComparator()
-		tree.Push("aa")
-		tree.Push("bb")
-		tree.Push("cc")
-		it := tree.Iterator()
-		it.End()
-		if !it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty list")
-		}
-		if index, value := it.Index(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Prev() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Index(), it.Value(); index != 0 || value.(string) != "aa" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "aa")
-		}
-		if it.Prev() {
-			t.Errorf("Should not go before first element")
-		}
-	}
-}
-
-func TestBinaryHeapSerialization(t *testing.T) {
-	heap := NewWithStringComparator()
-
-	heap.Push("c")
-	heap.Push("b")
-	heap.Push("a")
-
-	var err error
-	assert := func() {
-		if actualValue := heap.GetValues(); actualValue[0].(string) != "a" || actualValue[1].(string) != "b" || actualValue[2].(string) != "c" {
-			t.Errorf("Got %v expected %v", actualValue, "[1,3,2]")
-		}
-		if actualValue := heap.Size(); actualValue != 3 {
-			t.Errorf("Got %v expected %v", actualValue, 3)
-		}
-		if actualValue, ok := heap.Peek(); actualValue != "a" || !ok {
-			t.Errorf("Got %v expected %v", actualValue, "a")
-		}
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
-	}
-
-	assert()
-
-	bytes, err := heap.ToJSON()
-	assert()
-
-	err = heap.FromJSON(bytes)
-	assert()
-
-	bytes, err = json.Marshal([]interface{}{"a", "b", "c", heap})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`[1,2,3]`), &heap)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-}
-
-func TestBTreeString(t *testing.T) {
-	c := NewWithIntComparator()
-	c.Push(1)
-	if !strings.HasPrefix(c.ToString(), "BinaryHeap") {
-		t.Errorf("ToString should start with container name")
-	}
-}
-
-func benchmarkPush(b *testing.B, heap *Heap, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			heap.Push(n)
-		}
-	}
-}
-
-func benchmarkPop(b *testing.B, heap *Heap, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			heap.Pop()
-		}
-	}
-}
-
-func BenchmarkBinaryHeapPop100(b *testing.B) {
+func BenchmarkArrayHeapPop(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[string](utils.BasicComparator[string])
+				for i := 0; i < n; i++ {
+					m.Push("foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Pop()
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, m.Size(), name)
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make([]string, 0)
+				for i := 0; i < n; i++ {
+					m = append(m, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m = m[:len(m)-1]
+				}
+				b.StopTimer()
+				require.Equalf(b, 0, len(m), name)
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkPop(b, heap, size)
-}
 
-func BenchmarkBinaryHeapPop1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
+	for _, variant := range variants {
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkPop(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPop10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPop(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPop100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPop(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPush100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	heap := NewWithIntComparator()
-	b.StartTimer()
-	benchmarkPush(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPush1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPush10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, heap, size)
-}
-
-func BenchmarkBinaryHeapPush100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	heap := NewWithIntComparator()
-	for n := 0; n < size; n++ {
-		heap.Push(n)
-	}
-	b.StartTimer()
-	benchmarkPush(b, heap, size)
 }
