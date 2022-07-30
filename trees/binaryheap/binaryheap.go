@@ -16,13 +16,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
 	"github.com/JonasMuehlmann/datastructures.go/trees"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Tree implementation
-var _ trees.Tree[string, any] = (*Heap[any])(nil)
+var _ trees.Tree[int, any] = (*Heap[any])(nil)
 
 // Heap holds elements in an array-list
 type Heap[T any] struct {
@@ -31,19 +32,63 @@ type Heap[T any] struct {
 }
 
 // NewWith instantiates a new empty heap tree with the custom comparator.
-func NewWith[T any](comparator utils.Comparator[T]) *Heap[T] {
-	return &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
+func New[T any](comparator utils.Comparator[T], values ...T) *Heap[T] {
+	heap := &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
+
+	for _, element := range values {
+		heap.Push(element)
+
+	}
+
+	return heap
+}
+
+// NewFromSlice instantiates a new stack containing the provided slice.
+func NewFromSlice[T any](comparator utils.Comparator[T], slice []T) *Heap[T] {
+	heap := &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
+
+	for _, element := range slice {
+		heap.Push(element)
+
+	}
+
+	return heap
+}
+
+// NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
+func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T]) *Heap[T] {
+	heap := &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
+
+	for begin.Next() {
+		newItem, _ := begin.Get()
+		heap.Push(newItem)
+	}
+
+	return heap
+}
+
+// NewFromIterators instantiates a new stack containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T], end ds.ComparableIterator) *Heap[T] {
+	heap := &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newItem, _ := begin.Get()
+		heap.Push(newItem)
+	}
+
+	return heap
 }
 
 // Push adds a value onto the heap and bubbles it up accordingly.
 func (heap *Heap[T]) Push(values ...T) {
 	if len(values) == 1 {
-		heap.list.Add(values[0])
+		heap.list.PushBack(values[0])
 		heap.bubbleUp()
 	} else {
 		// Reference: https://en.wikipedia.org/wiki/Binary_heap#Building_a_heap
 		for _, value := range values {
-			heap.list.Add(value)
+			heap.list.PushBack(value)
 		}
 		size := heap.list.Size()/2 + 1
 		for i := size; i >= 0; i-- {
@@ -90,9 +135,14 @@ func (heap *Heap[T]) Clear() {
 // Values returns all elements in the heap.
 func (heap *Heap[T]) GetValues() []T {
 	values := make([]T, heap.list.Size(), heap.list.Size())
-	for it := heap.Iterator(); it.Next(); {
-		values[it.Index()] = it.Value()
+
+	for it := heap.OrderedBegin(); it.Next(); {
+		index, _ := it.Index()
+		value, _ := it.Get()
+
+		values[index] = value
 	}
+
 	return values
 }
 
@@ -100,9 +150,12 @@ func (heap *Heap[T]) GetValues() []T {
 func (heap *Heap[T]) ToString() string {
 	str := "BinaryHeap\n"
 	values := []string{}
-	for it := heap.Iterator(); it.Next(); {
-		values = append(values, fmt.Sprintf("%v", it.Value()))
+
+	for it := heap.OrderedBegin(); it.Next(); {
+		value, _ := it.Get()
+		values = append(values, fmt.Sprintf("%v", value))
 	}
+
 	str += strings.Join(values, ", ")
 	return str
 }
@@ -155,4 +208,30 @@ func (heap *Heap[T]) bubbleUp() {
 // Check that the index is within bounds of the list
 func (heap *Heap[T]) withinRange(index int) bool {
 	return index >= 0 && index < heap.list.Size()
+}
+
+//******************************************************************//
+//                         OrderedIterator                         //
+//******************************************************************//
+
+// Begin returns an initialized iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (heap *Heap[T]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return heap.NewOrderedIterator(heap, -1)
+}
+
+// End returns an initialized iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (heap *Heap[T]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return heap.NewOrderedIterator(heap, heap.list.Size())
+}
+
+// First returns an initialized iterator, which points to it's first element.
+func (heap *Heap[T]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return heap.NewOrderedIterator(heap, 0)
+}
+
+// Last returns an initialized iterator, which points to it's last element.
+func (heap *Heap[T]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
+	return heap.NewOrderedIterator(heap, heap.list.Size()-1)
 }
