@@ -6,770 +6,524 @@
 package linkedhashmap
 
 import (
-	"encoding/json"
-	"fmt"
-	"strings"
 	"testing"
+
+	"github.com/JonasMuehlmann/datastructures.go/tests"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/maps"
 )
 
-func TestMapPut(t *testing.T) {
-	m := New()
-	m.Put(5, "e")
-	m.Put(6, "f")
-	m.Put(7, "g")
-	m.Put(3, "c")
-	m.Put(4, "d")
-	m.Put(1, "x")
-	m.Put(2, "b")
-	m.Put(1, "a") //overwrite
+func TestRemove(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		newMap      *Map[string, int]
+		toRemove    string
+	}{
 
-	if actualValue := m.Size(); actualValue != 7 {
-		t.Errorf("Got %v expected %v", actualValue, 7)
-	}
-	if actualValue, expectedValue := m.GetKeys(), []interface{}{5, 6, 7, 3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := m.GetValues(), []interface{}{"e", "f", "g", "c", "d", "a", "b"}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			newMap:      New[string, int](),
+			toRemove:    "foo",
+		},
+		{
+			name:        "single item",
+			toRemove:    "foo",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      New[string, int](),
+		},
+		{
+			name:        "single item, target does not exist",
+			toRemove:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			toRemove:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1, "baz": 3}),
+		},
 	}
 
-	// key,expectedValue,expectedFound
-	tests1 := [][]interface{}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
-		{5, "e", true},
-		{6, "f", true},
-		{7, "g", true},
-		{8, nil, false},
-	}
+	for _, test := range tests {
+		test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
-	for _, test := range tests1 {
-		// retrievals
-		actualValue, actualFound := m.Get(test[0])
-		if actualValue != test[1] || actualFound != test[2] {
-			t.Errorf("Got %v expected %v", actualValue, test[1])
-		}
+		assert.Equalf(t, test.originalMap, test.newMap, test.name)
 	}
 }
 
-func TestMapRemove(t *testing.T) {
-	m := New()
-	m.Put(5, "e")
-	m.Put(6, "f")
-	m.Put(7, "g")
-	m.Put(3, "c")
-	m.Put(4, "d")
-	m.Put(1, "x")
-	m.Put(2, "b")
-	m.Put(1, "a") //overwrite
+func TestPut(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		newMap      *Map[string, int]
+		keyToAdd    string
+		valueToAdd  int
+	}{
 
-	m.Remove(5)
-	m.Remove(6)
-	m.Remove(7)
-	m.Remove(8)
-	m.Remove(5)
-
-	if actualValue, expectedValue := m.GetKeys(), []interface{}{3, 4, 1, 2}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-
-	if actualValue, expectedValue := m.GetValues(), []interface{}{"c", "d", "a", "b"}; !sameElements(actualValue, expectedValue) {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := m.Size(); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-
-	tests2 := [][]interface{}{
-		{1, "a", true},
-		{2, "b", true},
-		{3, "c", true},
-		{4, "d", true},
-		{5, nil, false},
-		{6, nil, false},
-		{7, nil, false},
-		{8, nil, false},
-	}
-
-	for _, test := range tests2 {
-		actualValue, actualFound := m.Get(test[0])
-		if actualValue != test[1] || actualFound != test[2] {
-			t.Errorf("Got %v expected %v", actualValue, test[1])
-		}
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+		},
+		{
+			name:        "single item",
+			keyToAdd:    "foo",
+			valueToAdd:  1,
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1}),
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item, overwrite",
+			keyToAdd:    "foo",
+			valueToAdd:  2,
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 2}),
+		},
+		{
+			name:        "3 items",
+			keyToAdd:    "bar",
+			valueToAdd:  2,
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "baz": 3}),
+			newMap:      NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
 
-	m.Remove(1)
-	m.Remove(4)
-	m.Remove(2)
-	m.Remove(3)
-	m.Remove(2)
-	m.Remove(2)
+	for _, test := range tests {
+		test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetKeys()), "[]"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue, expectedValue := fmt.Sprintf("%s", m.GetValues()), "[]"; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if actualValue := m.Size(); actualValue != 0 {
-		t.Errorf("Got %v expected %v", actualValue, 0)
-	}
-	if actualValue := m.IsEmpty(); actualValue != true {
-		t.Errorf("Got %v expected %v", actualValue, true)
+		assert.Equalf(t, test.originalMap.table, test.newMap.table, test.name)
 	}
 }
 
-func sameElements(a []interface{}, b []interface{}) bool {
-	// If one is nil, the other must also be nil.
-	if (a == nil) != (b == nil) {
-		return false
+func TestGet(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		keyToGet    string
+		value       int
+		found       bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			keyToGet:    "foo",
+			found:       false,
+		},
+		{
+			name:        "single item",
+			keyToGet:    "foo",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			value:       1,
+			found:       true,
+		},
+		{
+			name:        "single item, target does not exist",
+			keyToGet:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			found:       false,
+		},
+		{
+			name:        "3 items",
+			keyToGet:    "bar",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			value:       2,
+			found:       true,
+		},
 	}
 
-	if len(a) != len(b) {
-		return false
-	}
+	for _, test := range tests {
+		value, found := test.originalMap.Get(test.keyToGet)
 
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
-func TestMapEach(t *testing.T) {
-	m := New()
-	m.Put("c", 1)
-	m.Put("a", 2)
-	m.Put("b", 3)
-	count := 0
-	m.Each(func(key interface{}, value interface{}) {
-		count++
-		if actualValue, expectedValue := count, value; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		switch value {
-		case 1:
-			if actualValue, expectedValue := key, "c"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 2:
-			if actualValue, expectedValue := key, "a"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case 3:
-			if actualValue, expectedValue := key, "b"; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-	})
-}
-
-func TestMapMap(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	mappedMap := m.Map(func(key1 interface{}, value1 interface{}) (key2 interface{}, value2 interface{}) {
-		return key1, value1.(int) * value1.(int)
-	})
-	if actualValue, _ := mappedMap.Get("c"); actualValue != 9 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: c")
-	}
-	if actualValue, _ := mappedMap.Get("a"); actualValue != 1 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: a")
-	}
-	if actualValue, _ := mappedMap.Get("b"); actualValue != 4 {
-		t.Errorf("Got %v expected %v", actualValue, "mapped: b")
-	}
-	if mappedMap.Size() != 3 {
-		t.Errorf("Got %v expected %v", mappedMap.Size(), 3)
+		assert.Equalf(t, test.value, value, test.name)
+		assert.Equalf(t, test.found, found, test.name)
 	}
 }
 
-func TestMapSelect(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("b", 1)
-	m.Put("a", 2)
-	selectedMap := m.Select(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "b"
-	})
-	if actualValue, _ := selectedMap.Get("b"); actualValue != 1 {
-		t.Errorf("Got %v expected %v", actualValue, "value: a")
+func TestGetKeys(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		keys        []string
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			keys:        []string{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			keys:        []string{"foo"},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			keys:        []string{"foo", "bar", "baz"},
+		},
 	}
-	if actualValue, _ := selectedMap.Get("a"); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, "value: b")
-	}
-	if selectedMap.Size() != 2 {
-		t.Errorf("Got %v expected %v", selectedMap.Size(), 2)
+
+	for _, test := range tests {
+		keys := test.originalMap.GetKeys()
+
+		assert.Equalf(t, test.keys, keys, test.name)
 	}
 }
 
-func TestMapAny(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	any := m.Any(func(key interface{}, value interface{}) bool {
-		return value.(int) == 3
-	})
-	if any != true {
-		t.Errorf("Got %v expected %v", any, true)
+func TestGetValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		values      []int
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			values:      []int{},
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			values:      []int{1},
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			values:      []int{1, 2, 3},
+		},
 	}
-	any = m.Any(func(key interface{}, value interface{}) bool {
-		return value.(int) == 4
-	})
-	if any != false {
-		t.Errorf("Got %v expected %v", any, false)
+
+	for _, test := range tests {
+		values := test.originalMap.GetValues()
+
+		assert.Equalf(t, test.values, values, test.name)
 	}
 }
 
-func TestMapAll(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	all := m.All(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "c"
-	})
-	if all != true {
-		t.Errorf("Got %v expected %v", all, true)
+func TestIsEmpty(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+		isEmpty     bool
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+			isEmpty:     true,
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+			isEmpty:     false,
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmpty:     false,
+		},
 	}
-	all = m.All(func(key interface{}, value interface{}) bool {
-		return key.(string) >= "a" && key.(string) <= "b"
-	})
-	if all != false {
-		t.Errorf("Got %v expected %v", all, false)
+
+	for _, test := range tests {
+		isEmpty := test.originalMap.IsEmpty()
+
+		assert.Equal(t, test.isEmpty, isEmpty, test.name)
 	}
 }
 
-func TestMapFind(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	foundKey, foundValue := m.Find(func(key interface{}, value interface{}) bool {
-		return key.(string) == "c"
-	})
-	if foundKey != "c" || foundValue != 3 {
-		t.Errorf("Got %v -> %v expected %v -> %v", foundKey, foundValue, "c", 3)
+func TestClear(t *testing.T) {
+	tests := []struct {
+		name          string
+		originalMap   *Map[string, int]
+		isEmptyBefore bool
+		isEmptyAfter  bool
+	}{
+
+		{
+			name:          "empty list",
+			originalMap:   New[string, int](),
+			isEmptyBefore: true,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "single item",
+			originalMap:   NewFromMap[string, int](map[string]int{"foo": 1}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
+		{
+			name:          "3 items",
+			originalMap:   NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+			isEmptyBefore: false,
+			isEmptyAfter:  true,
+		},
 	}
-	foundKey, foundValue = m.Find(func(key interface{}, value interface{}) bool {
-		return key.(string) == "x"
-	})
-	if foundKey != nil || foundValue != nil {
-		t.Errorf("Got %v at %v expected %v at %v", foundValue, foundKey, nil, nil)
+
+	for _, test := range tests {
+		isEmptyBefore := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+
+		test.originalMap.Clear()
+
+		isEmptAfter := test.originalMap.IsEmpty()
+		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
 	}
 }
 
-func TestMapChaining(t *testing.T) {
-	m := New()
-	m.Put("c", 3)
-	m.Put("a", 1)
-	m.Put("b", 2)
-	chainedMap := m.Select(func(key interface{}, value interface{}) bool {
-		return value.(int) > 1
-	}).Map(func(key interface{}, value interface{}) (interface{}, interface{}) {
-		return key.(string) + key.(string), value.(int) * value.(int)
-	})
-	if actualValue := chainedMap.Size(); actualValue != 2 {
-		t.Errorf("Got %v expected %v", actualValue, 2)
+func TestNewFromIterator(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+	}{
+
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
-	if actualValue, found := chainedMap.Get("aa"); actualValue != nil || found {
-		t.Errorf("Got %v expected %v", actualValue, nil)
+
+	for _, test := range tests {
+		it := test.originalMap.Begin()
+
+		newMap := NewFromIterator[string, int](it)
+
+		assert.EqualValues(t, test.originalMap.table, newMap.table, test.name)
 	}
-	if actualValue, found := chainedMap.Get("bb"); actualValue != 4 || !found {
-		t.Errorf("Got %v expected %v", actualValue, 4)
-	}
-	if actualValue, found := chainedMap.Get("cc"); actualValue != 9 || !found {
-		t.Errorf("Got %v expected %v", actualValue, 9)
-	}
+
 }
 
-func TestMapIteratorNextOnEmpty(t *testing.T) {
-	m := New()
-	it := m.Iterator()
-	it = m.Iterator()
-	for it.Next() {
-		t.Errorf("Shouldn't iterate on empty map")
+func TestNewFromIterators(t *testing.T) {
+	tests := []struct {
+		name        string
+		originalMap *Map[string, int]
+	}{
+		{
+			name:        "empty list",
+			originalMap: New[string, int](),
+		},
+		{
+			name:        "single item",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1}),
+		},
+		{
+			name:        "3 items",
+			originalMap: NewFromMap[string, int](map[string]int{"foo": 1, "bar": 2, "baz": 3}),
+		},
 	}
+
+	for _, test := range tests {
+		first := test.originalMap.Begin()
+		end := test.originalMap.End()
+
+		newMap := NewFromIterators[string, int](first, end)
+
+		assert.EqualValues(t, test.originalMap.table, newMap.table, test.name)
+	}
+
 }
 
-func TestMapIteratorPrevOnEmpty(t *testing.T) {
-	m := New()
-	it := m.Iterator()
-	it = m.Iterator()
-	for it.Prev() {
-		t.Errorf("Shouldn't iterate on empty map")
-	}
-}
-
-func TestMapIteratorNext(t *testing.T) {
-	m := New()
-	m.Put("c", 1)
-	m.Put("a", 2)
-	m.Put("b", 3)
-
-	it := m.Iterator()
-	count := 0
-	for it.Next() {
-		count++
-		key := it.Key()
-		value := it.Value()
-		switch key {
-		case "c":
-			if actualValue, expectedValue := value, 1; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case "a":
-			if actualValue, expectedValue := value, 2; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case "b":
-			if actualValue, expectedValue := value, 3; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := value, count; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-	}
-	if actualValue, expectedValue := count, 3; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestMapIteratorPrev(t *testing.T) {
-	m := New()
-	m.Put("c", 1)
-	m.Put("a", 2)
-	m.Put("b", 3)
-
-	it := m.Iterator()
-	for it.Next() {
-	}
-	countDown := m.Size()
-	for it.Prev() {
-		key := it.Key()
-		value := it.Value()
-		switch key {
-		case "c":
-			if actualValue, expectedValue := value, 1; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case "a":
-			if actualValue, expectedValue := value, 2; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		case "b":
-			if actualValue, expectedValue := value, 3; actualValue != expectedValue {
-				t.Errorf("Got %v expected %v", actualValue, expectedValue)
-			}
-		default:
-			t.Errorf("Too many")
-		}
-		if actualValue, expectedValue := value, countDown; actualValue != expectedValue {
-			t.Errorf("Got %v expected %v", actualValue, expectedValue)
-		}
-		countDown--
-	}
-	if actualValue, expectedValue := countDown, 0; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-}
-
-func TestMapIteratorBegin(t *testing.T) {
-	m := New()
-	it := m.Iterator()
-	it.Begin()
-	m.Put(3, "c")
-	m.Put(1, "a")
-	m.Put(2, "b")
-	for it.Next() {
-	}
-	it.Begin()
-	it.Next()
-	if key, value := it.Key(), it.Value(); key != 3 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 3, "c")
-	}
-}
-
-func TestMapIteratorEnd(t *testing.T) {
-	m := New()
-	it := m.Iterator()
-	m.Put(3, "c")
-	m.Put(1, "a")
-	m.Put(2, "b")
-	it.End()
-	it.Prev()
-	if key, value := it.Key(), it.Value(); key != 2 || value != "b" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 2, "b")
-	}
-}
-
-func TestMapIteratorFirst(t *testing.T) {
-	m := New()
-	m.Put(3, "c")
-	m.Put(1, "a")
-	m.Put(2, "b")
-	it := m.Iterator()
-	if actualValue, expectedValue := it.First(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if key, value := it.Key(), it.Value(); key != 3 || value != "c" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 3, "c")
-	}
-}
-
-func TestMapIteratorLast(t *testing.T) {
-	m := New()
-	m.Put(3, "c")
-	m.Put(1, "a")
-	m.Put(2, "b")
-	it := m.Iterator()
-	if actualValue, expectedValue := it.Last(), true; actualValue != expectedValue {
-		t.Errorf("Got %v expected %v", actualValue, expectedValue)
-	}
-	if key, value := it.Key(), it.Value(); key != 2 || value != "b" {
-		t.Errorf("Got %v,%v expected %v,%v", key, value, 2, "b")
-	}
-}
-
-func TestMapIteratorNextTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// NextTo (empty)
-	{
-		m := New()
-		it := m.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-	}
-
-	// NextTo (not found)
-	{
-		m := New()
-		m.Put(0, "xx")
-		m.Put(1, "yy")
-		it := m.Iterator()
-		for it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-	}
-
-	// NextTo (found)
-	{
-		m := New()
-		m.Put(0, "aa")
-		m.Put(1, "bb")
-		m.Put(2, "cc")
-		it := m.Iterator()
-		it.Begin()
-		if !it.NextTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Next() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Key(), it.Value(); index != 2 || value.(string) != "cc" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 2, "cc")
-		}
-		if it.Next() {
-			t.Errorf("Should not go past last element")
-		}
-	}
-}
-
-func TestMapIteratorPrevTo(t *testing.T) {
-	// Sample seek function, i.e. string starting with "b"
-	seek := func(index interface{}, value interface{}) bool {
-		return strings.HasSuffix(value.(string), "b")
-	}
-
-	// PrevTo (empty)
-	{
-		m := New()
-		it := m.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-	}
-
-	// PrevTo (not found)
-	{
-		m := New()
-		m.Put(0, "xx")
-		m.Put(1, "yy")
-		it := m.Iterator()
-		it.End()
-		for it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-	}
-
-	// PrevTo (found)
-	{
-		m := New()
-		m.Put(0, "aa")
-		m.Put(1, "bb")
-		m.Put(2, "cc")
-		it := m.Iterator()
-		it.End()
-		if !it.PrevTo(seek) {
-			t.Errorf("Shouldn't iterate on empty map")
-		}
-		if index, value := it.Key(), it.Value(); index != 1 || value.(string) != "bb" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 1, "bb")
-		}
-		if !it.Prev() {
-			t.Errorf("Should go to first element")
-		}
-		if index, value := it.Key(), it.Value(); index != 0 || value.(string) != "aa" {
-			t.Errorf("Got %v,%v expected %v,%v", index, value, 0, "aa")
-		}
-		if it.Prev() {
-			t.Errorf("Should not go before first element")
-		}
-	}
-}
-
-func TestMapSerialization(t *testing.T) {
-	for i := 0; i < 10; i++ {
-		original := New()
-		original.Put("d", "4")
-		original.Put("e", "5")
-		original.Put("c", "3")
-		original.Put("b", "2")
-		original.Put("a", "1")
-
-		assertSerialization(original, "A", t)
-
-		serialized, err := original.ToJSON()
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
-		assertSerialization(original, "B", t)
-
-		deserialized := New()
-		err = deserialized.FromJSON(serialized)
-		if err != nil {
-			t.Errorf("Got error %v", err)
-		}
-		assertSerialization(deserialized, "C", t)
-	}
-
-	m := New()
-	m.Put("a", 1.0)
-	m.Put("b", 2.0)
-	m.Put("c", 3.0)
-
-	_, err := json.Marshal([]interface{}{"a", "b", "c", m})
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-
-	err = json.Unmarshal([]byte(`{"a":1,"b":2}`), &m)
-	if err != nil {
-		t.Errorf("Got error %v", err)
-	}
-}
-
-func TestMapString(t *testing.T) {
-	c := New()
-	c.Put("a", 1)
-	if !strings.HasPrefix(c.ToString(), "LinkedHashMap") {
-		t.Errorf("ToString should start with container name")
-	}
-}
-
-//noinspection GoBoolExpressions
-func assertSerialization(m *Map, txt string, t *testing.T) {
-	if actualValue := m.GetKeys(); false ||
-		actualValue[0].(string) != "d" ||
-		actualValue[1].(string) != "e" ||
-		actualValue[2].(string) != "c" ||
-		actualValue[3].(string) != "b" ||
-		actualValue[4].(string) != "a" {
-		t.Errorf("[%s] Got %v expected %v", txt, actualValue, "[d,e,c,b,a]")
-	}
-	if actualValue := m.GetValues(); false ||
-		actualValue[0].(string) != "4" ||
-		actualValue[1].(string) != "5" ||
-		actualValue[2].(string) != "3" ||
-		actualValue[3].(string) != "2" ||
-		actualValue[4].(string) != "1" {
-		t.Errorf("[%s] Got %v expected %v", txt, actualValue, "[4,5,3,2,1]")
-	}
-	if actualValue, expectedValue := m.Size(), 5; actualValue != expectedValue {
-		t.Errorf("[%s] Got %v expected %v", txt, actualValue, expectedValue)
-	}
-}
-
-func benchmarkGet(b *testing.B, m *Map, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Get(n)
-		}
-	}
-}
-
-func benchmarkPut(b *testing.B, m *Map, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Put(n, struct{}{})
-		}
-	}
-}
-
-func benchmarkRemove(b *testing.B, m *Map, size int) {
-	for i := 0; i < b.N; i++ {
-		for n := 0; n < size; n++ {
-			m.Remove(n)
-		}
-	}
-}
-
-func BenchmarkTreeMapGet100(b *testing.B) {
+// TODO: Compare lists after operations, to require correctnes
+func BenchmarkHashMapRemove(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Remove(utils.BasicComparator[int], i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make(map[int]string)
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					delete(m, i)
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkTreeMapGet1000(b *testing.B) {
+func BenchmarkHashMapGet(b *testing.B) {
 	b.StopTimer()
-	size := 1000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_, _ = m.Get(i)
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make(map[int]string)
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					_, _ = m[i]
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkTreeMapGet10000(b *testing.B) {
+func BenchmarkHashMapPut(b *testing.B) {
 	b.StopTimer()
-	size := 10000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StopTimer()
+			},
+		},
+		{
+			name: "Raw",
+			f: func(n int, name string) {
+				m := make(map[int]string)
+				b.StartTimer()
+				for i := 0; i < n; i++ {
+					m[i] = "foo"
+				}
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkTreeMapGet100000(b *testing.B) {
+func BenchmarkHashMapGetKeys(b *testing.B) {
 	b.StopTimer()
-	size := 100000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = m.GetKeys()
+				b.StopTimer()
+			},
+		},
+		{
+			name: "golang.org_x_exp",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = maps.Keys(m.table)
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkGet(b, m, size)
+
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+	}
 }
 
-func BenchmarkTreeMapPut100(b *testing.B) {
+func BenchmarkHashMapGetValues(b *testing.B) {
 	b.StopTimer()
-	size := 100
-	m := New()
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkTreeMapPut1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	variants := []struct {
+		name string
+		f    func(n int, name string)
+	}{
+		{
+			name: "Ours",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = m.GetValues()
+				b.StopTimer()
+			},
+		},
+		{
+			name: "golang.org_x_exp",
+			f: func(n int, name string) {
+				m := New[int, string]()
+				for i := 0; i < n; i++ {
+					m.Put(i, "foo")
+				}
+				b.StartTimer()
+				_ = maps.Values(m.table)
+				b.StopTimer()
+			},
+		},
 	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
 
-func BenchmarkTreeMapPut10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
+	for _, variant := range variants {
+		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkTreeMapPut100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkPut(b, m, size)
-}
-
-func BenchmarkTreeMapRemove100(b *testing.B) {
-	b.StopTimer()
-	size := 100
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkTreeMapRemove1000(b *testing.B) {
-	b.StopTimer()
-	size := 1000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkTreeMapRemove10000(b *testing.B) {
-	b.StopTimer()
-	size := 10000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
-}
-
-func BenchmarkTreeMapRemove100000(b *testing.B) {
-	b.StopTimer()
-	size := 100000
-	m := New()
-	for n := 0; n < size; n++ {
-		m.Put(n, struct{}{})
-	}
-	b.StartTimer()
-	benchmarkRemove(b, m, size)
 }
