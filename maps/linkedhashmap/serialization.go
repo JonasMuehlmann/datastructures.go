@@ -24,12 +24,13 @@ func (m *Map[TKey, TValue]) ToJSON() ([]byte, error) {
 
 	buf.WriteRune('{')
 
-	it := m.Iterator()
+	it := m.Begin()
 	lastIndex := m.Size() - 1
 	index := 0
 
 	for it.Next() {
-		km, err := json.Marshal(it.Key())
+		key, _ := it.Index()
+		km, err := json.Marshal(key)
 		if err != nil {
 			return nil, err
 		}
@@ -37,7 +38,8 @@ func (m *Map[TKey, TValue]) ToJSON() ([]byte, error) {
 
 		buf.WriteRune(':')
 
-		vm, err := json.Marshal(it.Value())
+		value, _ := it.Get()
+		vm, err := json.Marshal(value)
 		if err != nil {
 			return nil, err
 		}

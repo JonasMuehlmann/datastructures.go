@@ -8,102 +8,213 @@ package linkedhashmap
 import (
 	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // Assert Iterator implementation
-var _ ds.ReverseIteratorWithKey = (*Iterator)(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*Iterator[string, any])(nil)
 
-// Iterator holding the iterator's state
-type Iterator struct {
-	iterator doublylinkedlist.Iterator
-	table    map[interface{}]interface{}
+type Iterator[TKey comparable, TValue any] struct {
+	s             *Map[TKey, TValue]
+	orderIterator *doublylinkedlist.Iterator[TKey]
+	// Redundant but has better locality
+	value TValue
+	key   TKey
+	index int
+	size  int
 }
 
-// Iterator returns a stateful iterator whose elements are key/value pairs.
-func (m *Map) Iterator() Iterator {
-	return Iterator{
-		iterator: m.ordering.Iterator(),
-		table:    m.table}
+func (m *Map[TKey, TValue]) NewIterator(s *Map[TKey, TValue], position int) *Iterator[TKey, TValue] {
+	it := &Iterator[TKey, TValue]{
+		s:             s,
+		orderIterator: s.ordering.NewIterator(s.ordering, position),
+		index:         position,
+		size:          s.Size(),
+	}
+
+	it.key, _ = it.orderIterator.Get()
+	it.value, _ = s.Get(it.key)
+
+	return it
 }
 
-// Next moves the iterator to the next element and returns true if there was a next element in the container.
-// If Next() returns true, then next element's key and value can be retrieved by Key() and Value().
-// If Next() was called for the first time, then it will point the iterator to the first element if it exists.
-// Modifies the state of the iterator.
-func (iterator *Iterator) Next() bool {
-	return iterator.iterator.Next()
+// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsBegin() bool {
+	return it.index == -1
 }
 
-// Prev moves the iterator to the previous element and returns true if there was a previous element in the container.
-// If Prev() returns true, then previous element's key and value can be retrieved by Key() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Prev() bool {
-	return iterator.iterator.Prev()
+// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsEnd() bool {
+	return it.index == it.size
 }
 
-// Value returns the current element's value.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Value() interface{} {
-	key := iterator.iterator.Value()
-	return iterator.table[key]
+// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsFirst() bool {
+	return it.index == 0
 }
 
-// Key returns the current element's key.
-// Does not modify the state of the iterator.
-func (iterator *Iterator) Key() interface{} {
-	return iterator.iterator.Value()
+// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsLast() bool {
+	return it.index == it.size-1
 }
 
-// Begin resets the iterator to its initial state (one-before-first)
-// Call Next() to fetch the first element if any.
-func (iterator *Iterator) Begin() {
-	iterator.iterator.Begin()
+// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsValid() bool {
+	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
-// End moves the iterator past the last element (one-past-the-end).
-// Call Prev() to fetch the last element if any.
-func (iterator *Iterator) End() {
-	iterator.iterator.End()
+// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
+	otherThis, ok := other.(*Iterator[TKey, TValue])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.index == otherThis.index
+
 }
 
-// First moves the iterator to the first element and returns true if there was a first element in the container.
-// If First() returns true, then first element's key and value can be retrieved by Key() and Value().
-// Modifies the state of the iterator
-func (iterator *Iterator) First() bool {
-	return iterator.iterator.First()
+// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
+	otherThis, ok := other.(*Iterator[TKey, TValue])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.index - otherThis.index
 }
 
-// Last moves the iterator to the last element and returns true if there was a last element in the container.
-// If Last() returns true, then last element's key and value can be retrieved by Key() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) Last() bool {
-	return iterator.iterator.Last()
+// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[TKey, TValue])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.DistanceTo(otherThis) > 0
 }
 
-// NextTo moves the iterator to the next element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If NextTo() returns true, then next element's key and value can be retrieved by Key() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) NextTo(f func(key interface{}, value interface{}) bool) bool {
-	for iterator.Next() {
-		key, value := iterator.Key(), iterator.Value()
-		if f(key, value) {
+// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
+	otherThis, ok := other.(*Iterator[TKey, TValue])
+	if !ok {
+		panic(ds.CanOnlyCompareEqualIteratorTypes)
+	}
+
+	return it.DistanceTo(otherThis) < 0
+}
+
+// Size implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Size() int {
+	return it.size
+}
+
+// Index implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Index() (index TKey, found bool) {
+	return it.key, it.IsValid()
+}
+
+// Next implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Next() bool {
+	it.orderIterator.Next()
+	it.index = utils.Min(it.index+1, it.size)
+
+	var found bool
+
+	it.key, found = it.orderIterator.Get()
+
+	return found
+}
+
+// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) NextN(i int) bool {
+	it.orderIterator.NextN(i)
+	it.index = utils.Min(it.index+i, it.size)
+
+	var found bool
+
+	it.key, found = it.orderIterator.Get()
+
+	return found
+}
+
+// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Previous() bool {
+	it.orderIterator.Previous()
+	it.index = utils.Max(it.index-1, -1)
+
+	var found bool
+
+	it.key, found = it.orderIterator.Get()
+
+	return found
+}
+
+// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) PreviousN(n int) bool {
+	it.orderIterator.PreviousN(n)
+	it.index = utils.Max(it.index-n, -1)
+
+	var found bool
+
+	it.key, found = it.orderIterator.Get()
+
+	return found
+}
+
+// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) MoveBy(n int) bool {
+	if n > 0 {
+		return it.NextN(n)
+	} else if n < 0 {
+		return it.PreviousN(-n)
+	}
+
+	return it.IsValid()
+}
+
+// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) MoveTo(key TKey) bool {
+	// PERF: This can be optimized
+	for it.Next() {
+		if it.key == key {
 			return true
 		}
 	}
-	return false
-}
-
-// PrevTo moves the iterator to the previous element from current position that satisfies the condition given by the
-// passed function, and returns true if there was a next element in the container.
-// If PrevTo() returns true, then next element's key and value can be retrieved by Key() and Value().
-// Modifies the state of the iterator.
-func (iterator *Iterator) PrevTo(f func(key interface{}, value interface{}) bool) bool {
-	for iterator.Prev() {
-		key, value := iterator.Key(), iterator.Value()
-		if f(key, value) {
+	for it.Previous() {
+		if it.key == key {
 			return true
 		}
 	}
+
 	return false
+}
+
+// Get implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Get() (value TValue, found bool) {
+	return it.s.Get(it.key)
+}
+
+// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) GetAt(key TKey) (value TValue, found bool) {
+	return it.s.Get(key)
+}
+
+// Set implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) Set(value TValue) bool {
+	if !it.IsValid() {
+		return false
+	}
+
+	it.value = value
+	it.s.Put(it.key, value)
+
+	return true
+}
+
+// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+func (it *Iterator[TKey, TValue]) SetAt(i TKey, value TValue) bool {
+	it.s.Put(it.key, value)
+
+	return true
 }

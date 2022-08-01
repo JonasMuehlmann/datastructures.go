@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/doublylinkedlist"
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
@@ -46,11 +47,54 @@ func New[TKey comparable, TValue any]() *Map[TKey, TValue] {
 	}
 }
 
+// NewFromMap instantiates a new  set from the provided slice.
+func NewFromMap[TKey comparable, TValue any](map_ map[TKey]TValue) *Map[TKey, TValue] {
+	s := &Map[TKey, TValue]{table: make(map[TKey]TValue), ordering: doublylinkedlist.New[TKey]()}
+
+	for k, v := range map_ {
+		s.table[k] = v
+		s.ordering.PushBack(k)
+	}
+
+	return s
+}
+
+// NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
+func NewFromIterator[TKey comparable, TValue any](begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+	s := &Map[TKey, TValue]{table: make(map[TKey]TValue), ordering: doublylinkedlist.New[TKey]()}
+
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		s.table[newKey] = newValue
+		s.ordering.PushBack(newKey)
+	}
+
+	return s
+}
+
+// NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[TKey comparable, TValue any](begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+	s := &Map[TKey, TValue]{table: make(map[TKey]TValue), ordering: doublylinkedlist.New[TKey]()}
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		s.table[newKey] = newValue
+		s.ordering.PushBack(newKey)
+	}
+
+	return s
+}
+
 // Put inserts key-value pair into the map.
 // Key should adhere to the comparator's type assertion, otherwise method panics.
 func (m *Map[TKey, TValue]) Put(key TKey, value TValue) {
 	if _, contains := m.table[key]; !contains {
-		m.ordering.Append(key)
+		m.ordering.PushBack(key)
 	}
 	m.table[key] = value
 }
@@ -86,16 +130,17 @@ func (m *Map[TKey, TValue]) Size() int {
 
 // GetKeys returns all keys in-order
 func (m *Map[TKey, TValue]) GetKeys() []TKey {
-	return m.ordering.Values()
+	return m.ordering.GetValues()
 }
 
 // Values returns all values in-order based on the key.
 func (m *Map[TKey, TValue]) GetValues() []TValue {
 	values := make([]TValue, m.Size())
 	count := 0
-	it := m.Iterator()
+	it := m.Begin()
 	for it.Next() {
-		values[count] = it.Value()
+		value, _ := it.Get()
+		values[count] = value
 		count++
 	}
 	return values
@@ -110,10 +155,38 @@ func (m *Map[TKey, TValue]) Clear() {
 // String returns a string representation of container
 func (m *Map[TKey, TValue]) ToString() string {
 	str := "LinkedHashMap\nmap["
-	it := m.Iterator()
+	it := m.Begin()
 	for it.Next() {
-		str += fmt.Sprintf("%v:%v ", it.Key(), it.Value())
+		key, _ := it.Index()
+		value, _ := it.Get()
+		str += fmt.Sprintf("%v:%v ", key, value)
 	}
 	return strings.TrimRight(str, " ") + "]"
 
+}
+
+//******************************************************************//
+//                         Ordered iterator                         //
+//******************************************************************//
+
+// OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewIterator(m, -1)
+}
+
+// OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) End() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewIterator(m, m.Size())
+}
+
+// OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
+func (m *Map[TKey, TValue]) First() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewIterator(m, 0)
+}
+
+// OrderedLast returns an initialized, reversed iterator, which points to it's last element.
+func (m *Map[TKey, TValue]) Last() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewIterator(m, m.Size()-1)
 }
