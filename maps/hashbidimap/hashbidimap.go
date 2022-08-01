@@ -19,8 +19,10 @@ package hashbidimap
 import (
 	"fmt"
 
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
+	"github.com/JonasMuehlmann/datastructures.go/utils"
 )
 
 // TODO: Should be implement an Equaler interface?
@@ -29,8 +31,10 @@ var _ maps.BidiMap[string, string] = (*Map[string, string])(nil)
 
 // Map holds the elements in two hashmaps.
 type Map[TKey comparable, TValue comparable] struct {
-	forwardMap hashmap.Map[TKey, TValue]
-	inverseMap hashmap.Map[TValue, TKey]
+	forwardMap      *hashmap.Map[TKey, TValue]
+	inverseMap      *hashmap.Map[TValue, TKey]
+	keyComparator   utils.Comparator[TKey]
+	valueComparator utils.Comparator[TValue]
 }
 
 func (m *Map[TKey, TValue]) MergeWith(other *maps.Map[TKey, TValue]) bool {
@@ -42,17 +46,85 @@ func (m *Map[TKey, TValue]) MergeWithSafe(other *maps.Map[TKey, TValue], overwri
 }
 
 // New instantiates a bidirectional map.
-func New[TKey comparable, TValue comparable]() *Map[TKey, TValue] {
-	return &Map[TKey, TValue]{*hashmap.New[TKey, TValue](), *hashmap.New[TValue, TKey]()}
+func New[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue]) *Map[TKey, TValue] {
+	return &Map[TKey, TValue]{
+		forwardMap:      hashmap.New[TKey, TValue](),
+		inverseMap:      hashmap.New[TValue, TKey](),
+		keyComparator:   keyComparator,
+		valueComparator: valueComparator,
+	}
+}
+
+// NewFromMap instantiates a new  map containing the provided map.
+func NewFromMap[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], map_ map[TKey]TValue) *Map[TKey, TValue] {
+	m := &Map[TKey, TValue]{
+		forwardMap:      hashmap.NewFromMap(map_),
+		inverseMap:      hashmap.New[TValue, TKey](),
+		keyComparator:   keyComparator,
+		valueComparator: valueComparator,
+	}
+
+	for k, v := range map_ {
+		m.inverseMap.Put(v, k)
+	}
+
+	return m
+}
+
+// NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
+func NewFromIterator[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+	forwardMap := make(map[TKey]TValue)
+	inverseMap := make(map[TValue]TKey)
+
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		forwardMap[newKey] = newValue
+		inverseMap[newValue] = newKey
+	}
+
+	m := &Map[TKey, TValue]{
+		forwardMap:      hashmap.NewFromMap(forwardMap),
+		inverseMap:      hashmap.NewFromMap(inverseMap),
+		keyComparator:   keyComparator,
+		valueComparator: valueComparator,
+	}
+
+	return m
+}
+
+// NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+	forwardMap := make(map[TKey]TValue)
+	inverseMap := make(map[TValue]TKey)
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		forwardMap[newKey] = newValue
+		inverseMap[newValue] = newKey
+	}
+
+	m := &Map[TKey, TValue]{
+		forwardMap:      hashmap.NewFromMap(forwardMap),
+		inverseMap:      hashmap.NewFromMap(inverseMap),
+		keyComparator:   keyComparator,
+		valueComparator: valueComparator,
+	}
+
+	return m
 }
 
 // Put inserts element into the map.
 func (m *Map[TKey, TValue]) Put(key TKey, value TValue) {
 	if valueByKey, ok := m.forwardMap.Get(key); ok {
-		m.inverseMap.Remove(valueByKey)
+		m.inverseMap.Remove(m.valueComparator, valueByKey)
 	}
 	if keyByValue, ok := m.inverseMap.Get(value); ok {
-		m.forwardMap.Remove(keyByValue)
+		m.forwardMap.Remove(m.keyComparator, keyByValue)
 	}
 	m.forwardMap.Put(key, value)
 	m.inverseMap.Put(value, key)
@@ -71,10 +143,10 @@ func (m *Map[TKey, TValue]) GetKey(value TValue) (key TKey, found bool) {
 }
 
 // Remove removes the element from the map by key.
-func (m *Map[TKey, TValue]) Remove(key TKey) {
+func (m *Map[TKey, TValue]) Remove(keyComparator utils.Comparator[TKey], key TKey) {
 	if value, found := m.forwardMap.Get(key); found {
-		m.forwardMap.Remove(key)
-		m.inverseMap.Remove(value)
+		m.forwardMap.Remove(keyComparator, key)
+		m.inverseMap.Remove(m.valueComparator, value)
 	}
 }
 
@@ -109,4 +181,30 @@ func (m *Map[TKey, TValue]) ToString() string {
 	str := "HashBidimap\n"
 	str += fmt.Sprintf("%v", m.forwardMap)
 	return str
+}
+
+//******************************************************************//
+//                         Ordered iterator                         //
+//******************************************************************//
+
+// OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedBegin(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, -1)
+}
+
+// OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedEnd(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, m.Size())
+}
+
+// OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
+func (m *Map[TKey, TValue]) OrderedFirst(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, 0)
+}
+
+// OrderedLast returns an initialized, reversed iterator, which points to it's last element.
+func (m *Map[TKey, TValue]) OrderedLast(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, m.Size()-1)
 }
