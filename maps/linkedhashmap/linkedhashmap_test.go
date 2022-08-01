@@ -51,7 +51,7 @@ func TestRemove(t *testing.T) {
 	for _, test := range tests {
 		test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
-		assert.Equalf(t, test.originalMap, test.newMap, test.name)
+		assert.Equalf(t, test.originalMap.table, test.newMap.table, test.name)
 	}
 }
 

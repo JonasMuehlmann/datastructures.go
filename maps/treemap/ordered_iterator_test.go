@@ -374,6 +374,7 @@ func TestHashMapOrderedIteratorIsEqual(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
+			// FIX: All NewFromMap calls should be replaced with NewFromIterator and the map literar argument with hashmap.NewFromMap
 			m := NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"a": 1, "b": 2, "c": 4, "5": 5})
 
 			it1 := m.OrderedFirst(utils.BasicComparator[string])
