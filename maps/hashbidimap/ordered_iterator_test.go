@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/JonasMuehlmann/datastructures.go/ds"
+	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
@@ -19,14 +20,14 @@ func TestHashMapOrderedIteratorIsValid(t *testing.T) {
 	}{
 		{
 			name:         "One element, first",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:     "",
 			isValid:      true,
 			iteratorInit: (*Map[string, int]).OrderedFirst,
 		},
 		{
 			name:         "3 elements, middle",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:     "b",
 			isValid:      true,
 			iteratorInit: (*Map[string, int]).OrderedFirst,
@@ -65,7 +66,7 @@ func TestHashMapOrderedIteratorGet(t *testing.T) {
 		},
 		{
 			name:     "One element, first",
-			map_:     NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:     NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position: "a",
 			value:    1,
 			found:    true,
@@ -106,7 +107,7 @@ func TestHashMapOrderedIteratorSet(t *testing.T) {
 		},
 		{
 			name:        "One element, first",
-			map_:        NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:        NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:    "a",
 			value:       1,
 			successfull: true,
@@ -146,7 +147,7 @@ func TestHashMapOrderedIteratorGetAt(t *testing.T) {
 
 		{
 			name:     "One element, first",
-			map_:     NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:     NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position: "a",
 			value:    1,
 			found:    true,
@@ -184,7 +185,7 @@ func TestHashMapOrderedIteratorSetAt(t *testing.T) {
 
 		{
 			name:        "One element, first",
-			map_:        NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:        NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:    "a",
 			value:       1,
 			successfull: true,
@@ -213,21 +214,21 @@ func TestHashMapOrderedIteratorDistanceTo(t *testing.T) {
 	}{
 		{
 			name:     "Equal",
-			map_:     NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:     NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:     "a",
 			key2:     "a",
 			distance: 0,
 		},
 		{
 			name:     "First lower",
-			map_:     NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:     NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:     "a",
 			key2:     "b",
 			distance: -1,
 		},
 		{
 			name:     "Second lower",
-			map_:     NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:     NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:     "b",
 			key2:     "a",
 			distance: 1,
@@ -260,21 +261,21 @@ func TestHashMapOrderedIteratorIsAfter(t *testing.T) {
 	}{
 		{
 			name:    "Equal",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "a",
 			key2:    "a",
 			isAfter: false,
 		},
 		{
 			name:    "First lower",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "a",
 			key2:    "b",
 			isAfter: false,
 		},
 		{
 			name:    "Second lower",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "b",
 			key2:    "a",
 			isAfter: true,
@@ -307,21 +308,21 @@ func TestHashMapOrderedIteratorIsBefore(t *testing.T) {
 	}{
 		{
 			name:    "Equal",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "a",
 			key2:    "a",
 			isAfter: false,
 		},
 		{
 			name:    "First lower",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "a",
 			key2:    "b",
 			isAfter: true,
 		},
 		{
 			name:    "Second lower",
-			map_:    NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:    NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			key1:    "b",
 			key2:    "a",
 			isAfter: false,
@@ -405,33 +406,33 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 		},
 		{
 			name:         "One element, begin",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			valid:        false,
 			iteratorInit: (*Map[string, int]).OrderedBegin,
 		},
 		{
 			name:         "One element, end",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			valid:        false,
 			iteratorInit: (*Map[string, int]).OrderedEnd,
 		},
 		{
 			name:         "One element, first",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			key:          "a",
 			valid:        true,
 			iteratorInit: (*Map[string, int]).OrderedFirst,
 		},
 		{
 			name:         "One element, last",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			key:          "a",
 			valid:        true,
 			iteratorInit: (*Map[string, int]).OrderedLast,
 		},
 		{
 			name:         "3 elements, middle",
-			map_:         NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:         NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			valid:        false,
 			iteratorInit: (*Map[string, int]).OrderedBegin,
 		},
@@ -463,7 +464,7 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 		},
 		{
 			name: "3 elements, middle",
-			map_: NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_: NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			size: 3,
 		},
 	}
@@ -498,21 +499,21 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 		},
 		{
 			name:          "One element, begin",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			isValidBefore: false,
 			isValidAfter:  true,
 			iteratorInit:  (*Map[string, int]).OrderedBegin,
 		},
 		{
 			name:          "One element, end",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			isValidBefore: false,
 			isValidAfter:  false,
 			iteratorInit:  (*Map[string, int]).OrderedEnd,
 		},
 		{
 			name:          "One element, first",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			isValidBefore: true,
 			isValidAfter:  false,
@@ -520,7 +521,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 		},
 		{
 			name:          "One element, last",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			isValidBefore: true,
 			isValidAfter:  false,
@@ -528,7 +529,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			isValidBefore: true,
 			isValidAfter:  true,
@@ -577,7 +578,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "One element, begin",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "",
 			n:             1,
 			isValidBefore: false,
@@ -586,7 +587,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "One element, end",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "",
 			n:             1,
 			isValidBefore: false,
@@ -595,7 +596,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "One element, first",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -604,7 +605,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "One element, last",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -613,7 +614,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -622,7 +623,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle, move out of bounds",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             5,
 			isValidBefore: true,
@@ -669,21 +670,21 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 		},
 		{
 			name:          "One element, begin",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			isValidBefore: false,
 			isValidAfter:  false,
 			iteratorInit:  (*Map[string, int]).OrderedBegin,
 		},
 		{
 			name:          "One element, end",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			isValidBefore: false,
 			isValidAfter:  true,
 			iteratorInit:  (*Map[string, int]).OrderedEnd,
 		},
 		{
 			name:          "One element, first",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			isValidBefore: true,
 			isValidAfter:  false,
@@ -691,7 +692,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 		},
 		{
 			name:          "One element, last",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			isValidBefore: true,
 			isValidAfter:  false,
@@ -699,7 +700,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			isValidBefore: true,
 			isValidAfter:  true,
@@ -747,7 +748,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "One element, begin",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			n:             1,
 			isValidBefore: false,
 			isValidAfter:  false,
@@ -755,7 +756,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "One element, end",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			n:             1,
 			isValidBefore: false,
 			isValidAfter:  true,
@@ -763,7 +764,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "One element, first",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -772,7 +773,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "One element, last",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -781,7 +782,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			n:             1,
 			isValidBefore: true,
@@ -790,7 +791,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle, move out of bounds",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			n:             5,
 			isValidBefore: true,
@@ -839,7 +840,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "One element, begin",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			n:             1,
 			isValidBefore: false,
 			isValidAfter:  true,
@@ -847,7 +848,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "One element, end",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			n:             1,
 			isValidBefore: false,
 			isValidAfter:  false,
@@ -855,7 +856,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "One element, first",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -864,7 +865,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "One element, last",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "a",
 			n:             1,
 			isValidBefore: true,
@@ -873,7 +874,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			n:             1,
 			isValidBefore: true,
@@ -882,7 +883,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "5 elements, middle, forward by 2",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "c",
 			n:             2,
 			isValidBefore: true,
@@ -890,7 +891,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 			iteratorInit:  (*Map[string, int]).OrderedBegin,
 		}, {
 			name:          "5 elements, middle, backward by 2",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "c",
 			n:             -2,
 			isValidBefore: true,
@@ -899,7 +900,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		},
 		{
 			name:          "3 elements, middle, move out of bounds",
-			map_:          NewFromMap[string, int](utils.BasicComparator[string], utils.BasicComparator[int], map[string]int{"a": 1, "b": 2, "c": 3}),
+			map_:          NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], hashmap.NewFromMap(map[string]int{"a": 1, "b": 2, "c": 3}).OrderedBegin(utils.BasicComparator[string])),
 			position:      "b",
 			n:             5,
 			isValidBefore: true,
