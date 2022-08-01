@@ -155,9 +155,11 @@ func (it *Iterator[T]) PreviousN(n int) bool {
 func (it *Iterator[T]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
+	} else if n < 0 {
+		return it.PreviousN(-n)
 	}
 
-	return it.PreviousN(-n)
+	return it.IsValid()
 }
 
 // Size implements ds.ReadWriteOrdCompBidRandCollIterator
