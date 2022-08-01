@@ -20,119 +20,175 @@ package treebidimap
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/maps"
 	"github.com/JonasMuehlmann/datastructures.go/trees/redblacktree"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
-	"strings"
 )
 
 // Assert Map implementation
-var _ maps.BidiMap = (*Map)(nil)
+var _ maps.BidiMap[string, string] = (*Map[string, string])(nil)
 
 // Map holds the elements in two red-black trees.
-type Map struct {
-	forwardMap      redblacktree.Tree
-	inverseMap      redblacktree.Tree
-	keyComparator   utils.Comparator
-	valueComparator utils.Comparator
+type Map[TKey comparable, TValue comparable] struct {
+	forwardMap      redblacktree.Tree[TKey, TValue]
+	inverseMap      redblacktree.Tree[TValue, TKey]
+	keyComparator   utils.Comparator[TKey]
+	valueComparator utils.Comparator[TValue]
 }
 
-type data struct {
-	key   interface{}
-	value interface{}
+type data[TKey comparable, TValue comparable] struct {
+	key   TKey
+	value TValue
 }
 
-// NewWith instantiates a bidirectional map.
-func NewWith(keyComparator utils.Comparator, valueComparator utils.Comparator) *Map {
-	return &Map{
-		forwardMap:      *redblacktree.NewWith(keyComparator),
-		inverseMap:      *redblacktree.NewWith(valueComparator),
+// New instantiates a bidirectional map.
+func New[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue]) *Map[TKey, TValue] {
+	return &Map[TKey, TValue]{
+		forwardMap:      *redblacktree.New[TKey, TValue](keyComparator),
+		inverseMap:      *redblacktree.New[TValue, TKey](valueComparator),
 		keyComparator:   keyComparator,
 		valueComparator: valueComparator,
 	}
 }
 
-// NewWithIntComparators instantiates a bidirectional map with the IntComparator for key and value, i.e. keys and values are of type int.
-func NewWithIntComparators() *Map {
-	return NewWith(utils.IntComparator, utils.IntComparator)
+// NewFromMap instantiates a new tree containing the provided map.
+func NewFromMap[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], map_ map[TKey]TValue) *Map[TKey, TValue] {
+	tree := New[TKey, TValue](keyComparator, valueComparator)
+
+	for k, v := range map_ {
+		tree.Put(k, v)
+	}
+
+	return tree
 }
 
-// NewWithStringComparators instantiates a bidirectional map with the StringComparator for key and value, i.e. keys and values are of type string.
-func NewWithStringComparators() *Map {
-	return NewWith(utils.StringComparator, utils.StringComparator)
+// NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
+func NewFromIterator[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+	tree := New[TKey, TValue](keyComparator, valueComparator)
+
+	for begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
+}
+
+// NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
+// end is a sentinel and not included.
+func NewFromIterators[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+	tree := New[TKey, TValue](keyComparator, valueComparator)
+
+	for !begin.IsEqual(end) && begin.Next() {
+		newKey, _ := begin.Index()
+		newValue, _ := begin.Get()
+
+		tree.Put(newKey, newValue)
+	}
+
+	return tree
+}
+
+func (m *Map[TKey, TValue]) MergeWith(other *maps.Map[TKey, TValue]) bool {
+	panic("Not implemented")
+}
+
+func (m *Map[TKey, TValue]) MergeWithSafe(other *maps.Map[TKey, TValue], overwriteOriginal bool) {
+	panic("Not implemented")
 }
 
 // Put inserts element into the map.
-func (m *Map) Put(key interface{}, value interface{}) {
-	if d, ok := m.forwardMap.Get(key); ok {
-		m.inverseMap.Remove(d.(*data).value)
-	}
-	if d, ok := m.inverseMap.Get(value); ok {
-		m.forwardMap.Remove(d.(*data).key)
-	}
-	d := &data{key: key, value: value}
-	m.forwardMap.Put(key, d)
-	m.inverseMap.Put(value, d)
+func (m *Map[TKey, TValue]) Put(key TKey, value TValue) {
+	m.forwardMap.Put(key, value)
+	m.inverseMap.Put(value, key)
 }
 
 // Get searches the element in the map by key and returns its value or nil if key is not found in map.
 // Second return parameter is true if key was found, otherwise false.
-func (m *Map) Get(key interface{}) (value interface{}, found bool) {
-	if d, ok := m.forwardMap.Get(key); ok {
-		return d.(*data).value, true
-	}
-	return nil, false
+func (m *Map[TKey, TValue]) Get(key TKey) (value TValue, found bool) {
+	return m.forwardMap.Get(key)
 }
 
 // GetKey searches the element in the map by value and returns its key or nil if value is not found in map.
 // Second return parameter is true if value was found, otherwise false.
-func (m *Map) GetKey(value interface{}) (key interface{}, found bool) {
-	if d, ok := m.inverseMap.Get(value); ok {
-		return d.(*data).key, true
-	}
-	return nil, false
+func (m *Map[TKey, TValue]) GetKey(value TValue) (key TKey, found bool) {
+	return m.inverseMap.Get(value)
 }
 
 // Remove removes the element from the map by key.
-func (m *Map) Remove(key interface{}) {
+func (m *Map[TKey, TValue]) Remove(comparator utils.Comparator[TKey], key TKey) {
 	if d, found := m.forwardMap.Get(key); found {
 		m.forwardMap.Remove(key)
-		m.inverseMap.Remove(d.(*data).value)
+		m.inverseMap.Remove(d)
 	}
 }
 
 // Empty returns true if map does not contain any elements
-func (m *Map) IsEmpty() bool {
+func (m *Map[TKey, TValue]) IsEmpty() bool {
 	return m.Size() == 0
 }
 
 // Size returns number of elements in the map.
-func (m *Map) Size() int {
+func (m *Map[TKey, TValue]) Size() int {
 	return m.forwardMap.Size()
 }
 
 // GetKeys returns all keys (ordered).
-func (m *Map) GetKeys() []interface{} {
+func (m *Map[TKey, TValue]) GetKeys() []TKey {
 	return m.forwardMap.GetKeys()
 }
 
 // Values returns all values (ordered).
-func (m *Map) GetValues() []interface{} {
+func (m *Map[TKey, TValue]) GetValues() []TValue {
 	return m.inverseMap.GetKeys()
 }
 
 // Clear removes all elements from the map.
-func (m *Map) Clear() {
+func (m *Map[TKey, TValue]) Clear() {
 	m.forwardMap.Clear()
 	m.inverseMap.Clear()
 }
 
 // String returns a string representation of container
-func (m *Map) ToString() string {
+func (m *Map[TKey, TValue]) ToString() string {
 	str := "TreeBidiMap\nmap["
-	it := m.Iterator()
+	it := m.OrderedBegin(m.keyComparator)
 	for it.Next() {
-		str += fmt.Sprintf("%v:%v ", it.Key(), it.Value())
+		key, _ := it.Index()
+		value, _ := it.Get()
+
+		str += fmt.Sprintf("%v:%v ", key, value)
 	}
 	return strings.TrimRight(str, " ") + "]"
+}
+
+//******************************************************************//
+//                         Ordered iterator                         //
+//******************************************************************//
+
+// OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
+// Unless Next() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedBegin(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, -1)
+}
+
+// OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
+// Unless Previous() is called, the iterator is in an invalid state.
+func (m *Map[TKey, TValue]) OrderedEnd(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, m.Size())
+}
+
+// OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
+func (m *Map[TKey, TValue]) OrderedFirst(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, 0)
+}
+
+// OrderedLast returns an initialized, reversed iterator, which points to it's last element.
+func (m *Map[TKey, TValue]) OrderedLast(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+	return m.NewOrderedIterator(m, m.Size()-1)
 }
