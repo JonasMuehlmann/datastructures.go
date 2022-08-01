@@ -311,7 +311,7 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalList.First()
+		it := test.originalList.Begin()
 		newList := NewFromIterator[string](it)
 
 		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -358,7 +358,7 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalList.First()
+		first := test.originalList.Begin()
 		end := test.originalList.End()
 		newList := NewFromIterators[string](first, end)
 
