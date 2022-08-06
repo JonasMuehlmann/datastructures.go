@@ -42,7 +42,6 @@ import (
 // 	}
 
 // 	for _, test := range tests {
-// 		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
 
 // 		assert.Equalf(t, test.found, found, test.name)
 // 	}
@@ -98,10 +97,12 @@ func TestCircularBufferGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		defer testCommon.HandlePanic(t, test.name)
-		values := test.originalList.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			values := test.originalList.GetValues()
 
-		assert.Equalf(t, test.originalList.GetValues(), values, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), values, test.name)
+		})
 	}
 }
 
@@ -124,9 +125,11 @@ func TestCircularBufferIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
 
-		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -146,13 +149,15 @@ func TestCircularBufferClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
-		assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
+			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
-		test.originalList.Clear()
+			test.originalList.Clear()
 
-		isEmpty = test.originalList.IsEmpty()
-		assert.Truef(t, isEmpty, test.name)
+			isEmpty = test.originalList.IsEmpty()
+			assert.Truef(t, isEmpty, test.name)
+		})
 	}
 }
 
@@ -185,10 +190,12 @@ func TestCircularBufferEnqueue(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		defer testCommon.HandlePanic(t, test.name)
-		test.originalList.Enqueue(test.valueToAdd)
+		t.Run(test.name, func(t *testing.T) {
+			defer testCommon.HandlePanic(t, test.name)
+			test.originalList.Enqueue(test.valueToAdd)
 
-		assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -217,9 +224,11 @@ func TestCircularBufferDequeue(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Dequeue()
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Dequeue()
 
-		assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -251,14 +260,16 @@ func TestCircularBufferPeek(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		value, found := test.originalList.Peek()
+		t.Run(test.name, func(t *testing.T) {
+			value, found := test.originalList.Peek()
 
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.found, found, test.name)
 
-		if test.found {
-			assert.Equalf(t, test.value, value, test.name)
-		}
+			if test.found {
+				assert.Equalf(t, test.value, value, test.name)
+			}
 
+		})
 	}
 }
 
@@ -282,9 +293,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newList := NewFromSlice[string](10, test.originalList.GetValues())
+		t.Run(test.name, func(t *testing.T) {
+			newList := NewFromSlice[string](10, test.originalList.GetValues())
 
-		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }
@@ -309,10 +322,12 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalList.Begin()
-		newList := NewFromIterator[string](10, it)
+		t.Run(test.name, func(t *testing.T) {
+			it := test.originalList.Begin()
+			newList := NewFromIterator[string](10, it)
 
-		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }
@@ -352,11 +367,13 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalList.Begin()
-		end := test.originalList.End()
-		newList := NewFromIterators[string](10, first, end)
+		t.Run(test.name, func(t *testing.T) {
+			first := test.originalList.Begin()
+			end := test.originalList.End()
+			newList := NewFromIterators[string](10, first, end)
 
-		assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }

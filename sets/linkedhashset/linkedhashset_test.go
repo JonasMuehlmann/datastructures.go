@@ -49,9 +49,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
 
-		assert.Equalf(t, test.originalSet, test.newSet, test.name)
+			assert.Equalf(t, test.originalSet, test.newSet, test.name)
+		})
 	}
 }
 
@@ -91,9 +93,11 @@ func TestAdd(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalSet.Add(test.keyToAdd)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalSet.Add(test.keyToAdd)
 
-		assert.Equalf(t, test.originalSet, test.newSet, test.name)
+			assert.Equalf(t, test.originalSet, test.newSet, test.name)
+		})
 	}
 }
 
@@ -122,9 +126,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		values := test.originalSet.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			values := test.originalSet.GetValues()
 
-		assert.ElementsMatchf(t, test.values, values, test.name)
+			assert.ElementsMatchf(t, test.values, values, test.name)
+		})
 	}
 }
 
@@ -157,7 +163,9 @@ func TestContains(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equalf(t, test.doesContain, test.originalSet.Contains(test.value), test.name)
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equalf(t, test.doesContain, test.originalSet.Contains(test.value), test.name)
+		})
 	}
 }
 
@@ -186,9 +194,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalSet.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalSet.IsEmpty()
 
-		assert.Equal(t, test.isEmpty, isEmpty, test.name)
+			assert.Equal(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -221,13 +231,15 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmptyBefore := test.originalSet.IsEmpty()
-		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmptyBefore := test.originalSet.IsEmpty()
+			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
-		test.originalSet.Clear()
+			test.originalSet.Clear()
 
-		isEmptAfter := test.originalSet.IsEmpty()
-		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+			isEmptAfter := test.originalSet.IsEmpty()
+			assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+		})
 	}
 }
 
@@ -252,11 +264,13 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalSet.Begin(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			it := test.originalSet.Begin(utils.BasicComparator[string])
 
-		newSet := NewFromIterator[string](it)
+			newSet := NewFromIterator[string](it)
 
-		assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+		})
 	}
 
 }
@@ -281,12 +295,14 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalSet.Begin(utils.BasicComparator[string])
-		end := test.originalSet.End(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			first := test.originalSet.Begin(utils.BasicComparator[string])
+			end := test.originalSet.End(utils.BasicComparator[string])
 
-		newSet := NewFromIterators[string](first, end)
+			newSet := NewFromIterators[string](first, end)
 
-		assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+		})
 	}
 }
 
@@ -336,9 +352,11 @@ func TestMakeIntersectionWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newSet := test.a.MakeIntersectionWith(test.b)
+		t.Run(test.name, func(t *testing.T) {
+			newSet := test.a.MakeIntersectionWith(test.b)
 
-		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+		})
 	}
 }
 
@@ -388,9 +406,11 @@ func TestMakeUnionWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newSet := test.a.MakeUnionWith(test.b)
+		t.Run(test.name, func(t *testing.T) {
+			newSet := test.a.MakeUnionWith(test.b)
 
-		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+		})
 	}
 }
 
@@ -440,9 +460,11 @@ func TestMakeDifferenceWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newSet := test.a.MakeDifferenceWith(test.b)
+		t.Run(test.name, func(t *testing.T) {
+			newSet := test.a.MakeDifferenceWith(test.b)
 
-		assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
+		})
 	}
 }
 

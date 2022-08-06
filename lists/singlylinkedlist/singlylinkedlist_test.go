@@ -46,10 +46,12 @@ func TestArrayListGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		value, found := test.originalList.Get(test.position)
+		t.Run(test.name, func(t *testing.T) {
+			value, found := test.originalList.Get(test.position)
 
-		assert.Equalf(t, test.value, value, test.name)
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.value, value, test.name)
+			assert.Equalf(t, test.found, found, test.name)
+		})
 	}
 }
 
@@ -81,9 +83,11 @@ func TestArrayListContains(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
+		t.Run(test.name, func(t *testing.T) {
+			found := test.originalList.Contains(utils.BasicComparator[string], test.value)
 
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.found, found, test.name)
+		})
 	}
 }
 
@@ -115,9 +119,11 @@ func TestArrayListIndexOf(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+		t.Run(test.name, func(t *testing.T) {
+			position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
 
-		assert.Equalf(t, test.position, position, test.name)
+			assert.Equalf(t, test.position, position, test.name)
+		})
 	}
 }
 
@@ -141,9 +147,11 @@ func TestArrayListGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		values := test.originalList.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			values := test.originalList.GetValues()
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), values, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), values, test.name)
+		})
 	}
 }
 
@@ -166,9 +174,11 @@ func TestArrayListIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
 
-		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -188,13 +198,15 @@ func TestArrayListClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
-		assert.Equalf(t, len(test.originalList.GetValues()) == 0, isEmpty, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
+			assert.Equalf(t, len(test.originalList.GetValues()) == 0, isEmpty, test.name)
 
-		test.originalList.Clear()
+			test.originalList.Clear()
 
-		isEmpty = test.originalList.IsEmpty()
-		assert.Truef(t, isEmpty, test.name)
+			isEmpty = test.originalList.IsEmpty()
+			assert.Truef(t, isEmpty, test.name)
+		})
 	}
 }
 
@@ -238,11 +250,13 @@ func TestArrayListSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Set(test.position, test.value)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Set(test.position, test.value)
 
-		index := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
+			index := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
 
-		assert.Equalf(t, test.successfull, index == test.position, test.name)
+			assert.Equalf(t, test.successfull, index == test.position, test.name)
+		})
 	}
 }
 
@@ -315,9 +329,11 @@ func TestArrayListInsert(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Insert(test.position, test.value)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Insert(test.position, test.value)
 
-		assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+		})
 	}
 }
 
@@ -365,9 +381,11 @@ func TestArrayListSwap(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Swap(test.position1, test.position2)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Swap(test.position1, test.position2)
 
-		assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+		})
 	}
 }
 
@@ -411,9 +429,11 @@ func TestArrayListSort(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Sort(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Sort(utils.BasicComparator[string])
 
-		assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
+		})
 	}
 }
 
@@ -451,9 +471,11 @@ func TestArrayListPushFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.PushFront(test.itemsToAdd...)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.PushFront(test.itemsToAdd...)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -490,9 +512,11 @@ func TestArrayListPopBack(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.PopBack(test.n)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.PopBack(test.n)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -529,9 +553,11 @@ func TestArrayListPopFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.PopFront(test.n)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.PopFront(test.n)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -587,9 +613,11 @@ func TestArrayListRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Remove(test.i)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Remove(test.i)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -613,17 +641,19 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		originalValues := arraylist.New[string]()
-		it := test.originalList.Begin()
+		t.Run(test.name, func(t *testing.T) {
+			originalValues := arraylist.New[string]()
+			it := test.originalList.Begin()
 
-		for it.Next() {
-			newValue, _ := it.Get()
-			originalValues.PushBack(newValue)
-		}
+			for it.Next() {
+				newValue, _ := it.Get()
+				originalValues.PushBack(newValue)
+			}
 
-		newList := NewFromIterator[string](originalValues.Begin())
+			newList := NewFromIterator[string](originalValues.Begin())
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }
@@ -667,17 +697,19 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		originalValues := arraylist.New[string]()
-		it := test.originalList.Begin()
+		t.Run(test.name, func(t *testing.T) {
+			originalValues := arraylist.New[string]()
+			it := test.originalList.Begin()
 
-		for it.Next() {
-			newValue, _ := it.Get()
-			originalValues.PushBack(newValue)
-		}
+			for it.Next() {
+				newValue, _ := it.Get()
+				originalValues.PushBack(newValue)
+			}
 
-		newList := NewFromIterators[string](test.iteratorInitBegin(test.originalList), test.iteratorInitEnd(test.originalList))
+			newList := NewFromIterators[string](test.iteratorInitBegin(test.originalList), test.iteratorInitEnd(test.originalList))
 
-		assert.ElementsMatchf(t, test.newList.GetValues(), newList.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.newList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }

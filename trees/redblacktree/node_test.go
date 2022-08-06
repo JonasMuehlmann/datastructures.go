@@ -53,14 +53,16 @@ func TestNodeSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		tree := New[int, string](utils.BasicComparator[int])
+		t.Run(test.name, func(t *testing.T) {
+			tree := New[int, string](utils.BasicComparator[int])
 
-		for _, pair := range test.pairs {
-			tree.Put(pair.Key, pair.Value)
-		}
+			for _, pair := range test.pairs {
+				tree.Put(pair.Key, pair.Value)
+			}
 
-		size := tree.Size()
+			size := tree.Size()
 
-		assert.Equal(t, test.size, size, test.name)
+			assert.Equal(t, test.size, size, test.name)
+		})
 	}
 }

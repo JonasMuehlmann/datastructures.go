@@ -49,9 +49,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
-		assert.Equalf(t, test.originalMap, test.newMap, test.name)
+			assert.Equalf(t, test.originalMap, test.newMap, test.name)
+		})
 	}
 }
 
@@ -95,9 +97,11 @@ func TestPut(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalMap.Put(test.keyToAdd, test.valueToAdd)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
-		assert.Equalf(t, test.originalMap, test.newMap, test.name)
+			assert.Equalf(t, test.originalMap, test.newMap, test.name)
+		})
 	}
 }
 
@@ -139,10 +143,12 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		value, found := test.originalMap.Get(test.keyToGet)
+		t.Run(test.name, func(t *testing.T) {
+			value, found := test.originalMap.Get(test.keyToGet)
 
-		assert.Equalf(t, test.value, value, test.name)
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.value, value, test.name)
+			assert.Equalf(t, test.found, found, test.name)
+		})
 	}
 }
 
@@ -171,9 +177,11 @@ func TestGetKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		keys := test.originalMap.GetKeys()
+		t.Run(test.name, func(t *testing.T) {
+			keys := test.originalMap.GetKeys()
 
-		assert.ElementsMatch(t, test.keys, keys, test.name)
+			assert.ElementsMatch(t, test.keys, keys, test.name)
+		})
 	}
 }
 
@@ -202,9 +210,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		values := test.originalMap.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			values := test.originalMap.GetValues()
 
-		assert.ElementsMatch(t, test.values, values, test.name)
+			assert.ElementsMatch(t, test.values, values, test.name)
+		})
 	}
 }
 
@@ -237,9 +247,11 @@ func TestGetMap(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newMap := test.originalMap.GetMap()
+		t.Run(test.name, func(t *testing.T) {
+			newMap := test.originalMap.GetMap()
 
-		assert.Equal(t, test.newMap, newMap, test.name)
+			assert.Equal(t, test.newMap, newMap, test.name)
+		})
 	}
 }
 
@@ -268,9 +280,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalMap.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalMap.IsEmpty()
 
-		assert.Equal(t, test.isEmpty, isEmpty, test.name)
+			assert.Equal(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -303,13 +317,15 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmptyBefore := test.originalMap.IsEmpty()
-		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmptyBefore := test.originalMap.IsEmpty()
+			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
-		test.originalMap.Clear()
+			test.originalMap.Clear()
 
-		isEmptAfter := test.originalMap.IsEmpty()
-		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+			isEmptAfter := test.originalMap.IsEmpty()
+			assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+		})
 	}
 }
 
@@ -334,11 +350,13 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
-		newMap := NewFromIterator[string, int](it)
+			newMap := NewFromIterator[string, int](it)
 
-		assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+			assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+		})
 	}
 
 }
@@ -363,12 +381,14 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		first := test.originalMap.OrderedBegin(utils.BasicComparator[string])
-		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			first := test.originalMap.OrderedBegin(utils.BasicComparator[string])
+			end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
-		newMap := NewFromIterators[string, int](first, end)
+			newMap := NewFromIterators[string, int](first, end)
 
-		assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+			assert.EqualValues(t, test.originalMap.m, newMap.m, test.name)
+		})
 	}
 
 }

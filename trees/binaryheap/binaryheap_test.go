@@ -35,9 +35,11 @@ func TestArrayHeapGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		values := test.originalList.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			values := test.originalList.GetValues()
 
-		assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
+			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
+		})
 	}
 }
 
@@ -60,9 +62,11 @@ func TestArrayHeapIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
 
-		assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -82,13 +86,15 @@ func TestArrayHeapClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalList.IsEmpty()
-		assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalList.IsEmpty()
+			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
-		test.originalList.Clear()
+			test.originalList.Clear()
 
-		isEmpty = test.originalList.IsEmpty()
-		assert.Truef(t, isEmpty, test.name)
+			isEmpty = test.originalList.IsEmpty()
+			assert.Truef(t, isEmpty, test.name)
+		})
 	}
 }
 
@@ -121,9 +127,11 @@ func TestArrayHeapPush(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Push(test.valueToAdd)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Push(test.valueToAdd)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -152,9 +160,11 @@ func TestArrayHeapPop(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalList.Pop()
+		t.Run(test.name, func(t *testing.T) {
+			test.originalList.Pop()
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+		})
 	}
 }
 
@@ -186,14 +196,16 @@ func TestArrayHeapPeek(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		value, found := test.originalList.Peek()
+		t.Run(test.name, func(t *testing.T) {
+			value, found := test.originalList.Peek()
 
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.found, found, test.name)
 
-		if test.found {
-			assert.Equalf(t, test.value, value, test.name)
-		}
+			if test.found {
+				assert.Equalf(t, test.value, value, test.name)
+			}
 
+		})
 	}
 }
 
@@ -217,9 +229,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		newList := NewFromSlice[string](utils.BasicComparator[string], test.originalList.GetValues())
+		t.Run(test.name, func(t *testing.T) {
+			newList := NewFromSlice[string](utils.BasicComparator[string], test.originalList.GetValues())
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }
@@ -244,10 +258,12 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalList.OrderedBegin()
-		newList := NewFromIterator[string](utils.BasicComparator[string], it)
+		t.Run(test.name, func(t *testing.T) {
+			it := test.originalList.OrderedBegin()
+			newList := NewFromIterator[string](utils.BasicComparator[string], it)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }
@@ -291,11 +307,13 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		OrderedFirst := test.originalList.OrderedBegin()
-		end := test.originalList.OrderedEnd()
-		newList := NewFromIterators[string](utils.BasicComparator[string], OrderedFirst, end)
+		t.Run(test.name, func(t *testing.T) {
+			OrderedFirst := test.originalList.OrderedBegin()
+			end := test.originalList.OrderedEnd()
+			newList := NewFromIterators[string](utils.BasicComparator[string], OrderedFirst, end)
 
-		assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+		})
 	}
 
 }

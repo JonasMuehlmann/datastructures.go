@@ -48,9 +48,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalMap.Remove(test.toRemove)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalMap.Remove(test.toRemove)
 
-		assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
+			assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
+		})
 	}
 }
 
@@ -94,9 +96,11 @@ func TestPut(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.originalMap.Put(test.keyToAdd, test.valueToAdd)
+		t.Run(test.name, func(t *testing.T) {
+			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
-		assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
+			assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
+		})
 	}
 }
 
@@ -138,10 +142,12 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		value, found := test.originalMap.Get(test.keyToGet)
+		t.Run(test.name, func(t *testing.T) {
+			value, found := test.originalMap.Get(test.keyToGet)
 
-		assert.Equalf(t, test.value, value, test.name)
-		assert.Equalf(t, test.found, found, test.name)
+			assert.Equalf(t, test.value, value, test.name)
+			assert.Equalf(t, test.found, found, test.name)
+		})
 	}
 }
 
@@ -183,12 +189,14 @@ func TestGetNode(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		node := test.originalMap.GetNode(test.keyToGet)
+		t.Run(test.name, func(t *testing.T) {
+			node := test.originalMap.GetNode(test.keyToGet)
 
-		assert.Equalf(t, test.found, node != nil, test.name)
-		if test.found {
-			assert.Contains(t, node.Entries, &Entry[string, int]{test.keyToGet, test.value})
-		}
+			assert.Equalf(t, test.found, node != nil, test.name)
+			if test.found {
+				assert.Contains(t, node.Entries, &Entry[string, int]{test.keyToGet, test.value})
+			}
+		})
 	}
 }
 
@@ -223,12 +231,14 @@ func TestRight(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		node := test.originalMap.Right()
+		t.Run(test.name, func(t *testing.T) {
+			node := test.originalMap.Right()
 
-		assert.Equalf(t, test.found, node != nil, test.name)
-		if test.found {
-			assert.Contains(t, node.Entries, &Entry[int, string]{test.key, test.value})
-		}
+			assert.Equalf(t, test.found, node != nil, test.name)
+			if test.found {
+				assert.Contains(t, node.Entries, &Entry[int, string]{test.key, test.value})
+			}
+		})
 	}
 }
 
@@ -263,12 +273,14 @@ func TestLeft(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		node := test.originalMap.Left()
+		t.Run(test.name, func(t *testing.T) {
+			node := test.originalMap.Left()
 
-		assert.Equalf(t, test.found, node != nil, test.name)
-		if test.found {
-			assert.Contains(t, node.Entries, &Entry[int, string]{test.key, test.value})
-		}
+			assert.Equalf(t, test.found, node != nil, test.name)
+			if test.found {
+				assert.Contains(t, node.Entries, &Entry[int, string]{test.key, test.value})
+			}
+		})
 	}
 }
 
@@ -297,9 +309,11 @@ func TestGetKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		keys := test.originalMap.GetKeys()
+		t.Run(test.name, func(t *testing.T) {
+			keys := test.originalMap.GetKeys()
 
-		assert.ElementsMatch(t, test.keys, keys, test.name)
+			assert.ElementsMatch(t, test.keys, keys, test.name)
+		})
 	}
 }
 
@@ -328,9 +342,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		values := test.originalMap.GetValues()
+		t.Run(test.name, func(t *testing.T) {
+			values := test.originalMap.GetValues()
 
-		assert.ElementsMatch(t, test.values, values, test.name)
+			assert.ElementsMatch(t, test.values, values, test.name)
+		})
 	}
 }
 
@@ -359,9 +375,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmpty := test.originalMap.IsEmpty()
+		t.Run(test.name, func(t *testing.T) {
+			isEmpty := test.originalMap.IsEmpty()
 
-		assert.Equal(t, test.isEmpty, isEmpty, test.name)
+			assert.Equal(t, test.isEmpty, isEmpty, test.name)
+		})
 	}
 }
 
@@ -394,13 +412,15 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		isEmptyBefore := test.originalMap.IsEmpty()
-		assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
+		t.Run(test.name, func(t *testing.T) {
+			isEmptyBefore := test.originalMap.IsEmpty()
+			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
-		test.originalMap.Clear()
+			test.originalMap.Clear()
 
-		isEmptAfter := test.originalMap.IsEmpty()
-		assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+			isEmptAfter := test.originalMap.IsEmpty()
+			assert.Equal(t, test.isEmptyAfter, isEmptAfter, test.name)
+		})
 	}
 }
 
@@ -425,11 +445,13 @@ func TestNewFromIteratorWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
-		newMap := NewFromIterator[string, int](3, utils.BasicComparator[string], it)
+			newMap := NewFromIterator[string, int](3, utils.BasicComparator[string], it)
 
-		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+		})
 	}
 
 }
@@ -454,12 +476,14 @@ func TestNewFromIteratorsWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		beign := test.originalMap.OrderedBegin(utils.BasicComparator[string])
-		end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
+		t.Run(test.name, func(t *testing.T) {
+			beign := test.originalMap.OrderedBegin(utils.BasicComparator[string])
+			end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
-		newMap := NewFromIterators[string, int](3, utils.BasicComparator[string], beign, end)
+			newMap := NewFromIterators[string, int](3, utils.BasicComparator[string], beign, end)
 
-		assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+			assert.ElementsMatchf(t, test.originalMap.GetValues(), newMap.GetValues(), test.name)
+		})
 	}
 
 }
