@@ -8,9 +8,11 @@ package doublylinkedlist
 import (
 	"testing"
 
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/ds"
 	"github.com/JonasMuehlmann/datastructures.go/lists/arraylist"
-	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -46,11 +48,11 @@ func TestArrayListGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalList.Get(test.position)
 
 			assert.Equalf(t, test.value, value, test.name)
@@ -87,11 +89,11 @@ func TestArrayListContains(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			found := test.originalList.Contains(utils.BasicComparator[string], test.value)
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -127,11 +129,11 @@ func TestArrayListIndexOf(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
 
 			assert.Equalf(t, test.position, position, test.name)
@@ -159,11 +161,11 @@ func TestArrayListGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), values, test.name)
@@ -190,11 +192,11 @@ func TestArrayListIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -218,11 +220,11 @@ func TestArrayListClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, len(test.originalList.GetValues()) == 0, isEmpty, test.name)
 
@@ -274,11 +276,11 @@ func TestArrayListSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Set(test.position, test.value)
 
 			index := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
@@ -357,11 +359,11 @@ func TestArrayListInsert(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Insert(test.position, test.value)
 
 			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
@@ -413,11 +415,11 @@ func TestArrayListSwap(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Swap(test.position1, test.position2)
 
 			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
@@ -465,11 +467,11 @@ func TestArrayListSort(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Sort(utils.BasicComparator[string])
 
 			assert.ElementsMatch(t, test.newList.GetValues(), test.originalList.GetValues(), test.name)
@@ -511,11 +513,11 @@ func TestArrayListPushFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PushFront(test.itemsToAdd...)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -556,11 +558,10 @@ func TestArrayListPopBack(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopBack(test.n)
 
@@ -603,11 +604,11 @@ func TestArrayListPopFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopFront(test.n)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -667,11 +668,11 @@ func TestArrayListRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Remove(test.i)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -699,11 +700,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			originalValues := arraylist.New[string]()
 			it := test.originalList.Begin()
 
@@ -759,11 +760,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			originalValues := arraylist.New[string]()
 			it := test.originalList.First()
 

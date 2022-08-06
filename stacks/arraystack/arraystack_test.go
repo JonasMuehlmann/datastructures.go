@@ -8,8 +8,10 @@ package arraystack
 import (
 	"testing"
 
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/ds"
-	"github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -103,8 +105,8 @@ func TestArrayStackGetValues(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
 			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
@@ -134,8 +136,8 @@ func TestArrayStackIsEmpty(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -162,8 +164,8 @@ func TestArrayStackClear(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
@@ -207,8 +209,8 @@ func TestArrayStackPush(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Push(test.valueToAdd)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -244,8 +246,8 @@ func TestArrayStackPop(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Pop()
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -284,8 +286,8 @@ func TestArrayStackPeek(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalList.Peek()
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -321,8 +323,8 @@ func TestNewFromSlice(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](test.originalList.GetValues())
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -354,8 +356,8 @@ func TestNewFromIterator(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](it)
 
@@ -407,8 +409,8 @@ func TestNewFromIterators(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			first := test.originalList.Begin()
 			end := test.originalList.End()
 			newList := NewFromIterators[string](first, end)
@@ -458,6 +460,6 @@ func BenchmarkArrayStackPop(b *testing.B) {
 	}
 
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }

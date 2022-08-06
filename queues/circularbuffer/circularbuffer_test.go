@@ -8,8 +8,10 @@ package circularbuffer
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -101,7 +103,6 @@ func TestCircularBufferGetValues(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
@@ -133,8 +134,8 @@ func TestCircularBufferIsEmpty(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -161,8 +162,8 @@ func TestCircularBufferClear(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
@@ -206,7 +207,6 @@ func TestCircularBufferEnqueue(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Enqueue(test.valueToAdd)
@@ -244,8 +244,8 @@ func TestCircularBufferDequeue(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Dequeue()
 
 			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -284,8 +284,8 @@ func TestCircularBufferPeek(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalList.Peek()
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -321,8 +321,8 @@ func TestNewFromSlice(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](10, test.originalList.GetValues())
 
 			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -354,8 +354,8 @@ func TestNewFromIterator(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](10, it)
 
@@ -403,8 +403,8 @@ func TestNewFromIterators(t *testing.T) {
 		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
 			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			first := test.originalList.Begin()
 			end := test.originalList.End()
 			newList := NewFromIterators[string](10, first, end)

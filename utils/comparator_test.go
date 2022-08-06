@@ -30,7 +30,7 @@ func TestBasicComparator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		actual := BasicComparator(test.A, test.B)
 		expected := test.Comparision
@@ -52,7 +52,7 @@ func TestTimeComparator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		actual := TimeComparator(test.A, test.B)
 		expected := test.Comparision

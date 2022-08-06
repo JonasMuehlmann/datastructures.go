@@ -8,7 +8,8 @@ package linkedhashmap
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/tests"
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/maps"
@@ -49,11 +50,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
 			assert.Equalf(t, test.originalMap.table, test.newMap.table, test.name)
@@ -101,11 +102,11 @@ func TestPut(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
 			assert.Equalf(t, test.originalMap.table, test.newMap.table, test.name)
@@ -151,11 +152,11 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalMap.Get(test.keyToGet)
 
 			assert.Equalf(t, test.value, value, test.name)
@@ -189,11 +190,11 @@ func TestGetKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			keys := test.originalMap.GetKeys()
 
 			assert.ElementsMatch(t, test.keys, keys, test.name)
@@ -226,11 +227,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalMap.GetValues()
 
 			assert.ElementsMatch(t, test.values, values, test.name)
@@ -263,11 +264,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalMap.IsEmpty()
 
 			assert.Equal(t, test.isEmpty, isEmpty, test.name)
@@ -304,11 +305,11 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmptyBefore := test.originalMap.IsEmpty()
 			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
@@ -341,11 +342,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalMap.Begin()
 
 			newMap := NewFromIterator[string, int](it)
@@ -376,11 +377,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			first := test.originalMap.Begin()
 			end := test.originalMap.End()
 
@@ -429,7 +430,7 @@ func BenchmarkHashMapRemove(b *testing.B) {
 		},
 	}
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }
 
@@ -470,7 +471,7 @@ func BenchmarkHashMapGet(b *testing.B) {
 	}
 
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }
 
@@ -504,7 +505,7 @@ func BenchmarkHashMapPut(b *testing.B) {
 		},
 	}
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }
 
@@ -541,7 +542,7 @@ func BenchmarkHashMapGetKeys(b *testing.B) {
 	}
 
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }
 
@@ -578,6 +579,6 @@ func BenchmarkHashMapGetValues(b *testing.B) {
 	}
 
 	for _, variant := range variants {
-		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 	}
 }

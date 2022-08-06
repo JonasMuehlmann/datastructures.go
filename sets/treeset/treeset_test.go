@@ -8,6 +8,8 @@ package treeset
 import (
 	"testing"
 
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,11 +49,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
 
 			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
@@ -95,11 +97,11 @@ func TestAdd(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Add(test.keyToAdd)
 
 			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
@@ -132,11 +134,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalSet.GetValues()
 
 			assert.ElementsMatchf(t, test.values, values, test.name)
@@ -173,11 +175,11 @@ func TestContains(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			assert.Equalf(t, test.doesContain, test.originalSet.Contains(test.value), test.name)
 		})
 	}
@@ -208,11 +210,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalSet.IsEmpty()
 
 			assert.Equal(t, test.isEmpty, isEmpty, test.name)
@@ -249,11 +251,11 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmptyBefore := test.originalSet.IsEmpty()
 			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
@@ -286,11 +288,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalSet.OrderedBegin(utils.BasicComparator[string])
 
 			newSet := NewFromIterator[string](utils.BasicComparator[string], it)
@@ -321,11 +323,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			first := test.originalSet.OrderedBegin(utils.BasicComparator[string])
 			end := test.originalSet.OrderedEnd(utils.BasicComparator[string])
 
@@ -382,11 +384,11 @@ func TestMakeIntersectionWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newSet := test.a.MakeIntersectionWith(test.b)
 
 			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
@@ -440,11 +442,11 @@ func TestMakeUnionWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newSet := test.a.MakeUnionWith(test.b)
 
 			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)
@@ -498,11 +500,11 @@ func TestMakeDifferenceWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newSet := test.a.MakeDifferenceWith(test.b)
 
 			assert.ElementsMatchf(t, test.intersection.GetValues(), newSet.GetValues(), test.name)

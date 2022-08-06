@@ -3,8 +3,10 @@ package singlylinkedlist
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -58,9 +60,10 @@ func TestSinglyLinkedlistIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -115,9 +118,10 @@ func TestSinglyLinkedlistIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -181,9 +185,10 @@ func TestSinglyLinkedlistIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -269,9 +274,10 @@ func TestSinglyLinkedlistIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -357,9 +363,10 @@ func TestSinglyLinkedlistIteratorMoveTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -398,9 +405,10 @@ func TestSinglyLinkedlistIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 
@@ -443,9 +451,10 @@ func TestSinglyLinkedlistIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.First()
 			successfull := it.Set(test.value)
@@ -484,9 +493,10 @@ func TestSinglyLinkedlistIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
@@ -529,9 +539,10 @@ func TestSinglyLinkedlistIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
@@ -574,9 +585,10 @@ func TestSinglyLinkedlistIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
@@ -619,9 +631,10 @@ func TestSinglyLinkedlistIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).First()
 			it2 := New[int](1, 2, 3, 4, 5).First()
@@ -661,9 +674,10 @@ func TestSinglyLinkedListIteratorIsEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
@@ -702,9 +716,10 @@ func TestSinglyLinkedlistIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 

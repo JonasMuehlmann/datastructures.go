@@ -3,8 +3,10 @@ package circularbuffer
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,9 +67,10 @@ func TestCircularBufferIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -128,9 +131,10 @@ func TestCircularBufferIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -202,9 +206,10 @@ func TestCircularBufferIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -299,9 +304,10 @@ func TestCircularBufferIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -380,9 +386,10 @@ func TestCircularBufferIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -477,9 +484,10 @@ func TestCircularBufferIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -591,9 +599,10 @@ func TestCircularBufferIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -642,9 +651,10 @@ func TestCircularBufferIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -692,9 +702,10 @@ func TestCircularBufferIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -739,9 +750,10 @@ func TestCircularBufferIteratorGetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -785,9 +797,10 @@ func TestCircularBufferIteratorSetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -827,9 +840,10 @@ func TestCircularBufferIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
@@ -872,9 +886,10 @@ func TestCircularBufferIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
@@ -917,9 +932,10 @@ func TestCircularBufferIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
@@ -962,9 +978,10 @@ func TestCircularBufferIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
 			it2 := NewFromSlice[int](5, []int{1, 2, 3, 4, 5}).Begin()
@@ -1008,9 +1025,10 @@ func TestCircularBufferIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(NewFromSlice[int](5, []int{1, 2, 4, 5}))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
@@ -1048,9 +1066,10 @@ func TestCircularBufferIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 

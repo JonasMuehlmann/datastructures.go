@@ -3,8 +3,10 @@ package priorityqueue
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -66,9 +68,10 @@ func TestPriorityQueueIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -129,9 +132,10 @@ func TestPriorityQueueIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -205,9 +209,10 @@ func TestPriorityQueueIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -302,9 +307,10 @@ func TestPriorityQueueIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -383,9 +389,10 @@ func TestPriorityQueueIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -480,9 +487,10 @@ func TestPriorityQueueIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -594,9 +602,10 @@ func TestPriorityQueueIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 
@@ -645,9 +654,10 @@ func TestPriorityQueueIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -695,9 +705,10 @@ func TestPriorityQueueIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -742,9 +753,10 @@ func TestPriorityQueueIteratorGetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -788,9 +800,10 @@ func TestPriorityQueueIteratorSetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin()
 
@@ -830,9 +843,10 @@ func TestPriorityQueueIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
 			it2 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
@@ -875,9 +889,10 @@ func TestPriorityQueueIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
 			it2 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
@@ -920,9 +935,10 @@ func TestPriorityQueueIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
 			it2 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
@@ -965,9 +981,10 @@ func TestPriorityQueueIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
 			it2 := New[int](utils.BasicComparator[int], 1, 2, 3, 4, 5).Begin()
@@ -1011,9 +1028,10 @@ func TestPriorityQueueIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](utils.BasicComparator[int], 1, 2, 4, 5))
 			assert.Truef(t, test.iteratorCheck(it), test.name)
@@ -1051,9 +1069,10 @@ func TestPriorityQueueIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list)
 

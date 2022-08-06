@@ -8,8 +8,10 @@ package binaryheap
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -35,11 +37,11 @@ func TestArrayHeapGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
 			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
@@ -66,11 +68,11 @@ func TestArrayHeapIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -94,11 +96,11 @@ func TestArrayHeapClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
@@ -139,11 +141,11 @@ func TestArrayHeapPush(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Push(test.valueToAdd)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -176,11 +178,11 @@ func TestArrayHeapPop(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Pop()
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -216,11 +218,11 @@ func TestArrayHeapPeek(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalList.Peek()
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -253,11 +255,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](utils.BasicComparator[string], test.originalList.GetValues())
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -286,11 +288,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalList.OrderedBegin()
 			newList := NewFromIterator[string](utils.BasicComparator[string], it)
 
@@ -339,11 +341,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			OrderedFirst := test.originalList.OrderedBegin()
 			end := test.originalList.OrderedEnd()
 			newList := NewFromIterators[string](utils.BasicComparator[string], OrderedFirst, end)

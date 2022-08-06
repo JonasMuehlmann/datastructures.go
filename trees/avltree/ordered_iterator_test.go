@@ -3,8 +3,10 @@ package avltree
 import (
 	"testing"
 
-	"github.com/JonasMuehlmann/datastructures.go/ds"
 	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
+	"github.com/JonasMuehlmann/datastructures.go/ds"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,9 +43,10 @@ func TestAVLTreeOrderedIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -82,9 +85,10 @@ func TestAVLTreeOrderedIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
@@ -125,9 +129,10 @@ func TestAVLTreeOrderedIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
@@ -167,9 +172,10 @@ func TestAVLTreeOrderedIteratorGetAtKey(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
@@ -207,9 +213,10 @@ func TestAVLTreeOrderedIteratorSetAtKey(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
@@ -252,9 +259,10 @@ func TestAVLTreeOrderedIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
@@ -301,9 +309,10 @@ func TestAVLTreeOrderedIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
@@ -350,9 +359,10 @@ func TestAVLTreeOrderedIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
@@ -395,9 +405,10 @@ func TestAVLTreeOrderedIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			m := NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"a": 1, "b": 2, "c": 4, "d": 5})
 
@@ -457,9 +468,10 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -492,9 +504,10 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedBegin()
 
@@ -562,9 +575,10 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -659,9 +673,10 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -737,9 +752,10 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -831,9 +847,10 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
@@ -943,9 +960,10 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 
 			it := test.iteratorInit(test.map_)
@@ -1002,7 +1020,7 @@ func TestHashmapOrderedIteratorMoveToKey(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		testNameOrig := test.name
 		for _, iteratorInit := range []struct {
@@ -1017,6 +1035,7 @@ test := test
 			test.name = testNameOrig + iteratorInit.name
 
 			t.Run(test.name, func(t *testing.T) {
+				t.Parallel()
 				defer testCommon.HandlePanic(t, test.name)
 
 				repr := test.map_.ToString()
@@ -1068,9 +1087,10 @@ func TestAVLTreeOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"a": 1, "b": 2, "c": 4, "5": 5}))
 			assert.Truef(t, test.iteratorCheck(it), test.name)

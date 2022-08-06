@@ -8,6 +8,8 @@ package btree
 import (
 	"testing"
 
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/maps/hashmap"
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
@@ -48,11 +50,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Remove(test.toRemove)
 
 			assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
@@ -100,11 +102,11 @@ func TestPut(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
 			assert.Equalf(t, test.originalMap.GetValues(), test.newMap.GetValues(), test.name)
@@ -150,11 +152,11 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			value, found := test.originalMap.Get(test.keyToGet)
 
 			assert.Equalf(t, test.value, value, test.name)
@@ -201,11 +203,11 @@ func TestGetNode(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			node := test.originalMap.GetNode(test.keyToGet)
 
 			assert.Equalf(t, test.found, node != nil, test.name)
@@ -247,11 +249,11 @@ func TestRight(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			node := test.originalMap.Right()
 
 			assert.Equalf(t, test.found, node != nil, test.name)
@@ -293,11 +295,11 @@ func TestLeft(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			node := test.originalMap.Left()
 
 			assert.Equalf(t, test.found, node != nil, test.name)
@@ -333,11 +335,11 @@ func TestGetKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			keys := test.originalMap.GetKeys()
 
 			assert.ElementsMatch(t, test.keys, keys, test.name)
@@ -370,11 +372,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalMap.GetValues()
 
 			assert.ElementsMatch(t, test.values, values, test.name)
@@ -407,11 +409,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmpty := test.originalMap.IsEmpty()
 
 			assert.Equal(t, test.isEmpty, isEmpty, test.name)
@@ -448,11 +450,11 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			isEmptyBefore := test.originalMap.IsEmpty()
 			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
@@ -485,11 +487,11 @@ func TestNewFromIteratorWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
 			newMap := NewFromIterator[string, int](3, utils.BasicComparator[string], it)
@@ -520,11 +522,11 @@ func TestNewFromIteratorsWith(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			beign := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 			end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
@@ -573,7 +575,7 @@ t.Parallel()
 // 		},
 // 	}
 // 	for _, variant := range variants {
-// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 // 	}
 // }
 
@@ -614,7 +616,7 @@ t.Parallel()
 // 	}
 
 // 	for _, variant := range variants {
-// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 // 	}
 // }
 
@@ -648,7 +650,7 @@ t.Parallel()
 // 		},
 // 	}
 // 	for _, variant := range variants {
-// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 // 	}
 // }
 
@@ -685,7 +687,7 @@ t.Parallel()
 // 	}
 
 // 	for _, variant := range variants {
-// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 // 	}
 // }
 
@@ -722,6 +724,6 @@ t.Parallel()
 // 	}
 
 // 	for _, variant := range variants {
-// 		tests.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
+// 		testCommon.RunBenchmarkWithDefualtInputSizes(b, variant.name, variant.f)
 // 	}
 // }

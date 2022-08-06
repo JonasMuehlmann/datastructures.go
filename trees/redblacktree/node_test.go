@@ -15,6 +15,8 @@ package redblacktree
 import (
 	"testing"
 
+	testCommon "github.com/JonasMuehlmann/datastructures.go/tests"
+
 	"github.com/JonasMuehlmann/datastructures.go/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,11 +55,11 @@ func TestNodeSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-test := test
+		test := test
 
 		t.Run(test.name, func(t *testing.T) {
-
-t.Parallel()
+			t.Parallel()
+			defer testCommon.HandlePanic(t, test.name)
 			tree := New[int, string](utils.BasicComparator[int])
 
 			for _, pair := range test.pairs {
