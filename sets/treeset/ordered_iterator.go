@@ -70,14 +70,14 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 
 // PERF: These methods are inefficient, but the API is limiting here
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
-	return it.OrderedIterator.Index()
+	return it.OrderedIterator.GetKey()
 }
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
 		return false
 	}
 
-	curKey, _ := it.OrderedIterator.Index()
+	curKey, _ := it.OrderedIterator.GetKey()
 	// FIX: This probably does not change the cached value in the tree iterator
 	it.set.tree.Remove(curKey)
 	it.set.tree.Put(value, struct{}{})
@@ -94,7 +94,7 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 		return
 	}
 
-	return treeIteratorCopy.Index()
+	return treeIteratorCopy.GetKey()
 }
 
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
@@ -104,7 +104,7 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 		return false
 	}
 
-	keyToRemove, _ := treeIteratorCopy.Index()
+	keyToRemove, _ := treeIteratorCopy.GetKey()
 
 	// FIX: This probably does not change the cached value in the tree iterator
 	it.set.tree.Remove(keyToRemove)

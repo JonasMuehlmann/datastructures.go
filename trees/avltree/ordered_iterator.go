@@ -10,7 +10,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*OrderedIterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollMapIterator[string, any] = (*OrderedIterator[string, any])(nil)
 
 // Ordered holding the iterator's state
 type OrderedIterator[TKey comparable, TValue any] struct {
@@ -67,7 +67,7 @@ func (tree *Tree[TKey, TValue]) NewOrderedIterator(position int) *OrderedIterato
 func (tree *Tree[TKey, TValue]) NewOrderedteratorAt(t *Tree[TKey, TValue], key TKey) *OrderedIterator[TKey, TValue] {
 	it := &OrderedIterator[TKey, TValue]{tree: t, index: -1, size: t.Size()}
 
-	it.MoveTo(key)
+	it.MoveToKey(key)
 
 	return it
 }
@@ -246,8 +246,12 @@ func (it *OrderedIterator[TKey, TValue]) MoveBy(n int) bool {
 	}
 }
 
+func (it *OrderedIterator[TKey, TValue]) MoveTo(n int) bool {
+	return it.MoveBy(n - it.index)
+}
+
 // https://www.geeksforgeeks.org/find-distance-between-two-nodes-of-a-binary-tree/
-func (it *OrderedIterator[TKey, TValue]) MoveTo(key TKey) (found bool) {
+func (it *OrderedIterator[TKey, TValue]) MoveToKey(key TKey) (found bool) {
 	if it.IsValid() && it.tree.Comparator(key, it.node.Key) == 0 {
 
 		return true
@@ -286,14 +290,12 @@ func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
 	return it.node.Value, true
 }
 
-func (it *OrderedIterator[TKey, TValue]) GetAt(key TKey) (value TValue, found bool) {
-	return it.tree.Get(key)
-}
+func (it *OrderedIterator[TKey, TValue]) GetKey() (key TKey, found bool) {
+	if !it.IsValid() {
+		return
+	}
 
-func (it *OrderedIterator[TKey, TValue]) SetAt(key TKey, value TValue) bool {
-	it.tree.Put(key, value)
-
-	return true
+	return it.node.Key, true
 }
 
 func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
@@ -307,14 +309,40 @@ func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
 	return true
 }
 
-// Key returns the current element's key.
-// Does not modify the state of the .
-func (it *OrderedIterator[TKey, TValue]) Index() (key TKey, found bool) {
+func (it *OrderedIterator[TKey, TValue]) GetAt(i int) (value TValue, found bool) {
 	if !it.IsValid() {
 		return
 	}
 
-	return it.key, true
+	return it.tree.NewOrderedIterator(i).Get()
+}
+
+func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
+	if !it.IsValid() {
+		return false
+	}
+
+	return it.tree.NewOrderedIterator(i).Set(value)
+}
+
+func (it *OrderedIterator[TKey, TValue]) GetAtKey(key TKey) (value TValue, found bool) {
+	return it.tree.Get(key)
+}
+
+func (it *OrderedIterator[TKey, TValue]) SetAtKey(key TKey, value TValue) bool {
+	it.tree.Put(key, value)
+
+	return true
+}
+
+// Key returns the current element's key.
+// Does not modify the state of the .
+func (it *OrderedIterator[TKey, TValue]) Index() (key int, found bool) {
+	if !it.IsValid() {
+		return
+	}
+
+	return it.index, true
 }
 
 // Node returns the current element's node.

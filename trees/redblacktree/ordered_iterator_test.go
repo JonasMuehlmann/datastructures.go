@@ -15,7 +15,7 @@ func TestRedBlackTreeOrderedIteratorIsValid(t *testing.T) {
 		map_         *Tree[string, int]
 		position     string
 		isValid      bool
-		iteratorInit func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "Empty",
@@ -46,7 +46,7 @@ func TestRedBlackTreeOrderedIteratorIsValid(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValid := it.IsValid()
@@ -85,7 +85,7 @@ func TestRedBlackTreeOrderedIteratorGet(t *testing.T) {
 			it := test.map_.OrderedFirst()
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			value, found := it.Get()
@@ -126,7 +126,7 @@ func TestRedBlackTreeOrderedIteratorSet(t *testing.T) {
 			it := test.map_.OrderedFirst()
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			successfull := it.Set(test.value)
@@ -136,7 +136,7 @@ func TestRedBlackTreeOrderedIteratorSet(t *testing.T) {
 	}
 }
 
-func TestRedBlackTreeOrderedIteratorGetAt(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorGetAtKey(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Tree[string, int]
@@ -165,7 +165,7 @@ func TestRedBlackTreeOrderedIteratorGetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
-			value, found := it.GetAt(test.position)
+			value, found := it.GetAtKey(test.position)
 
 			assert.Equalf(t, test.found, found, test.name)
 			assert.Equalf(t, test.value, value, test.name)
@@ -173,7 +173,7 @@ func TestRedBlackTreeOrderedIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestRedBlackTreeOrderedIteratorSetAt(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorSetAtKey(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Tree[string, int]
@@ -203,7 +203,7 @@ func TestRedBlackTreeOrderedIteratorSetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
 
-			successfull := it.SetAt(test.position, test.value)
+			successfull := it.SetAtKey(test.position, test.value)
 
 			assert.Equalf(t, test.successfull, successfull, test.name)
 		})
@@ -247,8 +247,8 @@ func TestRedBlackTreeOrderedIteratorDistanceTo(t *testing.T) {
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			distance := it1.DistanceTo(it2)
 
@@ -294,8 +294,8 @@ func TestRedBlackTreeOrderedIteratorIsAfter(t *testing.T) {
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsAfter(it2)
 
@@ -341,8 +341,8 @@ func TestRedBlackTreeOrderedIteratorIsBefore(t *testing.T) {
 			it1 := test.map_.OrderedBegin()
 			it2 := test.map_.OrderedBegin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsBefore(it2)
 
@@ -386,8 +386,8 @@ func TestRedBlackTreeOrderedIteratorIsEqual(t *testing.T) {
 			it1 := m.OrderedFirst()
 			it2 := m.OrderedFirst()
 
-			it1.MoveTo(test.position1)
-			it2.MoveTo(test.position2)
+			it1.MoveToKey(test.position1)
+			it2.MoveToKey(test.position2)
 
 			isAfter := it1.IsEqual(it2)
 
@@ -402,7 +402,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 		map_         *Tree[string, int]
 		key          string
 		valid        bool
-		iteratorInit func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "Empty",
@@ -443,7 +443,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
-			position, valid := it.Index()
+			position, valid := it.GetKey()
 
 			assert.Equalf(t, test.valid, valid, test.name)
 			if test.valid {
@@ -490,7 +490,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -545,7 +545,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -567,7 +567,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -640,7 +640,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -661,7 +661,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -716,7 +716,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -738,7 +738,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -808,7 +808,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -830,7 +830,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -919,7 +919,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -933,7 +933,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveTo(t *testing.T) {
+func TestHashmapOrderedIteratorMoveToKey(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Tree[string, int]
@@ -973,7 +973,7 @@ func TestHashmapOrderedIteratorMoveTo(t *testing.T) {
 		testNameOrig := test.name
 		for _, iteratorInit := range []struct {
 			name string
-			f    func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+			f    func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 		}{
 			{", from first,", (*Tree[string, int]).OrderedFirst},
 			{", from last,", (*Tree[string, int]).OrderedLast},
@@ -991,7 +991,7 @@ func TestHashmapOrderedIteratorMoveTo(t *testing.T) {
 				it := iteratorInit.f(test.map_)
 
 				if test.position != "" {
-					it.MoveTo(test.position)
+					it.MoveToKey(test.position)
 				}
 
 				isValidAfter := it.IsValid()
@@ -1009,27 +1009,27 @@ func TestHashmapOrderedIteratorMoveTo(t *testing.T) {
 func TestRedBlackTreeOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[string, int]) bool
+		iteratorInit  func(*Tree[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]) bool
 	}{
 		{
 			name:          "OrderedFirst",
 			iteratorInit:  (*Tree[string, int]).OrderedFirst,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsFirst,
 		}, {
 			name:          "OrderedLast",
 			iteratorInit:  (*Tree[string, int]).OrderedLast,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsLast,
 		},
 		{
 			name:          "OrderedBegin",
 			iteratorInit:  (*Tree[string, int]).OrderedBegin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsBegin,
 		},
 		{
 			name:          "OrderedEnd",
 			iteratorInit:  (*Tree[string, int]).OrderedEnd,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsEnd,
 		},
 	}
 

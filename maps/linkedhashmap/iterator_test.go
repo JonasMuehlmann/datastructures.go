@@ -16,7 +16,7 @@ func TestHashMapIteratorIsValid(t *testing.T) {
 		map_         *Map[string, int]
 		position     string
 		isValid      bool
-		iteratorInit func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "One element, first",
@@ -40,7 +40,7 @@ func TestHashMapIteratorIsValid(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValid := it.IsValid()
@@ -79,7 +79,7 @@ func TestHashMapIteratorGet(t *testing.T) {
 			it := test.map_.First()
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			value, found := it.Get()
@@ -120,7 +120,7 @@ func TestHashMapIteratorSet(t *testing.T) {
 			it := test.map_.First()
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			successfull := it.Set(test.value)
@@ -130,7 +130,7 @@ func TestHashMapIteratorSet(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorGetAt(t *testing.T) {
+func TestHashMapIteratorGetAtKey(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -159,7 +159,7 @@ func TestHashMapIteratorGetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.First()
 
-			value, found := it.GetAt(test.position)
+			value, found := it.GetAtKey(test.position)
 
 			assert.Equalf(t, test.found, found, test.name)
 			assert.Equalf(t, test.value, value, test.name)
@@ -167,7 +167,7 @@ func TestHashMapIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorSetAt(t *testing.T) {
+func TestHashMapIteratorSetAtKey(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -197,7 +197,7 @@ func TestHashMapIteratorSetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.First()
 
-			successfull := it.SetAt(test.position, test.value)
+			successfull := it.SetAtKey(test.position, test.value)
 
 			assert.Equalf(t, test.successfull, successfull, test.name)
 		})
@@ -241,8 +241,8 @@ func TestHashMapIteratorDistanceTo(t *testing.T) {
 			it1 := test.map_.Begin()
 			it2 := test.map_.Begin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			distance := it1.DistanceTo(it2)
 
@@ -288,8 +288,8 @@ func TestHashMapIteratorIsAfter(t *testing.T) {
 			it1 := test.map_.Begin()
 			it2 := test.map_.Begin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsAfter(it2)
 
@@ -335,8 +335,8 @@ func TestHashMapIteratorIsBefore(t *testing.T) {
 			it1 := test.map_.Begin()
 			it2 := test.map_.Begin()
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsBefore(it2)
 
@@ -380,8 +380,8 @@ func TestHashMapIteratorIsEqual(t *testing.T) {
 			it1 := m.First()
 			it2 := m.First()
 
-			it1.MoveTo(test.position1)
-			it2.MoveTo(test.position2)
+			it1.MoveToKey(test.position1)
+			it2.MoveToKey(test.position2)
 
 			isAfter := it1.IsEqual(it2)
 
@@ -396,7 +396,7 @@ func TestHashmapIteratorIndex(t *testing.T) {
 		map_         *Map[string, int]
 		key          string
 		valid        bool
-		iteratorInit func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "Empty",
@@ -443,7 +443,7 @@ func TestHashmapIteratorIndex(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
 
-			position, valid := it.Index()
+			position, valid := it.GetKey()
 
 			assert.Equalf(t, test.key, position, test.name)
 			assert.Equalf(t, test.valid, valid, test.name)
@@ -488,7 +488,7 @@ func TestHashmapIteratorNext(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -543,7 +543,7 @@ func TestHashmapIteratorNext(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -565,7 +565,7 @@ func TestHashmapIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -638,7 +638,7 @@ func TestHashmapIteratorNextN(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -659,7 +659,7 @@ func TestHashmapIteratorPrevious(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -714,7 +714,7 @@ func TestHashmapIteratorPrevious(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -736,7 +736,7 @@ func TestHashmapIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -806,7 +806,7 @@ func TestHashmapIteratorPreviousN(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -828,7 +828,7 @@ func TestHashmapIteratorMoveBy(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -915,7 +915,7 @@ func TestHashmapIteratorMoveBy(t *testing.T) {
 			it := test.iteratorInit(test.map_)
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -932,27 +932,27 @@ func TestHashmapIteratorMoveBy(t *testing.T) {
 func TestHashMapIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[string, int]) bool
+		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]) bool
 	}{
 		{
 			name:          "First",
 			iteratorInit:  (*Map[string, int]).First,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsFirst,
 		}, {
 			name:          "Last",
 			iteratorInit:  (*Map[string, int]).Last,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsLast,
 		},
 		{
 			name:          "Begin",
 			iteratorInit:  (*Map[string, int]).Begin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*Map[string, int]).End,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsEnd,
 		},
 	}
 

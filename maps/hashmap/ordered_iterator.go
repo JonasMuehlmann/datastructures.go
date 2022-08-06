@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*OrderedIterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollMapIterator[string, any] = (*OrderedIterator[string, any])(nil)
 
 type OrderedIterator[TKey comparable, TValue any] struct {
 	m          *Map[TKey, TValue]
@@ -37,7 +37,7 @@ func (m *Map[TKey, TValue]) NewOrderedIterator(position int, comparator utils.Co
 	}
 
 	if position > 0 && position < len(keys) {
-		it.MoveTo(it.keys[position])
+		it.MoveToKey(it.keys[position])
 	}
 
 	return it
@@ -103,7 +103,11 @@ func (it *OrderedIterator[TKey, TValue]) Size() int {
 	return len(it.keys)
 }
 
-func (it *OrderedIterator[TKey, TValue]) Index() (key TKey, found bool) {
+func (it *OrderedIterator[TKey, TValue]) Index() (index int, found bool) {
+	return it.index, it.IsValid()
+}
+
+func (it *OrderedIterator[TKey, TValue]) GetKey() (key TKey, found bool) {
 	if !it.IsValid() {
 		found = false
 		return
@@ -175,7 +179,11 @@ func (it *OrderedIterator[TKey, TValue]) MoveBy(n int) bool {
 	return it.PreviousN(-n)
 }
 
-func (it *OrderedIterator[TKey, TValue]) MoveTo(k TKey) bool {
+func (it *OrderedIterator[TKey, TValue]) MoveTo(n int) bool {
+	return it.MoveBy(n - it.index)
+}
+
+func (it *OrderedIterator[TKey, TValue]) MoveToKey(k TKey) bool {
 	for i, key := range it.keys {
 		if key == k {
 			it.index = i
@@ -197,14 +205,6 @@ func (it *OrderedIterator[TKey, TValue]) Get() (value TValue, found bool) {
 	return it.m.Get(it.keys[it.index])
 }
 
-func (it *OrderedIterator[TKey, TValue]) GetAt(i TKey) (value TValue, found bool) {
-	if !it.IsValid() {
-		return
-	}
-
-	return it.m.Get(i)
-}
-
 func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
 	if !it.IsValid() {
 		return false
@@ -215,7 +215,31 @@ func (it *OrderedIterator[TKey, TValue]) Set(value TValue) bool {
 	return true
 }
 
-func (it *OrderedIterator[TKey, TValue]) SetAt(i TKey, value TValue) bool {
+func (it *OrderedIterator[TKey, TValue]) GetAt(i int) (value TValue, found bool) {
+	if !it.IsValid() {
+		return
+	}
+
+	return it.m.NewOrderedIterator(i, it.comparator).Get()
+}
+
+func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
+	if !it.IsValid() {
+		return false
+	}
+
+	return it.m.NewOrderedIterator(i, it.comparator).Set(value)
+}
+
+func (it *OrderedIterator[TKey, TValue]) GetAtKey(i TKey) (value TValue, found bool) {
+	if !it.IsValid() {
+		return
+	}
+
+	return it.m.Get(i)
+}
+
+func (it *OrderedIterator[TKey, TValue]) SetAtKey(i TKey, value TValue) bool {
 	it.m.Put(i, value)
 
 	return true

@@ -16,7 +16,7 @@ func TestHashMapOrderedIteratorIsValid(t *testing.T) {
 		map_         *Map[string, int]
 		position     string
 		isValid      bool
-		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "One element, first",
@@ -40,7 +40,7 @@ func TestHashMapOrderedIteratorIsValid(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValid := it.IsValid()
@@ -79,7 +79,7 @@ func TestHashMapOrderedIteratorGet(t *testing.T) {
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			value, found := it.Get()
@@ -120,7 +120,7 @@ func TestHashMapOrderedIteratorSet(t *testing.T) {
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			successfull := it.Set(test.value)
@@ -130,7 +130,7 @@ func TestHashMapOrderedIteratorSet(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorGetAt(t *testing.T) {
+func TestHashMapOrderedIteratorGetAtKey(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -159,7 +159,7 @@ func TestHashMapOrderedIteratorGetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
-			value, found := it.GetAt(test.position)
+			value, found := it.GetAtKey(test.position)
 
 			assert.Equalf(t, test.found, found, test.name)
 			assert.Equalf(t, test.value, value, test.name)
@@ -167,7 +167,7 @@ func TestHashMapOrderedIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorSetAt(t *testing.T) {
+func TestHashMapOrderedIteratorSetAtKey(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -197,7 +197,7 @@ func TestHashMapOrderedIteratorSetAt(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst(utils.BasicComparator[string])
 
-			successfull := it.SetAt(test.position, test.value)
+			successfull := it.SetAtKey(test.position, test.value)
 
 			assert.Equalf(t, test.successfull, successfull, test.name)
 		})
@@ -241,8 +241,8 @@ func TestHashMapOrderedIteratorDistanceTo(t *testing.T) {
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			distance := it1.DistanceTo(it2)
 
@@ -288,8 +288,8 @@ func TestHashMapOrderedIteratorIsAfter(t *testing.T) {
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsAfter(it2)
 
@@ -335,8 +335,8 @@ func TestHashMapOrderedIteratorIsBefore(t *testing.T) {
 			it1 := test.map_.OrderedBegin(utils.BasicComparator[string])
 			it2 := test.map_.OrderedBegin(utils.BasicComparator[string])
 
-			it1.MoveTo(test.key1)
-			it2.MoveTo(test.key2)
+			it1.MoveToKey(test.key1)
+			it2.MoveToKey(test.key2)
 
 			isAfter := it1.IsBefore(it2)
 
@@ -383,8 +383,8 @@ func TestHashMapOrderedIteratorIsEqual(t *testing.T) {
 			it1 := test.map_.OrderedFirst(utils.BasicComparator[string])
 			it2 := test.map_.OrderedFirst(utils.BasicComparator[string])
 
-			it1.MoveTo(test.position1)
-			it2.MoveTo(test.position2)
+			it1.MoveToKey(test.position1)
+			it2.MoveToKey(test.position2)
 
 			isAfter := it1.IsEqual(it2)
 
@@ -399,7 +399,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 		map_         *Map[string, int]
 		key          string
 		valid        bool
-		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:         "Empty",
@@ -446,7 +446,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
-			position, valid := it.Index()
+			position, valid := it.GetKey()
 
 			assert.Equalf(t, test.key, position, test.name)
 			assert.Equalf(t, test.valid, valid, test.name)
@@ -491,7 +491,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -546,7 +546,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -568,7 +568,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -641,7 +641,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -662,7 +662,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -717,7 +717,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -739,7 +739,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -809,7 +809,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -831,7 +831,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -918,7 +918,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 			it := test.iteratorInit(test.map_, utils.BasicComparator[string])
 
 			if test.position != "" {
-				it.MoveTo(test.position)
+				it.MoveToKey(test.position)
 			}
 
 			isValidBefore := it.IsValid()
@@ -935,27 +935,27 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 func TestHashMapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[string, int]) bool
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]) bool
 	}{
 		{
 			name:          "OrderedFirst",
 			iteratorInit:  (*Map[string, int]).OrderedFirst,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsFirst,
 		}, {
 			name:          "OrderedLast",
 			iteratorInit:  (*Map[string, int]).OrderedLast,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsLast,
 		},
 		{
 			name:          "OrderedBegin",
 			iteratorInit:  (*Map[string, int]).OrderedBegin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsBegin,
 		},
 		{
 			name:          "OrderedEnd",
 			iteratorInit:  (*Map[string, int]).OrderedEnd,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsEnd,
 		},
 	}
 

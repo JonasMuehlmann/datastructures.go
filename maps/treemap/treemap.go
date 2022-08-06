@@ -47,11 +47,11 @@ func NewFromMap[TKey comparable, TValue any](comparator utils.Comparator[TKey], 
 }
 
 // NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue]) *Map[TKey, TValue] {
 	tree := New[TKey, TValue](comparator)
 
 	for begin.Next() {
-		newKey, _ := begin.Index()
+		newKey, _ := begin.GetKey()
 		newValue, _ := begin.Get()
 
 		tree.Put(newKey, newValue)
@@ -62,11 +62,11 @@ func NewFromIterator[TKey comparable, TValue any](comparator utils.Comparator[TK
 
 // NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+func NewFromIterators[TKey comparable, TValue any](comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
 	tree := New[TKey, TValue](comparator)
 
 	for !begin.IsEqual(end) && begin.Next() {
-		newKey, _ := begin.Index()
+		newKey, _ := begin.GetKey()
 		newValue, _ := begin.Get()
 
 		tree.Put(newKey, newValue)
@@ -199,22 +199,26 @@ func (m *Map[TKey, TValue]) ToString() string {
 
 // OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
-func (m *Map[TKey, TValue]) OrderedBegin(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+
+func (m *Map[TKey, TValue]) OrderedBegin(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
 	return m.NewOrderedIterator(-1)
 }
 
 // OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
-func (m *Map[TKey, TValue]) OrderedEnd(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+
+func (m *Map[TKey, TValue]) OrderedEnd(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
 	return m.NewOrderedIterator(m.Size())
 }
 
 // OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
-func (m *Map[TKey, TValue]) OrderedFirst(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+
+func (m *Map[TKey, TValue]) OrderedFirst(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
 	return m.NewOrderedIterator(0)
 }
 
 // OrderedLast returns an initialized, reversed iterator, which points to it's last element.
-func (m *Map[TKey, TValue]) OrderedLast(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
+
+func (m *Map[TKey, TValue]) OrderedLast(comparator utils.Comparator[TKey]) ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
 	return m.NewOrderedIterator(m.Size() - 1)
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*Iterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollMapIterator[string, any] = (*Iterator[string, any])(nil)
 
 type Iterator[TKey comparable, TValue any] struct {
 	s             *Map[TKey, TValue]
@@ -99,8 +99,8 @@ func (it *Iterator[TKey, TValue]) Size() int {
 	return it.size
 }
 
-func (it *Iterator[TKey, TValue]) Index() (index TKey, found bool) {
-	return it.key, it.IsValid()
+func (it *Iterator[TKey, TValue]) Index() (index int, found bool) {
+	return it.index, it.IsValid()
 }
 
 func (it *Iterator[TKey, TValue]) Next() bool {
@@ -157,7 +157,7 @@ func (it *Iterator[TKey, TValue]) MoveBy(n int) bool {
 	return it.IsValid()
 }
 
-func (it *Iterator[TKey, TValue]) MoveTo(key TKey) bool {
+func (it *Iterator[TKey, TValue]) MoveToKey(key TKey) bool {
 	// PERF: This can be optimized
 	for it.Next() {
 		if it.key == key {
@@ -177,8 +177,8 @@ func (it *Iterator[TKey, TValue]) Get() (value TValue, found bool) {
 	return it.s.Get(it.key)
 }
 
-func (it *Iterator[TKey, TValue]) GetAt(key TKey) (value TValue, found bool) {
-	return it.s.Get(key)
+func (it *Iterator[TKey, TValue]) GetKey() (index TKey, found bool) {
+	return it.key, it.IsValid()
 }
 
 func (it *Iterator[TKey, TValue]) Set(value TValue) bool {
@@ -192,7 +192,27 @@ func (it *Iterator[TKey, TValue]) Set(value TValue) bool {
 	return true
 }
 
-func (it *Iterator[TKey, TValue]) SetAt(i TKey, value TValue) bool {
+func (it *Iterator[TKey, TValue]) GetAt(i int) (value TValue, found bool) {
+	if !it.IsValid() {
+		return
+	}
+
+	return it.s.NewIterator(i).Get()
+}
+
+func (it *Iterator[TKey, TValue]) SetAt(i int, value TValue) bool {
+	if !it.IsValid() {
+		return false
+	}
+
+	return it.s.NewIterator(i).Set(value)
+}
+
+func (it *Iterator[TKey, TValue]) GetAtKey(key TKey) (value TValue, found bool) {
+	return it.s.Get(key)
+}
+
+func (it *Iterator[TKey, TValue]) SetAtKey(i TKey, value TValue) bool {
 	it.s.Put(it.key, value)
 
 	return true

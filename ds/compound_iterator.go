@@ -19,6 +19,7 @@ package ds
 
 // RandomAccessIterator = Rand
 // IndexedIterator = Index
+// MappingIterator = Map
 // CollectionIterator = Coll
 
 const (
@@ -27,7 +28,7 @@ const (
 
 type ReadWriteCompForRandCollIterator[TIndex any, TValue any] interface {
 	ComparableIterator
-	CollectionIterator[TIndex]
+	CollectionIterator
 	ForwardIterator
 	RandomAccessReadableIterator[TIndex, TValue]
 	RandomAccessWriteableIterator[TIndex, TValue]
@@ -39,7 +40,7 @@ type ReadWriteOrdCompForRandCollIterator[TIndex any, TValue any] interface {
 	ForwardIterator
 	ReadableIterator[TValue]
 	WritableIterator[TValue]
-	RandomAccessIterator[TIndex]
+	RandomAccessIterator
 }
 
 type ReadWriteOrdCompBidRandCollIterator[TIndex any, TValue any] interface {
@@ -48,6 +49,14 @@ type ReadWriteOrdCompBidRandCollIterator[TIndex any, TValue any] interface {
 	BidirectionalIterator
 	RandomAccessReadableIterator[TIndex, TValue]
 	RandomAccessWriteableIterator[TIndex, TValue]
+}
+
+type ReadWriteOrdCompBidRandCollMapIterator[TIndex any, TValue any] interface {
+	ComparableIterator
+	OrderedIterator
+	BidirectionalIterator
+	RandomAccessReadableMappingIterator[TIndex, TValue]
+	RandomAccessWriteableMappingIterator[TIndex, TValue]
 }
 
 type ReadForIterator[TValue any] interface {
@@ -63,13 +72,26 @@ type ReadCompForIterator[TValue any] interface {
 
 type ReadCompForIndexIterator[TIndex any, TValue any] interface {
 	ReadableIterator[TValue]
-	IndexedIterator[TIndex]
+	IndexedIterator
+	ComparableIterator
+	ForwardIterator
+}
+
+type ReadCompForIndexMapIterator[TIndex any, TValue any] interface {
+	ReadableIterator[TValue]
+	IndexedIterator
+	MappingIterator[TIndex]
 	ComparableIterator
 	ForwardIterator
 }
 
 type CompIndexIterator[TIndex any] interface {
-	IndexedIterator[TIndex]
+	IndexedIterator
+	ComparableIterator
+}
+
+type CompIndexMapIterator[TIndex any] interface {
+	IndexedIterator
 	ComparableIterator
 }
 

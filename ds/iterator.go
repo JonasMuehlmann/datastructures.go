@@ -67,22 +67,33 @@ type SizedIterator interface {
 }
 
 // CollectionIterator defines a SizedIterator, which can be said to reference a collection of elements.
-type CollectionIterator[TIndex any] interface {
+type CollectionIterator interface {
 	// *********************    Inherited methods    ********************//
 	SizedIterator
-	IndexedIterator[TIndex]
+	IndexedIterator
 	// ************************    Own methods    ***********************//
 }
 
 // IndexedIterator defines an Iterator, which defines an an iterator with an index.
 // This iterator can be combined with a ReadableIterator to hold key-value or index-value pairs.
-type IndexedIterator[TIndex any] interface {
+type IndexedIterator interface {
 	// *********************    Inherited methods    ********************//
 	SizedIterator
 	// ************************    Own methods    ***********************//
 
 	// Index returns the index of the iterator's position in the collection.
-	Index() (TIndex, bool)
+	Index() (int, bool)
+}
+
+// MappingIterator defines an Iterator, which defines an an iterator holding a key and a value.
+// This iterator can be combined with a ReadableIterator to hold key-value or index-value pairs.
+type MappingIterator[TKey any] interface {
+	// *********************    Inherited methods    ********************//
+	SizedIterator
+	// ************************    Own methods    ***********************//
+
+	// GetKey returns the key of the iterator's position in the collection.
+	GetKey() (TKey, bool)
 }
 
 // WritableIterator defines an Iterator, which can be used to write to the underlying values.
@@ -158,19 +169,19 @@ type BidirectionalIterator interface {
 
 // RandomAccessIterator defines a CollectionIterator, which can be moved to every position in the iterable direction.
 // A RandomAccessIterator does not imply bidirectional iteration.
-type RandomAccessIterator[TIndex any] interface {
+type RandomAccessIterator interface {
 	// *********************    Inherited methods    ********************//
-	CollectionIterator[TIndex]
+	CollectionIterator
 	// ************************    Own methods    ***********************//
 
 	// MoveTo moves the iterator to the given index, if it is reachable.
-	MoveTo(i TIndex) bool
+	MoveTo(i int) bool
 }
 
 // RandomAccessReadableIterator defines a RandomAccessIterator and ReadableIterator, which can read from every index in the iterator.
 type RandomAccessReadableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	RandomAccessIterator[TIndex]
+	RandomAccessIterator
 	ReadableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
@@ -181,10 +192,44 @@ type RandomAccessReadableIterator[TIndex any, TValue any] interface {
 // RandomAccessWriteableIterator defines a RandomAccessIterator and WritableIterator, which can write from every index in the iterator.
 type RandomAccessWriteableIterator[TIndex any, TValue any] interface {
 	// *********************    Inherited methods    ********************//
-	RandomAccessIterator[TIndex]
+	RandomAccessIterator
 	WritableIterator[TValue]
 	// ************************    Own methods    ***********************//
 
 	// GetAt sets the value at the given index of the iterator.
 	SetAt(i TIndex, value TValue) bool
+}
+
+// RandomAccessMappingIterator defines a CollectionIterator, which can be moved to every position in the iterable direction.
+// A RandomAccessMappingIterator does not imply bidirectional iteration.
+type RandomAccessMappingIterator[TKey any] interface {
+	// *********************    Inherited methods    ********************//
+	CollectionIterator
+	MappingIterator[TKey]
+	// ************************    Own methods    ***********************//
+
+	// MoveTo moves the iterator to the given index, if it is reachable.
+	MoveToKey(i TKey) bool
+}
+
+// RandomAccessReadableMappingIterator defines a RandomAccessMappingIterator and ReadableIterator, which can read from every key in the iterator.
+type RandomAccessReadableMappingIterator[TKey any, TValue any] interface {
+	// *********************    Inherited methods    ********************//
+	RandomAccessMappingIterator[TKey]
+	ReadableIterator[TValue]
+	// ************************    Own methods    ***********************//
+
+	// GetAt returns the value at the given index of the iterator.
+	GetAtKey(i TKey) (value TValue, found bool)
+}
+
+// RandomAccessWriteableMappingIterator defines a RandomAccessMappingIterator and WritableIterator, which can write to every key in the iterator.
+type RandomAccessWriteableMappingIterator[TKey any, TValue any] interface {
+	// *********************    Inherited methods    ********************//
+	RandomAccessMappingIterator[TKey]
+	WritableIterator[TValue]
+	// ************************    Own methods    ***********************//
+
+	// GetAt sets the value at the given index of the iterator.
+	SetAtKey(i TKey, value TValue) bool
 }
