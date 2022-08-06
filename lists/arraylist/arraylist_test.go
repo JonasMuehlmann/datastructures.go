@@ -45,7 +45,11 @@ func TestArrayListGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			value, found := test.originalList.Get(test.position)
 
 			assert.Equalf(t, test.value, value, test.name)
@@ -82,7 +86,11 @@ func TestArrayListContains(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			found := test.originalList.Contains(utils.BasicComparator[string], test.value)
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -118,7 +126,11 @@ func TestArrayListIndexOf(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
 
 			assert.Equalf(t, test.position, position, test.name)
@@ -146,7 +158,11 @@ func TestArrayListGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			values := test.originalList.GetValues()
 
 			assert.ElementsMatchf(t, test.originalList.elements, values, test.name)
@@ -170,7 +186,11 @@ func TestArrayListGetSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			slice := test.originalList.GetSlice()
 
 			assert.ElementsMatchf(t, test.originalList.elements, slice, test.name)
@@ -197,7 +217,11 @@ func TestArrayListIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -221,7 +245,11 @@ func TestArrayListClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, len(test.originalList.elements) == 0, isEmpty, test.name)
 
@@ -273,7 +301,11 @@ func TestArrayListSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.Set(test.position, test.value)
 
 			index := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
@@ -323,7 +355,11 @@ func TestArrayListInsert(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.Insert(test.position, test.value)
 
 			assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
@@ -375,7 +411,11 @@ func TestArrayListSwap(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.Swap(test.position1, test.position2)
 
 			assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
@@ -423,7 +463,11 @@ func TestArrayListSort(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.Sort(utils.BasicComparator[string])
 
 			assert.ElementsMatch(t, test.newList.elements, test.originalList.elements, test.name)
@@ -465,7 +509,11 @@ func TestArrayListPushFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.PushFront(test.itemsToAdd...)
 
 			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
@@ -506,7 +554,11 @@ func TestArrayListPopBack(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.PopBack(test.n)
 
 			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
@@ -547,7 +599,11 @@ func TestArrayListPopFront(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.PopFront(test.n)
 
 			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
@@ -593,7 +649,11 @@ func TestArrayListShrinkToFit(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.PopBack(test.n)
 			test.originalList.ShrinkToFit()
 
@@ -637,7 +697,11 @@ func TestArrayListRemoveStable(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.RemoveStable(test.i)
 
 			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
@@ -679,7 +743,11 @@ func TestArrayListRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalList.Remove(test.i)
 
 			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
@@ -707,7 +775,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			newList := NewFromSlice[string](test.originalList.elements)
 
 			assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
@@ -736,7 +808,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](it)
 
@@ -785,7 +861,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			first := test.originalList.Begin()
 			end := test.originalList.End()
 			newList := NewFromIterators[string](first, end)

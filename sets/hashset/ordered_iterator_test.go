@@ -66,6 +66,8 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -134,6 +136,8 @@ func TestArrayListIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -208,6 +212,8 @@ func TestArrayListIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -303,6 +309,8 @@ func TestArrayListIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -382,6 +390,8 @@ func TestArrayListIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -477,6 +487,8 @@ func TestArrayListIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -589,6 +601,8 @@ func TestArrayListIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -638,6 +652,8 @@ func TestArrayListIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.OrderedBegin(utils.BasicComparator[int])
@@ -686,6 +702,8 @@ func TestArrayListIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.OrderedBegin(utils.BasicComparator[int])
@@ -731,6 +749,8 @@ func TestArrayListIteratorGetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.OrderedBegin(utils.BasicComparator[int])
@@ -775,6 +795,8 @@ func TestArrayListIteratorSetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.OrderedBegin(utils.BasicComparator[int])
@@ -815,6 +837,8 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
@@ -858,6 +882,8 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
@@ -901,6 +927,8 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
@@ -944,6 +972,8 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).OrderedBegin(utils.BasicComparator[int])
@@ -988,6 +1018,8 @@ func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5), utils.BasicComparator[int])
@@ -1026,6 +1058,8 @@ func TestArrayListIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])

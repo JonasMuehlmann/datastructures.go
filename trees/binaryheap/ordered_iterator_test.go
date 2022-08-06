@@ -45,6 +45,8 @@ func TestHeapOrderedIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -91,6 +93,8 @@ func TestHeapOrderedIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
@@ -139,6 +143,8 @@ func TestHeapOrderedIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
@@ -186,6 +192,8 @@ func TestHeapOrderedIteratorGetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
@@ -231,6 +239,8 @@ func TestHeapOrderedIteratorSetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedFirst()
@@ -274,6 +284,8 @@ func TestHeapOrderedIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
@@ -321,6 +333,8 @@ func TestHeapOrderedIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
@@ -368,6 +382,8 @@ func TestHeapOrderedIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := test.map_.OrderedBegin()
@@ -411,6 +427,8 @@ func TestHeapOrderedIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			m := NewFromSlice[int](utils.BasicComparator[int], []int{1, 2, 4, 5})
@@ -471,6 +489,8 @@ func TestHeapOrderedIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -504,6 +524,8 @@ func TestHeapOrderedIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.map_.OrderedBegin()
@@ -575,6 +597,8 @@ func TestHeapOrderedIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -670,6 +694,8 @@ func TestHeapOrderedIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -748,6 +774,8 @@ func TestHeapOrderedIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -842,6 +870,8 @@ func TestHeapOrderedIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.map_)
@@ -954,6 +984,8 @@ func TestHeapOrderedIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 
@@ -1008,6 +1040,8 @@ func TestHeapOrderedIteratorMoveTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		testNameOrig := test.name
 		for _, iteratorInit := range []struct {
 			name string
@@ -1070,6 +1104,8 @@ func TestHeapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(NewFromSlice[int](utils.BasicComparator[int], []int{1, 2, 4, 5}))

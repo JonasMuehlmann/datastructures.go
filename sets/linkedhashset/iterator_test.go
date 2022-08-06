@@ -66,6 +66,8 @@ func TestLinkedHashSetIteratorIsValid(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -134,6 +136,8 @@ func TestLinkedHashSetIteratorIndex(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -206,6 +210,8 @@ func TestLinkedHashSetIteratorNext(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -301,6 +307,8 @@ func TestLinkedHashSetIteratorNextN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -380,6 +388,8 @@ func TestLinkedHashSetIteratorPrevious(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -475,6 +485,8 @@ func TestLinkedHashSetIteratorPreviousN(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -587,6 +599,8 @@ func TestLinkedHashSetIteratorMoveBy(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -666,6 +680,8 @@ func TestLinkedHashSetIteratorMoveTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])
@@ -711,6 +727,8 @@ func TestLinkedHashSetIteratorGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin(utils.BasicComparator[int])
@@ -759,6 +777,8 @@ func TestLinkedHashSetIteratorSet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin(utils.BasicComparator[int])
@@ -804,6 +824,8 @@ func TestLinkedHashSetIteratorGetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin(utils.BasicComparator[int])
@@ -848,6 +870,8 @@ func TestLinkedHashSetIteratorSetAt(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.list.Begin(utils.BasicComparator[int])
@@ -888,6 +912,8 @@ func TestLinkedHashSetIteratorDistanceTo(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
@@ -931,6 +957,8 @@ func TestLinkedHashSetIteratorIsAfter(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
@@ -974,6 +1002,8 @@ func TestLinkedHashSetIteratorIsBefore(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
@@ -1017,6 +1047,8 @@ func TestLinkedHashSetIteratorIsEqual(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it1 := New[int](1, 2, 3, 4, 5).Begin(utils.BasicComparator[int])
@@ -1061,6 +1093,8 @@ func TestLinkedHashSetIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(New[int](1, 2, 4, 5), utils.BasicComparator[int])
@@ -1099,6 +1133,8 @@ func TestLinkedHashSetIteratorSize(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			it := test.iteratorInit(test.list, utils.BasicComparator[int])

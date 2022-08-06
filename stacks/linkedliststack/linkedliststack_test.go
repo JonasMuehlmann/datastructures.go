@@ -42,6 +42,7 @@ import (
 // 	}
 
 // 	for _, test := range tests {
+
 // 		found := test.originalList.Contains(utils.BasicComparator[string], test.value)
 
 // 		assert.Equalf(t, test.found, found, test.name)
@@ -76,6 +77,7 @@ import (
 // 	}
 
 // 	for _, test := range tests {
+
 // 		position := test.originalList.IndexOf(utils.BasicComparator[string], test.value)
 
 // 		assert.Equalf(t, test.position, position, test.name)
@@ -102,7 +104,11 @@ func TestLinkedListStackGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			values := test.originalList.GetValues()
 
 			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
@@ -129,7 +135,11 @@ func TestLinkedListStackIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			isEmpty := test.originalList.IsEmpty()
 
 			assert.Equalf(t, test.isEmpty, isEmpty, test.name)
@@ -153,7 +163,11 @@ func TestLinkedListStackClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			isEmpty := test.originalList.IsEmpty()
 			assert.Equalf(t, test.originalList.Size() == 0, isEmpty, test.name)
 
@@ -194,7 +208,11 @@ func TestLinkedListStackPush(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			test.originalList.Push(test.valueToAdd)
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -227,7 +245,11 @@ func TestLinkedListStackPop(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			test.originalList.Pop()
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
@@ -263,7 +285,11 @@ func TestLinkedListStackPeek(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			value, found := test.originalList.Peek()
 
 			assert.Equalf(t, test.found, found, test.name)
@@ -296,7 +322,11 @@ func TestNewFromSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			newList := NewFromSlice[string](test.originalList.GetValues())
 
 			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
@@ -325,7 +355,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](it)
 
@@ -374,7 +408,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
+		test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+			t.Parallel()
 			first := test.originalList.Begin()
 			end := test.originalList.End()
 			newList := NewFromIterators[string](first, end)

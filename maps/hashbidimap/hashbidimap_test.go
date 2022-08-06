@@ -48,7 +48,11 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
 			assert.ElementsMatchf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
@@ -96,7 +100,11 @@ func TestPut(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
 			assert.ElementsMatchf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
@@ -142,7 +150,11 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			value, found := test.originalMap.Get(test.keyToGet)
 
 			assert.Equalf(t, test.value, value, test.name)
@@ -176,7 +188,11 @@ func TestGetKeys(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			keys := test.originalMap.GetKeys()
 
 			assert.ElementsMatchf(t, test.keys, keys, test.name)
@@ -209,7 +225,11 @@ func TestGetValues(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			values := test.originalMap.GetValues()
 
 			assert.ElementsMatchf(t, test.values, values, test.name)
@@ -242,7 +262,11 @@ func TestIsEmpty(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			isEmpty := test.originalMap.IsEmpty()
 
 			assert.Equal(t, test.isEmpty, isEmpty, test.name)
@@ -279,7 +303,11 @@ func TestClear(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			isEmptyBefore := test.originalMap.IsEmpty()
 			assert.Equal(t, test.isEmptyBefore, isEmptyBefore, test.name)
 
@@ -312,7 +340,11 @@ func TestNewFromIterator(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			it := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 
 			newMap := NewFromIterator[string, int](utils.BasicComparator[string], utils.BasicComparator[int], it)
@@ -343,7 +375,11 @@ func TestNewFromIterators(t *testing.T) {
 	}
 
 	for _, test := range tests {
+test := test
+
 		t.Run(test.name, func(t *testing.T) {
+
+t.Parallel()
 			first := test.originalMap.OrderedBegin(utils.BasicComparator[string])
 			end := test.originalMap.OrderedEnd(utils.BasicComparator[string])
 
