@@ -23,7 +23,7 @@ func (list *Queue[T]) NewOrderedIterator(q *Queue[T], index int) *OrderedIterato
 	return &OrderedIterator[T]{q.heap.NewOrderedIterator(q.heap, index)}
 }
 
-// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -37,7 +37,7 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return thisIndex - otherThisIndex
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -47,7 +47,7 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -57,7 +57,7 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {

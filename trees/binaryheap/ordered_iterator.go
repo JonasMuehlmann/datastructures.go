@@ -32,12 +32,12 @@ func (list *Heap[T]) NewOrderedIterator(l *Heap[T], index int) *OrderedIterator[
 	return &OrderedIterator[T]{heap: l, index: index, size: l.Size(), valueDirty: true}
 }
 
-// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
-// Get implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
 		return
@@ -70,7 +70,7 @@ func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	return it.value, true
 }
 
-// Set implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
 		return false
@@ -102,7 +102,7 @@ func (it *OrderedIterator[T]) Set(value T) bool {
 	return true
 }
 
-// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 // If other is of type IndexedOrderedIterator, IndexedOrderedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -113,7 +113,7 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return it.index - otherThis.index
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -123,7 +123,7 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -133,7 +133,7 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -143,7 +143,7 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	return it.DistanceTo(otherThis) == 0
 }
 
-// Next implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
 	it.valueDirty = true
@@ -151,7 +151,7 @@ func (it *OrderedIterator[T]) Next() bool {
 	return it.IsValid()
 }
 
-// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) NextN(n int) bool {
 	it.index = utils.Min(it.index+n, it.size)
 	it.valueDirty = true
@@ -159,7 +159,7 @@ func (it *OrderedIterator[T]) NextN(n int) bool {
 	return it.IsValid()
 }
 
-// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Previous() bool {
 	it.index = utils.Max(it.index-1, -1)
 	it.valueDirty = true
@@ -167,7 +167,7 @@ func (it *OrderedIterator[T]) Previous() bool {
 	return it.IsValid()
 }
 
-// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	it.index = utils.Max(it.index-n, -1)
 	it.valueDirty = true
@@ -175,7 +175,7 @@ func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	return it.IsValid()
 }
 
-// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
@@ -184,42 +184,42 @@ func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	return it.PreviousN(-n)
 }
 
-// Size implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Size() int {
 	return it.size
 }
 
-// Index implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
 
-// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
 
-// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsBegin() bool {
 	return it.index == -1
 }
 
-// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsEnd() bool {
 	return it.size == 0 || it.index == it.size
 }
 
-// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsFirst() bool {
 	return it.index == 0
 }
 
-// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsLast() bool {
 	return it.index == it.size-1
 }
 
-// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	if it.size == 0 || !it.heap.withinRange(i) {
 		return
@@ -234,7 +234,7 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	return iteratorCopy.Get()
 }
 
-// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	if it.size == 0 || !it.heap.withinRange(i) || i >= it.size {
 		return false

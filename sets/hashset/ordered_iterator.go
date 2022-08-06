@@ -42,32 +42,32 @@ func (m *Set[T]) NewOrderedIterator(s *Set[T], position int, comparator utils.Co
 	return it
 }
 
-// IsBegin implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsBegin() bool {
 	return it.index == -1
 }
 
-// IsEnd implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsEnd() bool {
 	return it.size == 0 || it.index == it.size
 }
 
-// IsFirst implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsFirst() bool {
 	return it.index == 0
 }
 
-// IsLast implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsLast() bool {
 	return it.index == it.size-1
 }
 
-// IsValid implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -77,7 +77,7 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	return it.DistanceTo(otherThis) == 0
 }
 
-// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -87,7 +87,7 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return it.index - otherThis.index
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -97,7 +97,7 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -107,12 +107,12 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-// Size implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Size() int {
 	return it.size
 }
 
-// Index implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Index() (index int, found bool) {
 	if !it.IsValid() {
 		found = false
@@ -126,7 +126,7 @@ func (it *OrderedIterator[T]) Index() (index int, found bool) {
 	return
 }
 
-// Next implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
 
@@ -140,7 +140,7 @@ func (it *OrderedIterator[T]) Next() bool {
 
 }
 
-// NextN implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) NextN(i int) bool {
 	it.index = utils.Min(it.index+i, it.size)
 
@@ -154,7 +154,7 @@ func (it *OrderedIterator[T]) NextN(i int) bool {
 
 }
 
-// Previous implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Previous() bool {
 	it.index = utils.Max(it.index-1, -1)
 
@@ -167,7 +167,7 @@ func (it *OrderedIterator[T]) Previous() bool {
 	return true
 }
 
-// PreviousN implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	it.index = utils.Max(it.index-n, -1)
 
@@ -180,7 +180,7 @@ func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	return true
 }
 
-// MoveBy implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
@@ -189,12 +189,12 @@ func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	return it.PreviousN(-n)
 }
 
-// MoveTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
 
-// Get implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
 		return
@@ -203,7 +203,7 @@ func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	return it.value, true
 }
 
-// GetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	if i < 0 || i >= it.size {
 		return
@@ -212,7 +212,7 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	return it.values[i], true
 }
 
-// Set implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
 		return false
@@ -224,7 +224,7 @@ func (it *OrderedIterator[T]) Set(value T) bool {
 	return true
 }
 
-// SetAt implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	if i < 0 || i >= it.size {
 		return false

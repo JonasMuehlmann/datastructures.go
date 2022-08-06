@@ -25,7 +25,7 @@ func (list *Map[TKey, TValue]) NewOrderedIterator(list_ *Map[TKey, TValue], inde
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain
 
-// DistanceTo implements ds.ReadWriteOrdCompBidRandCollIterator
+
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
@@ -36,7 +36,7 @@ func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) in
 	return it.OrderedIterator.DistanceTo(otherThis.OrderedIterator)
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -46,7 +46,7 @@ func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool 
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -56,7 +56,7 @@ func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool
 	return it.DistanceTo(otherThis) < 0
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandCollIterator
+
 func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {

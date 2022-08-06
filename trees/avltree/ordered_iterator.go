@@ -72,32 +72,32 @@ func (tree *Tree[TKey, TValue]) NewOrderedteratorAt(t *Tree[TKey, TValue], key T
 	return it
 }
 
-// IsBegin implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsBegin() bool {
 	return it.index <= -1
 }
 
-// IsEnd implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsEnd() bool {
 	return it.size == 0 || it.index >= it.size
 }
 
-// IsFirst implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsFirst() bool {
 	return it.index == 0
 }
 
-// IsLast implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsLast() bool {
 	return it.index == it.size-1
 }
 
-// IsValid implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
 
-// IsEqual implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -107,7 +107,7 @@ func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bo
 	return it.DistanceTo(otherThis) == 0
 }
 
-// DistanceTo implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -117,7 +117,7 @@ func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) in
 	return it.index - otherThis.index
 }
 
-// IsAfter implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -127,7 +127,7 @@ func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool 
 	return it.DistanceTo(otherThis) > 0
 }
 
-// IsBefore implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -137,7 +137,7 @@ func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool
 	return it.DistanceTo(otherThis) < 0
 }
 
-// Size implements ds.ReadWriteOrdCompBidRandColl
+
 func (it *OrderedIterator[TKey, TValue]) Size() int {
 	return it.size
 }
