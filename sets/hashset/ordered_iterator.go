@@ -23,7 +23,7 @@ type OrderedIterator[T comparable] struct {
 	size  int
 }
 
-func (m *Set[T]) NewOrderedIterator(s *Set[T], position int, comparator utils.Comparator[T]) *OrderedIterator[T] {
+func (s *Set[T]) NewOrderedIterator(position int, comparator utils.Comparator[T]) *OrderedIterator[T] {
 	keys := s.GetValues()
 	utils.Sort(keys, comparator)
 
@@ -42,31 +42,25 @@ func (m *Set[T]) NewOrderedIterator(s *Set[T], position int, comparator utils.Co
 	return it
 }
 
-
 func (it *OrderedIterator[T]) IsBegin() bool {
 	return it.index == -1
 }
-
 
 func (it *OrderedIterator[T]) IsEnd() bool {
 	return it.size == 0 || it.index == it.size
 }
 
-
 func (it *OrderedIterator[T]) IsFirst() bool {
 	return it.index == 0
 }
-
 
 func (it *OrderedIterator[T]) IsLast() bool {
 	return it.index == it.size-1
 }
 
-
 func (it *OrderedIterator[T]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
-
 
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -77,7 +71,6 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	return it.DistanceTo(otherThis) == 0
 }
 
-
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -86,7 +79,6 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 
 	return it.index - otherThis.index
 }
-
 
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -97,7 +89,6 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -107,11 +98,9 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-
 func (it *OrderedIterator[T]) Size() int {
 	return it.size
 }
-
 
 func (it *OrderedIterator[T]) Index() (index int, found bool) {
 	if !it.IsValid() {
@@ -126,7 +115,6 @@ func (it *OrderedIterator[T]) Index() (index int, found bool) {
 	return
 }
 
-
 func (it *OrderedIterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
 
@@ -139,7 +127,6 @@ func (it *OrderedIterator[T]) Next() bool {
 	return true
 
 }
-
 
 func (it *OrderedIterator[T]) NextN(i int) bool {
 	it.index = utils.Min(it.index+i, it.size)
@@ -154,7 +141,6 @@ func (it *OrderedIterator[T]) NextN(i int) bool {
 
 }
 
-
 func (it *OrderedIterator[T]) Previous() bool {
 	it.index = utils.Max(it.index-1, -1)
 
@@ -166,7 +152,6 @@ func (it *OrderedIterator[T]) Previous() bool {
 
 	return true
 }
-
 
 func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	it.index = utils.Max(it.index-n, -1)
@@ -180,7 +165,6 @@ func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	return true
 }
 
-
 func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
@@ -189,11 +173,9 @@ func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	return it.PreviousN(-n)
 }
 
-
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
-
 
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
@@ -203,7 +185,6 @@ func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	return it.value, true
 }
 
-
 func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	if i < 0 || i >= it.size {
 		return
@@ -211,7 +192,6 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 
 	return it.values[i], true
 }
-
 
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
@@ -223,7 +203,6 @@ func (it *OrderedIterator[T]) Set(value T) bool {
 
 	return true
 }
-
 
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	if i < 0 || i >= it.size {

@@ -581,21 +581,21 @@ func distanceBetween[TKey comparable, TValue any](comparator utils.Comparator[TK
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree, -1)
+	return tree.NewOrderedIterator(-1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree, tree.Size())
+	return tree.NewOrderedIterator(tree.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree, 0)
+	return tree.NewOrderedIterator(0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree, tree.Size()-1)
+	return tree.NewOrderedIterator(tree.Size() - 1)
 }

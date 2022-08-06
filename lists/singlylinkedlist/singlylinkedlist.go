@@ -369,21 +369,21 @@ func (list *List[T]) withinRange(index int) bool {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (list *List[T]) Begin() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return list.NewIterator(list, -1)
+	return list.NewIterator(-1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (list *List[T]) End() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return list.NewIterator(list, list.size)
+	return list.NewIterator(list.size)
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (list *List[T]) First() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return list.NewIterator(list, 0)
+	return list.NewIterator(0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (list *List[T]) Last() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return list.NewIterator(list, list.size-1)
+	return list.NewIterator(list.size - 1)
 }

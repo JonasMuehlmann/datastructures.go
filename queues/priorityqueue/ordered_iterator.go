@@ -19,10 +19,9 @@ type OrderedIterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Queue[T]) NewOrderedIterator(q *Queue[T], index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{q.heap.NewOrderedIterator(q.heap, index)}
+func (list *Queue[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
+	return &OrderedIterator[T]{list.heap.NewOrderedIterator(index)}
 }
-
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
@@ -37,7 +36,6 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return thisIndex - otherThisIndex
 }
 
-
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -47,7 +45,6 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -56,7 +53,6 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 
 	return it.DistanceTo(otherThis) < 0
 }
-
 
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])

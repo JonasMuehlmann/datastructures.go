@@ -19,12 +19,11 @@ type Iterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Stack[T]) NewIterator(list_ *Stack[T], index int) *Iterator[T] {
-	return &Iterator[T]{list_.list.NewIterator(list_.list, index)}
+func (list *Stack[T]) NewIterator(index int) *Iterator[T] {
+	return &Iterator[T]{list.list.NewIterator(index)}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain
-
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
@@ -39,7 +38,6 @@ func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return thisIndex - otherThisIndex
 }
 
-
 func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -49,7 +47,6 @@ func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -58,7 +55,6 @@ func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 
 	return it.DistanceTo(otherThis) < 0
 }
-
 
 func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
@@ -83,11 +79,9 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 // 	return &Iterator[T]{stack: list_, index: index}
 // }
 
-
 // func (it *Iterator[T]) IsValid() bool {
 // 	return it.stack.withinRange(it.index)
 // }
-
 
 // func (it *Iterator[T]) Get() (value T, found bool) {
 // 	if it.stack.Size() == 0 || !it.IsValid() {
@@ -96,7 +90,6 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 
 // 	return it.stack.list.Get(it.index)
 // }
-
 
 // func (it *Iterator[T]) Set(value T) bool {
 // 	if it.stack.Size() == 0 || !it.IsValid() {
@@ -108,41 +101,33 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 // 	return true
 // }
 
-
 // func (it *Iterator[T]) Next() {
 // 	it.index++
 // }
-
 
 // func (it *Iterator[T]) NextN(i int) {
 // 	it.index += i
 // }
 
-
 // func (it *Iterator[T]) Previous() {
 // 	it.index--
 // }
-
 
 // func (it *Iterator[T]) PreviousN(n int) {
 // 	it.index -= n
 // }
 
-
 // func (it *Iterator[T]) MoveBy(n int) {
 // 	it.index += n
 // }
-
 
 // func (it *Iterator[T]) Size() int {
 // 	return it.stack.Size()
 // }
 
-
 // func (it *Iterator[T]) Index() (int, bool) {
 // 	return it.index, true
 // }
-
 
 // func (it *Iterator[T]) MoveTo(i int) bool {
 // 	it.index = i
@@ -150,26 +135,21 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 // 	return true
 // }
 
-
 // func (it *Iterator[T]) IsBegin() bool {
 // 	return it.index == -1
 // }
-
 
 // func (it *Iterator[T]) IsEnd() bool {
 // 	return it.stack.Size() == 0 || it.index == it.stack.Size()
 // }
 
-
 // func (it *Iterator[T]) IsFirst() bool {
 // 	return it.index == 0
 // }
 
-
 // func (it *Iterator[T]) IsLast() bool {
 // 	return it.index == it.stack.Size()-1
 // }
-
 
 // func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 // 	if it.stack.Size() == 0 || !it.stack.withinRange(i) {
@@ -178,7 +158,6 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 
 // 	return it.stack.list.Get(i)
 // }
-
 
 // func (it *Iterator[T]) SetAt(i int, value T) bool {
 // 	if it.stack.Size() == 0 || !it.stack.withinRange(i) {

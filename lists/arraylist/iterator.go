@@ -23,21 +23,19 @@ type Iterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *List[T]) NewIterator(l *List[T], index int) *Iterator[T] {
-	it := &Iterator[T]{list: l, index: index, size: l.Size()}
+func (list *List[T]) NewIterator(index int) *Iterator[T] {
+	it := &Iterator[T]{list: list, index: index, size: list.Size()}
 
 	if it.IsValid() {
-		it.value = l.elements[it.index]
+		it.value = list.elements[it.index]
 	}
 
 	return it
 }
 
-
 func (it *Iterator[T]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
-
 
 func (it *Iterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
@@ -46,7 +44,6 @@ func (it *Iterator[T]) Get() (value T, found bool) {
 
 	return it.value, true
 }
-
 
 func (it *Iterator[T]) Set(value T) bool {
 	if !it.IsValid() {
@@ -58,7 +55,6 @@ func (it *Iterator[T]) Set(value T) bool {
 	return true
 }
 
-
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*Iterator[T])
@@ -69,7 +65,6 @@ func (it *Iterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return it.index - otherThis.index
 }
 
-
 func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -78,7 +73,6 @@ func (it *Iterator[T]) IsAfter(other ds.OrderedIterator) bool {
 
 	return it.DistanceTo(otherThis) > 0
 }
-
 
 func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
@@ -89,7 +83,6 @@ func (it *Iterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-
 func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*Iterator[T])
 	if !ok {
@@ -98,7 +91,6 @@ func (it *Iterator[T]) IsEqual(other ds.ComparableIterator) bool {
 
 	return it.DistanceTo(otherThis) == 0
 }
-
 
 func (it *Iterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
@@ -112,7 +104,6 @@ func (it *Iterator[T]) Next() bool {
 	return true
 }
 
-
 func (it *Iterator[T]) NextN(i int) bool {
 	it.index = utils.Min(it.index+i, it.size)
 
@@ -124,7 +115,6 @@ func (it *Iterator[T]) NextN(i int) bool {
 
 	return true
 }
-
 
 func (it *Iterator[T]) Previous() bool {
 	it.index = utils.Max(it.index-1, -1)
@@ -138,7 +128,6 @@ func (it *Iterator[T]) Previous() bool {
 	return true
 }
 
-
 func (it *Iterator[T]) PreviousN(n int) bool {
 	it.index = utils.Max(it.index-n, -1)
 
@@ -151,7 +140,6 @@ func (it *Iterator[T]) PreviousN(n int) bool {
 	return true
 }
 
-
 func (it *Iterator[T]) MoveBy(n int) bool {
 	if n > 0 {
 		return it.NextN(n)
@@ -162,41 +150,33 @@ func (it *Iterator[T]) MoveBy(n int) bool {
 	return it.IsValid()
 }
 
-
 func (it *Iterator[T]) Size() int {
 	return it.size
 }
-
 
 func (it *Iterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
 
-
 func (it *Iterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
-
 
 func (it *Iterator[T]) IsBegin() bool {
 	return it.index == -1
 }
 
-
 func (it *Iterator[T]) IsEnd() bool {
 	return it.size == 0 || it.index == it.size
 }
-
 
 func (it *Iterator[T]) IsFirst() bool {
 	return it.index == 0
 }
 
-
 func (it *Iterator[T]) IsLast() bool {
 	return it.index == it.size-1
 }
-
 
 func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 	if it.size == 0 || !it.list.withinRange(i) {
@@ -205,7 +185,6 @@ func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 
 	return it.list.elements[i], true
 }
-
 
 func (it *Iterator[T]) SetAt(i int, value T) bool {
 	if it.size == 0 || !it.list.withinRange(i) {

@@ -137,21 +137,21 @@ func (queue *Queue[T]) ToString() string {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (stack *Queue[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewOrderedIterator(stack, -1)
+	return stack.NewOrderedIterator(-1)
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (stack *Queue[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewOrderedIterator(stack, stack.Size())
+	return stack.NewOrderedIterator(stack.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (stack *Queue[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewOrderedIterator(stack, 0)
+	return stack.NewOrderedIterator(0)
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (stack *Queue[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return stack.NewOrderedIterator(stack, stack.Size()-1)
+	return stack.NewOrderedIterator(stack.Size() - 1)
 }

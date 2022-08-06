@@ -20,12 +20,11 @@ type OrderedIterator[T comparable] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (set *Set[T]) NewOrderedIterator(list_ *Set[T], index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{list_.tree.NewOrderedIterator(list_.tree, index), set}
+func (set *Set[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
+	return &OrderedIterator[T]{set.tree.NewOrderedIterator(index), set}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain
-
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
@@ -42,7 +41,6 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return it.OrderedIterator.DistanceTo(otherThis.OrderedIterator)
 }
 
-
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -52,7 +50,6 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -61,7 +58,6 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 
 	return it.DistanceTo(otherThis) < 0
 }
-
 
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])

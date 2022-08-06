@@ -24,32 +24,32 @@ type OrderedIterator[TKey comparable, TValue any] struct {
 }
 
 //  returns a stateful iterator whose elements are key/value pairs.
-func (tree *Tree[TKey, TValue]) NewOrderedIterator(t *Tree[TKey, TValue], position int) *OrderedIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) NewOrderedIterator(position int) *OrderedIterator[TKey, TValue] {
 	it := &OrderedIterator[TKey, TValue]{
-		tree:  t,
+		tree:  tree,
 		index: 0,
-		size:  t.Size(),
+		size:  tree.Size(),
 	}
 
-	if t.size == 0 {
+	if tree.size == 0 {
 		return it
 	}
 
 	switch position {
 	case -1:
-		it.node = t.Left()
+		it.node = tree.Left()
 		it.index = -1
 	case 0:
-		it.node = t.Left()
+		it.node = tree.Left()
 		it.index = 0
 		it.key = it.node.Key
 		it.value = it.node.Value
-	case t.size:
-		it.node = t.Right()
-		it.index = t.size
-	case t.size - 1:
-		it.node = t.Right()
-		it.index = t.size - 1
+	case tree.size:
+		it.node = tree.Right()
+		it.index = tree.size
+	case tree.size - 1:
+		it.node = tree.Right()
+		it.index = tree.size - 1
 		it.key = it.node.Key
 		it.value = it.node.Value
 	}
@@ -72,31 +72,25 @@ func (tree *Tree[TKey, TValue]) NewOrderedteratorAt(t *Tree[TKey, TValue], key T
 	return it
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsBegin() bool {
 	return it.index <= -1
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) IsEnd() bool {
 	return it.size == 0 || it.index >= it.size
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsFirst() bool {
 	return it.index == 0
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) IsLast() bool {
 	return it.index == it.size-1
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
@@ -107,7 +101,6 @@ func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bo
 	return it.DistanceTo(otherThis) == 0
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -116,7 +109,6 @@ func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) in
 
 	return it.index - otherThis.index
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
@@ -127,7 +119,6 @@ func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool 
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -136,7 +127,6 @@ func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool
 
 	return it.DistanceTo(otherThis) < 0
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) Size() int {
 	return it.size

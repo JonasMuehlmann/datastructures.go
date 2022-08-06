@@ -19,12 +19,11 @@ type OrderedIterator[TKey comparable, TValue any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Map[TKey, TValue]) NewOrderedIterator(list_ *Map[TKey, TValue], index int) *OrderedIterator[TKey, TValue] {
-	return &OrderedIterator[TKey, TValue]{list_.forwardMap.NewOrderedIterator(&list_.forwardMap, index)}
+func (list *Map[TKey, TValue]) NewOrderedIterator(index int) *OrderedIterator[TKey, TValue] {
+	return &OrderedIterator[TKey, TValue]{list.forwardMap.NewOrderedIterator(index)}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain
-
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) int {
@@ -36,7 +35,6 @@ func (it *OrderedIterator[TKey, TValue]) DistanceTo(other ds.OrderedIterator) in
 	return it.OrderedIterator.DistanceTo(otherThis.OrderedIterator)
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -46,7 +44,6 @@ func (it *OrderedIterator[TKey, TValue]) IsAfter(other ds.OrderedIterator) bool 
 	return it.DistanceTo(otherThis) > 0
 }
 
-
 func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])
 	if !ok {
@@ -55,7 +52,6 @@ func (it *OrderedIterator[TKey, TValue]) IsBefore(other ds.OrderedIterator) bool
 
 	return it.DistanceTo(otherThis) < 0
 }
-
 
 func (it *OrderedIterator[TKey, TValue]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[TKey, TValue])

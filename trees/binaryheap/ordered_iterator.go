@@ -28,15 +28,13 @@ type OrderedIterator[T any] struct {
 }
 
 // NewOrderedIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Heap[T]) NewOrderedIterator(l *Heap[T], index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{heap: l, index: index, size: l.Size(), valueDirty: true}
+func (list *Heap[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
+	return &OrderedIterator[T]{heap: list, index: index, size: list.Size(), valueDirty: true}
 }
-
 
 func (it *OrderedIterator[T]) IsValid() bool {
 	return it.size > 0 && !it.IsBegin() && !it.IsEnd()
 }
-
 
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
@@ -70,7 +68,6 @@ func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	return it.value, true
 }
 
-
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
 		return false
@@ -102,7 +99,6 @@ func (it *OrderedIterator[T]) Set(value T) bool {
 	return true
 }
 
-
 // If other is of type IndexedOrderedIterator, IndexedOrderedIterator.Index() will be used, possibly executing in O(1)
 func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -113,7 +109,6 @@ func (it *OrderedIterator[T]) DistanceTo(other ds.OrderedIterator) int {
 	return it.index - otherThis.index
 }
 
-
 func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -122,7 +117,6 @@ func (it *OrderedIterator[T]) IsAfter(other ds.OrderedIterator) bool {
 
 	return it.DistanceTo(otherThis) > 0
 }
-
 
 func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
@@ -133,7 +127,6 @@ func (it *OrderedIterator[T]) IsBefore(other ds.OrderedIterator) bool {
 	return it.DistanceTo(otherThis) < 0
 }
 
-
 func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	otherThis, ok := other.(*OrderedIterator[T])
 	if !ok {
@@ -143,14 +136,12 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 	return it.DistanceTo(otherThis) == 0
 }
 
-
 func (it *OrderedIterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
 	it.valueDirty = true
 
 	return it.IsValid()
 }
-
 
 func (it *OrderedIterator[T]) NextN(n int) bool {
 	it.index = utils.Min(it.index+n, it.size)
@@ -159,7 +150,6 @@ func (it *OrderedIterator[T]) NextN(n int) bool {
 	return it.IsValid()
 }
 
-
 func (it *OrderedIterator[T]) Previous() bool {
 	it.index = utils.Max(it.index-1, -1)
 	it.valueDirty = true
@@ -167,14 +157,12 @@ func (it *OrderedIterator[T]) Previous() bool {
 	return it.IsValid()
 }
 
-
 func (it *OrderedIterator[T]) PreviousN(n int) bool {
 	it.index = utils.Max(it.index-n, -1)
 	it.valueDirty = true
 
 	return it.IsValid()
 }
-
 
 func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	if n > 0 {
@@ -184,41 +172,33 @@ func (it *OrderedIterator[T]) MoveBy(n int) bool {
 	return it.PreviousN(-n)
 }
 
-
 func (it *OrderedIterator[T]) Size() int {
 	return it.size
 }
-
 
 func (it *OrderedIterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
 
-
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
-
 
 func (it *OrderedIterator[T]) IsBegin() bool {
 	return it.index == -1
 }
 
-
 func (it *OrderedIterator[T]) IsEnd() bool {
 	return it.size == 0 || it.index == it.size
 }
-
 
 func (it *OrderedIterator[T]) IsFirst() bool {
 	return it.index == 0
 }
 
-
 func (it *OrderedIterator[T]) IsLast() bool {
 	return it.index == it.size-1
 }
-
 
 func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	if it.size == 0 || !it.heap.withinRange(i) {
@@ -229,11 +209,10 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 		return it.Get()
 	}
 
-	iteratorCopy := it.heap.NewOrderedIterator(it.heap, i)
+	iteratorCopy := it.heap.NewOrderedIterator(i)
 
 	return iteratorCopy.Get()
 }
-
 
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	if it.size == 0 || !it.heap.withinRange(i) || i >= it.size {
@@ -244,7 +223,7 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 		return it.Set(value)
 	}
 
-	iteratorCopy := it.heap.NewOrderedIterator(it.heap, i)
+	iteratorCopy := it.heap.NewOrderedIterator(i)
 	it.heap.list.Set(iteratorCopy.index, value)
 	it.heap.bubbleDownIndex(iteratorCopy.index)
 
