@@ -34,10 +34,12 @@ type element[T any] struct {
 	next  *element[T]
 }
 
-func (list *List[T]) PopBack(n int) {
+func (list *List[T]) PopBack(n int) (popped []T) {
 	if list.size < n || n == 0 || list.size == 0 {
 		return
 	}
+
+	popped = make([]T, 0, n)
 
 	e := list.first
 
@@ -45,23 +47,36 @@ func (list *List[T]) PopBack(n int) {
 		e = e.next
 	}
 
+	eBackup := e
+	for e.next != nil {
+		e = e.next
+		popped = append(popped, e.value)
+	}
+	e = eBackup
+
 	e.next = nil
 	list.last = e
 
 	list.size -= n
+
+	return
 }
 
-func (list *List[T]) PopFront(n int) {
+func (list *List[T]) PopFront(n int) (popped []T) {
 	if list.size < n || n == 0 || list.size == 0 {
 		return
 	}
 
+	popped = make([]T, 0, n)
+
 	for i := 0; i < n; i++ {
+		popped = append(popped, list.first.value)
 		list.first = list.first.next
 	}
 
 	list.size -= n
 
+	return
 }
 
 // New instantiates a new list and adds the passed values, if any, to the list

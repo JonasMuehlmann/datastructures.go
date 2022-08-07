@@ -27,8 +27,8 @@ type List[T any] interface {
 
 	PushBack(value ...T)
 	PushFront(value ...T)
-	PopBack(n int)
-	PopFront(n int)
+	PopBack(n int) []T
+	PopFront(n int) []T
 
 	ds.Container[T]
 }

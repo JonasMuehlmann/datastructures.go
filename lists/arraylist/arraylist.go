@@ -100,15 +100,24 @@ func (list *List[T]) PushFront(values ...T) {
 	list.elements = append(values, list.elements...)
 }
 
-func (list *List[T]) PopBack(n int) {
+func (list *List[T]) PopBack(n int) (popped []T) {
 	if len(list.elements) > 0 && len(list.elements) >= n {
+		popped = list.elements[len(list.elements)-n:]
+
 		list.elements = list.elements[:len(list.elements)-n]
 	}
+
+	return
 }
-func (list *List[T]) PopFront(n int) {
+
+func (list *List[T]) PopFront(n int) (popped []T) {
 	if len(list.elements) > 0 && len(list.elements) >= n {
+		popped = list.elements[:n]
+
 		list.elements = list.elements[n:]
 	}
+
+	return
 }
 
 // Get returns the element at index.

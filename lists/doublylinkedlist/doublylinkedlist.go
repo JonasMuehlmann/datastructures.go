@@ -79,31 +79,42 @@ func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableI
 	return list
 }
 
-func (list *List[T]) PopBack(n int) {
+func (list *List[T]) PopBack(n int) (popped []T) {
 	if list.size < n || n == 0 || list.size == 0 {
 		return
 	}
 
+	popped = make([]T, 0, n)
+
 	for i := 0; i < n; i++ {
+		popped = append(popped, list.last.value)
+
 		list.last = list.last.prev
 		list.last.next = nil
 	}
 
 	list.size -= n
+
+	return
 }
 
-func (list *List[T]) PopFront(n int) {
+func (list *List[T]) PopFront(n int) (popped []T) {
 	if list.size < n || n == 0 || list.size == 0 {
 		return
 	}
 
+	popped = make([]T, 0, n)
+
 	for i := 0; i < n; i++ {
+		popped = append(popped, list.first.value)
+
 		list.first = list.first.next
 		list.first.prev = nil
 	}
 
 	list.size -= n
 
+	return
 }
 
 // Add appends a value (one or more) at the end of the list (same as Append())
