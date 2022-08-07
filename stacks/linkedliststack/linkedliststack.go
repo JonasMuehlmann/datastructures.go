@@ -65,15 +65,17 @@ func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableI
 
 // Push adds a value onto the top of the stack
 func (stack *Stack[T]) Push(value T) {
-	stack.list.PushFront(value)
+	stack.list.PushBack(value)
 }
 
 // Pop removes top element on stack and returns it, or nil if stack is empty.
 // Second return parameter is true, unless the stack was empty and there was nothing to pop.
 func (stack *Stack[T]) Pop() (value T, ok bool) {
-	value, ok = stack.list.Get(0)
-	stack.list.Remove(0)
-	return
+	if stack.Size() == 0 {
+		return
+	}
+
+	return stack.list.PopBack(1)[0], true
 }
 
 // Peek returns top element on the stack without removing it, or nil if stack is empty.
