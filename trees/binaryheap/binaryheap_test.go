@@ -21,18 +21,17 @@ func TestBinaryHeapGetValues(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
+		newList      []string
 	}{
 		{
 			name:         "empty list",
 			originalList: New[string](utils.BasicComparator[string]),
+			newList:      []string{},
 		},
 		{
 			name:         "3 items, not found",
 			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
-		},
-		{
-			name:         "3 items, found",
-			originalList: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
+			newList:      []string{"bar", "baz", "foo"},
 		},
 	}
 
@@ -44,7 +43,7 @@ func TestBinaryHeapGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
-			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
+			assert.Equalf(t, test.newList, values, test.name)
 		})
 	}
 }
@@ -129,14 +128,14 @@ func TestBinaryHeapPush(t *testing.T) {
 			name:         "1 item",
 			originalList: New[string](utils.BasicComparator[string], "foo"),
 			valueToAdd:   "bar",
-			newItems:     []string{"foo", "bar"},
+			newItems:     []string{"bar", "foo"},
 		},
 
 		{
 			name:         "list with 4 items, remove 1",
 			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
 			valueToAdd:   "foo",
-			newItems:     []string{"foo", "bar", "baz", "foo"},
+			newItems:     []string{"bar", "baz", "foo", "foo"},
 		},
 	}
 
@@ -148,7 +147,7 @@ func TestBinaryHeapPush(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Push(test.valueToAdd)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -173,7 +172,7 @@ func TestBinaryHeapPop(t *testing.T) {
 		{
 			name:         "list with 4 items, remove 1",
 			originalList: New[string](utils.BasicComparator[string], "foo", "bar", "baz"),
-			newItems:     []string{"foo", "baz"},
+			newItems:     []string{"baz", "foo"},
 		},
 	}
 
@@ -185,7 +184,7 @@ func TestBinaryHeapPop(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Pop()
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -262,7 +261,7 @@ func TestBinaryHeapNewFromSlice(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](utils.BasicComparator[string], test.originalList.GetValues())
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
@@ -296,7 +295,7 @@ func TestBinaryHeapNewFromIterator(t *testing.T) {
 			it := test.originalList.OrderedBegin()
 			newList := NewFromIterator[string](utils.BasicComparator[string], it)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
@@ -350,7 +349,7 @@ func TestBinaryHeapNewFromIterators(t *testing.T) {
 			end := test.originalList.OrderedEnd()
 			newList := NewFromIterators[string](utils.BasicComparator[string], OrderedFirst, end)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
