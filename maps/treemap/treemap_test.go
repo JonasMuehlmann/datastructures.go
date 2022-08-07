@@ -56,7 +56,7 @@ func TestTreeMapRemove(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Remove(utils.BasicComparator[string], test.toRemove)
 
-			assert.ElementsMatchf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
+			assert.Equalf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
 		})
 	}
 }
@@ -108,7 +108,7 @@ func TestTreeMapPut(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalMap.Put(test.keyToAdd, test.valueToAdd)
 
-			assert.ElementsMatchf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
+			assert.Equalf(t, test.originalMap.GetKeys(), test.newMap.GetKeys(), test.name)
 		})
 	}
 }
@@ -184,7 +184,7 @@ func TestTreeMapGetKeys(t *testing.T) {
 		{
 			name:        "3 items",
 			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
-			keys:        []string{"foo", "bar", "baz"},
+			keys:        []string{"bar", "baz", "foo"},
 		},
 	}
 
@@ -196,7 +196,7 @@ func TestTreeMapGetKeys(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			keys := test.originalMap.GetKeys()
 
-			assert.ElementsMatchf(t, test.keys, keys, test.name)
+			assert.Equalf(t, test.keys, keys, test.name)
 		})
 	}
 }
@@ -221,7 +221,7 @@ func TestTreeMapGetValues(t *testing.T) {
 		{
 			name:        "3 items",
 			originalMap: NewFromMap[string, int](utils.BasicComparator[string], map[string]int{"foo": 1, "bar": 2, "baz": 3}),
-			values:      []int{1, 2, 3},
+			values:      []int{2, 3, 1},
 		},
 	}
 
@@ -233,7 +233,7 @@ func TestTreeMapGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalMap.GetValues()
 
-			assert.ElementsMatchf(t, test.values, values, test.name)
+			assert.Equalf(t, test.values, values, test.name)
 		})
 	}
 }
@@ -350,7 +350,7 @@ func TestTreeMapNewFromIterator(t *testing.T) {
 
 			newMap := NewFromIterator[string, int](utils.BasicComparator[string], it)
 
-			assert.ElementsMatchf(t, test.originalMap.GetKeys(), newMap.GetKeys(), test.name)
+			assert.Equalf(t, test.originalMap.GetKeys(), newMap.GetKeys(), test.name)
 		})
 	}
 
@@ -386,7 +386,7 @@ func TestTreeMapNewFromIterators(t *testing.T) {
 
 			newMap := NewFromIterators[string, int](utils.BasicComparator[string], first, end)
 
-			assert.ElementsMatchf(t, test.originalMap.GetKeys(), newMap.GetKeys(), test.name)
+			assert.Equalf(t, test.originalMap.GetKeys(), newMap.GetKeys(), test.name)
 		})
 	}
 
