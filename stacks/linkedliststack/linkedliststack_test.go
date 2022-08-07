@@ -113,7 +113,7 @@ func TestLinkedListStackGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
-			assert.ElementsMatchf(t, test.originalList.list.GetValues(), values, test.name)
+			assert.Equalf(t, test.originalList.list.GetValues(), values, test.name)
 		})
 	}
 }
@@ -217,7 +217,7 @@ func TestLinkedListStackPush(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Push(test.valueToAdd)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.newItems, test.originalList.GetValues(), test.name)
 		})
 	}
 }
@@ -254,7 +254,7 @@ func TestLinkedListStackPop(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Pop()
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.newItems, test.originalList.GetValues(), test.name)
 		})
 	}
 }
@@ -331,7 +331,7 @@ func TestLinkedListStackNewFromSlice(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](test.originalList.GetValues())
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
@@ -365,7 +365,7 @@ func TestLinkedListStackNewFromIterator(t *testing.T) {
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](it)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
@@ -419,7 +419,7 @@ func TestLinkedListStackNewFromIterators(t *testing.T) {
 			end := test.originalList.End()
 			newList := NewFromIterators[string](first, end)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
