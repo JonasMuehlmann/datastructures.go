@@ -638,22 +638,22 @@ func nodeColor[TKey comparable, TValue any](node *Node[TKey, TValue]) color {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(-1)
+	return tree.NewOrderedIterator(-1, tree.Size())
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 
 func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree.Size())
+	return tree.NewOrderedIterator(tree.Size(), tree.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(0)
+	return tree.NewOrderedIterator(0, tree.Size())
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
-	return tree.NewOrderedIterator(tree.Size() - 1)
+	return tree.NewOrderedIterator(tree.Size()-1, tree.Size())
 }

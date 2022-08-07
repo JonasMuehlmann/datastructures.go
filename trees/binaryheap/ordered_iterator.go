@@ -28,8 +28,12 @@ type OrderedIterator[T any] struct {
 }
 
 // NewOrderedIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Heap[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{heap: list, index: index, size: list.Size(), valueDirty: true}
+func (list *Heap[T]) NewOrderedIterator(index int, size int) *OrderedIterator[T] {
+	it := &OrderedIterator[T]{heap: list, index: index, size: size, valueDirty: true}
+	it.size = utils.Min(list.Size(), size)
+	it.size = utils.Max(list.Size(), -1)
+
+	return it
 }
 
 func (it *OrderedIterator[T]) IsValid() bool {

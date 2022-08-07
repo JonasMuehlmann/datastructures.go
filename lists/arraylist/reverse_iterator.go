@@ -23,8 +23,10 @@ type ReverseIterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *List[T]) NewReverseIterator(index int) *ReverseIterator[T] {
-	it := &ReverseIterator[T]{list: list, index: index, size: list.Size()}
+func (list *List[T]) NewReverseIterator(index int, size int) *ReverseIterator[T] {
+	it := &ReverseIterator[T]{list: list, index: index, size: size}
+	it.size = utils.Min(list.Size(), size)
+	it.size = utils.Max(list.Size(), -1)
 
 	if it.IsValid() {
 		it.value = list.elements[it.index]

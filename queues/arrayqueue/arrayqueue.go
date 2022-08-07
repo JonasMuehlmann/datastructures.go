@@ -145,21 +145,21 @@ func (queue *Queue[T]) withinRange(index int) bool {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (queue *Queue[T]) Begin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return queue.NewIterator(-1)
+	return queue.NewIterator(-1, queue.Size())
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (queue *Queue[T]) End() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return queue.NewIterator(queue.list.Size())
+	return queue.NewIterator(queue.list.Size(), queue.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (queue *Queue[T]) First() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return queue.NewIterator(0)
+	return queue.NewIterator(0, queue.Size())
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (queue *Queue[T]) Last() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return queue.NewIterator(queue.list.Size() - 1)
+	return queue.NewIterator(queue.list.Size()-1, queue.Size())
 }

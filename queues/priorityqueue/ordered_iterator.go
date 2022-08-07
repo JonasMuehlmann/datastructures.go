@@ -19,8 +19,8 @@ type OrderedIterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Queue[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{list.heap.NewOrderedIterator(index)}
+func (list *Queue[T]) NewOrderedIterator(index int, size int) *OrderedIterator[T] {
+	return &OrderedIterator[T]{list.heap.NewOrderedIterator(index, size)}
 }
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)

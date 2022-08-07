@@ -24,14 +24,16 @@ type Iterator[T comparable] struct {
 	size  int
 }
 
-func (s *Set[T]) NewIterator(position int, comparator utils.Comparator[T]) *Iterator[T] {
+func (s *Set[T]) NewIterator(position int, size int, comparator utils.Comparator[T]) *Iterator[T] {
 	it := &Iterator[T]{
 		s:             s,
-		orderIterator: s.ordering.NewIterator(position),
+		orderIterator: s.ordering.NewIterator(position, size),
 		comparator:    comparator,
 		index:         position,
-		size:          s.Size(),
+		size:          size,
 	}
+	it.size = utils.Min(s.Size(), size)
+	it.size = utils.Max(s.Size(), -1)
 
 	it.value, _ = it.orderIterator.Get()
 

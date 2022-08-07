@@ -125,21 +125,21 @@ func (stack *Stack[T]) withinRange(index int) bool {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (stack *Stack[T]) Begin() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return stack.NewIterator(-1)
+	return stack.NewIterator(-1, stack.Size())
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (stack *Stack[T]) End() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return stack.NewIterator(stack.Size())
+	return stack.NewIterator(stack.Size(), stack.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (stack *Stack[T]) First() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return stack.NewIterator(0)
+	return stack.NewIterator(0, stack.Size())
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (stack *Stack[T]) Last() ds.ReadWriteOrdCompForRandCollIterator[int, T] {
-	return stack.NewIterator(stack.Size() - 1)
+	return stack.NewIterator(stack.Size()-1, stack.Size())
 }

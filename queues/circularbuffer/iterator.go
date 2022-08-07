@@ -23,8 +23,8 @@ type Iterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Queue[T]) NewIterator(index int) *Iterator[T] {
-	it := &Iterator[T]{stack: list, index: 0, size: list.size}
+func (list *Queue[T]) NewIterator(index int, size int) *Iterator[T] {
+	it := &Iterator[T]{stack: list, index: 0, size: size}
 
 	it.MoveTo(index)
 

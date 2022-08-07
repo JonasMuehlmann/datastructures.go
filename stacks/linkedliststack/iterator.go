@@ -18,8 +18,8 @@ type Iterator[T any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Stack[T]) NewIterator(index int) *Iterator[T] {
-	return &Iterator[T]{list.list.NewIterator(index)}
+func (list *Stack[T]) NewIterator(index int, size int) *Iterator[T] {
+	return &Iterator[T]{list.list.NewIterator(index, size)}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain

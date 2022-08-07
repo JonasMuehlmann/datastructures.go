@@ -23,8 +23,10 @@ type Iterator[T any] struct {
 }
 
 // Iterator returns a stateful iterator whose values can be fetched by an index.
-func (list *List[T]) NewIterator(position int) *Iterator[T] {
-	it := &Iterator[T]{list: list, index: position, size: list.Size()}
+func (list *List[T]) NewIterator(position int, size int) *Iterator[T] {
+	it := &Iterator[T]{list: list, index: position, size: size}
+	it.size = utils.Min(list.Size(), size)
+	it.size = utils.Max(list.Size(), -1)
 
 	it.element = list.first
 	it.MoveTo(position)

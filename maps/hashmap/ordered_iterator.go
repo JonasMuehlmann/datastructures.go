@@ -24,7 +24,7 @@ type OrderedIterator[TKey comparable, TValue any] struct {
 	size  int
 }
 
-func (m *Map[TKey, TValue]) NewOrderedIterator(position int, comparator utils.Comparator[TKey]) *OrderedIterator[TKey, TValue] {
+func (m *Map[TKey, TValue]) NewOrderedIterator(position int, size int, comparator utils.Comparator[TKey]) *OrderedIterator[TKey, TValue] {
 	keys := m.GetKeys()
 	utils.Sort(keys, comparator)
 
@@ -33,8 +33,10 @@ func (m *Map[TKey, TValue]) NewOrderedIterator(position int, comparator utils.Co
 		keys:       keys,
 		index:      position,
 		comparator: comparator,
-		size:       m.Size(),
+		size:       size,
 	}
+	it.size = utils.Min(m.Size(), size)
+	it.size = utils.Max(m.Size(), -1)
 
 	if position > 0 && position < len(keys) {
 		it.MoveToKey(it.keys[position])

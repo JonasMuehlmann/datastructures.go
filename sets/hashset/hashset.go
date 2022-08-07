@@ -204,21 +204,21 @@ func (set *Set[T]) MakeDifferenceWith(other sets.Set[T]) sets.Set[T] {
 // OrderedBegin returns an initialized, reversed iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (s *Set[T]) OrderedBegin(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return s.NewOrderedIterator(-1, comparator)
+	return s.NewOrderedIterator(-1, s.Size(), comparator)
 }
 
 // OrderedEnd returns an initialized,reversed iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (s *Set[T]) OrderedEnd(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return s.NewOrderedIterator(len(s.items), comparator)
+	return s.NewOrderedIterator(len(s.items), s.Size(), comparator)
 }
 
 // OrderedFirst returns an initialized, reversed iterator, which points to it's first element.
 func (s *Set[T]) OrderedFirst(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return s.NewOrderedIterator(0, comparator)
+	return s.NewOrderedIterator(0, s.Size(), comparator)
 }
 
 // OrderedLast returns an initialized, reversed iterator, which points to it's last element.
 func (s *Set[T]) OrderedLast(comparator utils.Comparator[T]) ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return s.NewOrderedIterator(len(s.items)-1, comparator)
+	return s.NewOrderedIterator(len(s.items)-1, s.Size(), comparator)
 }

@@ -23,7 +23,7 @@ type OrderedIterator[T comparable] struct {
 	size  int
 }
 
-func (s *Set[T]) NewOrderedIterator(position int, comparator utils.Comparator[T]) *OrderedIterator[T] {
+func (s *Set[T]) NewOrderedIterator(position int, size int, comparator utils.Comparator[T]) *OrderedIterator[T] {
 	keys := s.GetValues()
 	utils.Sort(keys, comparator)
 
@@ -32,8 +32,11 @@ func (s *Set[T]) NewOrderedIterator(position int, comparator utils.Comparator[T]
 		values:     keys,
 		index:      position,
 		comparator: comparator,
-		size:       s.Size(),
+		size:       size,
 	}
+
+	it.size = utils.Min(s.Size(), size)
+	it.size = utils.Max(s.Size(), -1)
 
 	if it.IsValid() {
 		it.value = it.values[it.index]

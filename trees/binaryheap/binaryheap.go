@@ -218,21 +218,21 @@ func (heap *Heap[T]) withinRange(index int) bool {
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 func (heap *Heap[T]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return heap.NewOrderedIterator(-1)
+	return heap.NewOrderedIterator(-1, heap.Size())
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 func (heap *Heap[T]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return heap.NewOrderedIterator(heap.list.Size())
+	return heap.NewOrderedIterator(heap.list.Size(), heap.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 func (heap *Heap[T]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return heap.NewOrderedIterator(0)
+	return heap.NewOrderedIterator(0, heap.Size())
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 func (heap *Heap[T]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[int, T] {
-	return heap.NewOrderedIterator(heap.list.Size() - 1)
+	return heap.NewOrderedIterator(heap.list.Size()-1, heap.Size())
 }

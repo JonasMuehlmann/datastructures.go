@@ -20,8 +20,8 @@ type OrderedIterator[T comparable] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (set *Set[T]) NewOrderedIterator(index int) *OrderedIterator[T] {
-	return &OrderedIterator[T]{set.tree.NewOrderedIterator(index), set}
+func (set *Set[T]) NewOrderedIterator(index int, size int) *OrderedIterator[T] {
+	return &OrderedIterator[T]{set.tree.NewOrderedIterator(index, size), set}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain

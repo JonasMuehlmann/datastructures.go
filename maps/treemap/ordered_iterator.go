@@ -19,8 +19,8 @@ type OrderedIterator[TKey comparable, TValue any] struct {
 }
 
 // NewIterator returns a stateful iterator whose values can be fetched by an index.
-func (list *Map[TKey, TValue]) NewOrderedIterator(index int) *OrderedIterator[TKey, TValue] {
-	return &OrderedIterator[TKey, TValue]{list.tree.NewOrderedIterator(index)}
+func (list *Map[TKey, TValue]) NewOrderedIterator(index int, size int) *OrderedIterator[TKey, TValue] {
+	return &OrderedIterator[TKey, TValue]{list.tree.NewOrderedIterator(index, size)}
 }
 
 // NOTE: The following methods need to be reimplemented because of the type assertions they contain

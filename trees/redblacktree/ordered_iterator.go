@@ -25,12 +25,14 @@ type OrderedIterator[TKey comparable, TValue any] struct {
 }
 
 //  returns a stateful iterator whose elements are key/value pairs.
-func (tree *Tree[TKey, TValue]) NewOrderedIterator(position int) *OrderedIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) NewOrderedIterator(position int, size int) *OrderedIterator[TKey, TValue] {
 	it := &OrderedIterator[TKey, TValue]{
 		tree:  tree,
 		index: 0,
-		size:  tree.Size(),
+		size:  size,
 	}
+	it.size = utils.Min(tree.Size(), size)
+	it.size = utils.Max(tree.Size(), -1)
 
 	if tree.size == 0 {
 		return it

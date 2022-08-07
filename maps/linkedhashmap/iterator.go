@@ -24,13 +24,15 @@ type Iterator[TKey comparable, TValue any] struct {
 	size  int
 }
 
-func (m *Map[TKey, TValue]) NewIterator(position int) *Iterator[TKey, TValue] {
+func (m *Map[TKey, TValue]) NewIterator(position int, size int) *Iterator[TKey, TValue] {
 	it := &Iterator[TKey, TValue]{
 		s:             m,
-		orderIterator: m.ordering.NewIterator(position),
+		orderIterator: m.ordering.NewIterator(position, size),
 		index:         position,
-		size:          m.Size(),
+		size:          size,
 	}
+	it.size = utils.Min(m.Size(), size)
+	it.size = utils.Max(m.Size(), -1)
 
 	it.key, _ = it.orderIterator.Get()
 	it.value, _ = m.Get(it.key)
