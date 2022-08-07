@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRemove(t *testing.T) {
+func TestRedBlackTreeRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -62,7 +62,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestPut(t *testing.T) {
+func TestRedBlackTreePut(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -114,7 +114,7 @@ func TestPut(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestRedBlackTreeGet(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -165,7 +165,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetNode(t *testing.T) {
+func TestRedBlackTreeGetNode(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -218,7 +218,7 @@ func TestGetNode(t *testing.T) {
 	}
 }
 
-func TestRight(t *testing.T) {
+func TestRedBlackTreeRight(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -261,7 +261,7 @@ func TestRight(t *testing.T) {
 	}
 }
 
-func TestLeft(t *testing.T) {
+func TestRedBlackTreeLeft(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -304,7 +304,7 @@ func TestLeft(t *testing.T) {
 	}
 }
 
-func TestCeiling(t *testing.T) {
+func TestRedBlackTreeCeiling(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -356,7 +356,7 @@ func TestCeiling(t *testing.T) {
 	}
 }
 
-func TestFloor(t *testing.T) {
+func TestRedBlackTreeFloor(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -409,7 +409,7 @@ func TestFloor(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestRedBlackTreeGetKeys(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -446,7 +446,7 @@ func TestGetKeys(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestRedBlackTreeGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -483,7 +483,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestRedBlackTreeIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -520,7 +520,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestRedBlackTreeClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalMap   *Tree[string, int]
@@ -565,7 +565,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIteratorWith(t *testing.T) {
+func TestRedBlackTreeNewFromIteratorWith(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *hashmap.Map[string, int]
@@ -601,7 +601,7 @@ func TestNewFromIteratorWith(t *testing.T) {
 
 }
 
-func TestNewFromIteratorsWith(t *testing.T) {
+func TestRedBlackTreeNewFromIteratorsWith(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *hashmap.Map[string, int]

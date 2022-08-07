@@ -15,7 +15,7 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-func TestRemove(t *testing.T) {
+func TestHashSetRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -62,7 +62,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestAdd(t *testing.T) {
+func TestHashSetAdd(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -110,7 +110,7 @@ func TestAdd(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestHashSetGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -147,7 +147,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestContains(t *testing.T) {
+func TestHashSetContains(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -186,7 +186,7 @@ func TestContains(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestHashSetIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -223,7 +223,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestHashSetClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalSet   *Set[string]
@@ -268,7 +268,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestHashSetNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -304,7 +304,7 @@ func TestNewFromIterator(t *testing.T) {
 
 }
 
-func TestNewFromIterators(t *testing.T) {
+func TestHashSetNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalSet *Set[string]
@@ -339,7 +339,7 @@ func TestNewFromIterators(t *testing.T) {
 	}
 }
 
-func TestMakeIntersectionWith(t *testing.T) {
+func TestHashSetMakeIntersectionWith(t *testing.T) {
 	tests := []struct {
 		name         string
 		a            *Set[string]
@@ -397,7 +397,7 @@ func TestMakeIntersectionWith(t *testing.T) {
 	}
 }
 
-func TestMakeUnionWith(t *testing.T) {
+func TestHashSetMakeUnionWith(t *testing.T) {
 	tests := []struct {
 		name         string
 		a            *Set[string]
@@ -455,7 +455,7 @@ func TestMakeUnionWith(t *testing.T) {
 	}
 }
 
-func TestMakeDifferenceWith(t *testing.T) {
+func TestHashSetMakeDifferenceWith(t *testing.T) {
 	tests := []struct {
 		name         string
 		a            *Set[string]

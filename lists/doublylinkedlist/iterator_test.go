@@ -973,7 +973,7 @@ func TestDoublyLinkedlistIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestDoublylInkedlistIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestDoublyLinkedlistIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]

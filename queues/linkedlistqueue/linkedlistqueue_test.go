@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// func TestArrayQueueContains(t *testing.T) {
+// func TestLinkedListQueueContains(t *testing.T) {
 // 	tests := []struct {
 // 		name         string
 // 		originalList *Queue[string]
@@ -49,7 +49,7 @@ import (
 // 	}
 // }
 
-// func TestArrayQueueIndexOf(t *testing.T) {
+// func TestLinkedListQueueIndexOf(t *testing.T) {
 // 	tests := []struct {
 // 		name         string
 // 		originalList *Queue[string]
@@ -84,7 +84,7 @@ import (
 // 	}
 // }
 
-func TestArrayQueueGetValues(t *testing.T) {
+func TestLinkedListQueueGetValues(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -116,7 +116,7 @@ func TestArrayQueueGetValues(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIsEmpty(t *testing.T) {
+func TestLinkedListQueueIsEmpty(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -147,7 +147,7 @@ func TestArrayQueueIsEmpty(t *testing.T) {
 	}
 }
 
-func TestArrayQueueClear(t *testing.T) {
+func TestLinkedListQueueClear(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -179,7 +179,7 @@ func TestArrayQueueClear(t *testing.T) {
 	}
 }
 
-func TestArrayQueueEnqueue(t *testing.T) {
+func TestLinkedListQueueEnqueue(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -220,7 +220,7 @@ func TestArrayQueueEnqueue(t *testing.T) {
 	}
 }
 
-func TestArrayQueueDequeue(t *testing.T) {
+func TestLinkedListQueueDequeue(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -257,7 +257,7 @@ func TestArrayQueueDequeue(t *testing.T) {
 	}
 }
 
-func TestArrayQueuePeek(t *testing.T) {
+func TestLinkedListQueuePeek(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -302,7 +302,7 @@ func TestArrayQueuePeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestLinkedListQueueNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -335,7 +335,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestLinkedListQueueNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -370,7 +370,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestLinkedListQueueNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *Queue[string]
@@ -423,7 +423,7 @@ func TestNewFromIterators(t *testing.T) {
 
 }
 
-func BenchmarkArrayQueueDequeue(b *testing.B) {
+func BenchmarkLinkedListQueueDequeue(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string

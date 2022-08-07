@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRemove(t *testing.T) {
+func TestBTreeRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -62,7 +62,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestPut(t *testing.T) {
+func TestBTreePut(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -114,7 +114,7 @@ func TestPut(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestBTreeGet(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -165,7 +165,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetNode(t *testing.T) {
+func TestBTreeGetNode(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -218,7 +218,7 @@ func TestGetNode(t *testing.T) {
 	}
 }
 
-func TestRight(t *testing.T) {
+func TestBTreeRight(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -264,7 +264,7 @@ func TestRight(t *testing.T) {
 	}
 }
 
-func TestLeft(t *testing.T) {
+func TestBTreeLeft(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[int, string]
@@ -310,7 +310,7 @@ func TestLeft(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestBTreeGetKeys(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -347,7 +347,7 @@ func TestGetKeys(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestBTreeGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -384,7 +384,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestBTreeIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Tree[string, int]
@@ -421,7 +421,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestBTreeClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalMap   *Tree[string, int]
@@ -466,7 +466,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIteratorWith(t *testing.T) {
+func TestBTreeNewFromIteratorWith(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *hashmap.Map[string, int]
@@ -502,7 +502,7 @@ func TestNewFromIteratorWith(t *testing.T) {
 
 }
 
-func TestNewFromIteratorsWith(t *testing.T) {
+func TestBTreeNewFromIteratorsWith(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *hashmap.Map[string, int]

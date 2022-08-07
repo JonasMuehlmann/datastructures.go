@@ -425,7 +425,7 @@ func TestAVLTreeOrderedIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorIndex(t *testing.T) {
+func TestAVLTreeOrderedIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Tree[string, int]
@@ -485,7 +485,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorSize(t *testing.T) {
+func TestAVLTreeOrderedIteratorSize(t *testing.T) {
 	tests := []struct {
 		name string
 		map_ *Tree[string, int]
@@ -518,7 +518,7 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNext(t *testing.T) {
+func TestAVLTreeOrderedIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -597,7 +597,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNextN(t *testing.T) {
+func TestAVLTreeOrderedIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -695,7 +695,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPrevious(t *testing.T) {
+func TestAVLTreeOrderedIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -774,7 +774,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
+func TestAVLTreeOrderedIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -869,7 +869,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
+func TestAVLTreeOrderedIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -983,7 +983,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveToKey(t *testing.T) {
+func TestAVLTreeOrderedIteratorMoveToKey(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Tree[string, int]

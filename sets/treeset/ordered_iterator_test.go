@@ -15,7 +15,7 @@ const (
 	NoMoveMagicPosition = 7869543205234798
 )
 
-func TestArrayListIteratorIsValid(t *testing.T) {
+func TestTreeMapIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]
@@ -86,7 +86,7 @@ func TestArrayListIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIndex(t *testing.T) {
+func TestTreeMapIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]
@@ -156,7 +156,7 @@ func TestArrayListIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorNext(t *testing.T) {
+func TestTreeMapIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -238,7 +238,7 @@ func TestArrayListIteratorNext(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorNextN(t *testing.T) {
+func TestTreeMapIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -336,7 +336,7 @@ func TestArrayListIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorPrevious(t *testing.T) {
+func TestTreeMapIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -418,7 +418,7 @@ func TestArrayListIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorPreviousN(t *testing.T) {
+func TestTreeMapIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -516,7 +516,7 @@ func TestArrayListIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorMoveBy(t *testing.T) {
+func TestTreeMapIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -631,7 +631,7 @@ func TestArrayListIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorGet(t *testing.T) {
+func TestTreeMapIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *Set[int]
@@ -680,7 +680,7 @@ func TestArrayListIteratorGet(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorSet(t *testing.T) {
+func TestTreeMapIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *Set[int]
@@ -730,7 +730,7 @@ func TestArrayListIteratorSet(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorGetAt(t *testing.T) {
+func TestTreeMapIteratorGetAt(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *Set[int]
@@ -775,7 +775,7 @@ func TestArrayListIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorSetAt(t *testing.T) {
+func TestTreeMapIteratorSetAt(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *Set[int]
@@ -822,7 +822,7 @@ func TestArrayListIteratorSetAt(t *testing.T) {
 }
 
 // NOTE: Missing test case: other does not implement IndexedIterator
-func TestArrayListIteratorDistanceTo(t *testing.T) {
+func TestTreeMapIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -868,7 +868,7 @@ func TestArrayListIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsAfter(t *testing.T) {
+func TestTreeMapIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -914,7 +914,7 @@ func TestArrayListIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsBefore(t *testing.T) {
+func TestTreeMapIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -960,7 +960,7 @@ func TestArrayListIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsEqual(t *testing.T) {
+func TestTreeMapIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -1006,7 +1006,7 @@ func TestArrayListIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestTreeMapIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Set[int], utils.Comparator[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
@@ -1046,7 +1046,7 @@ func TestArrayListIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 }
 
-func TestArrayListIteratorSize(t *testing.T) {
+func TestTreeMapIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]

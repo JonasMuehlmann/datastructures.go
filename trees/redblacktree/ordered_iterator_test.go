@@ -425,7 +425,7 @@ func TestRedBlackTreeOrderedIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorIndex(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Tree[string, int]
@@ -485,7 +485,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorSize(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorSize(t *testing.T) {
 	tests := []struct {
 		name string
 		map_ *Tree[string, int]
@@ -518,7 +518,7 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNext(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -597,7 +597,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNextN(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -695,7 +695,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPrevious(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -774,7 +774,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -869,7 +869,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Tree[string, int]
@@ -983,7 +983,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveToKey(t *testing.T) {
+func TestRedBlackTreeOrderedIteratorMoveToKey(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Tree[string, int]

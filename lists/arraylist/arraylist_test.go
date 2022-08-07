@@ -757,7 +757,7 @@ func TestArrayListRemove(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestArrayListNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -790,7 +790,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestArrayListNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -825,7 +825,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestArrayListNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *List[string]

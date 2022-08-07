@@ -298,7 +298,7 @@ func TestCircularBufferPeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestCircularBufferNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -331,7 +331,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestCircularBufferNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -366,7 +366,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestCircularBufferNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *Queue[string]

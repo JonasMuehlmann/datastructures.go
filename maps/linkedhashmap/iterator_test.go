@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHashMapIteratorIsValid(t *testing.T) {
+func TestLinkedHashMapIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Map[string, int]
@@ -55,7 +55,7 @@ func TestHashMapIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorGet(t *testing.T) {
+func TestLinkedHashMapIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -98,7 +98,7 @@ func TestHashMapIteratorGet(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorSet(t *testing.T) {
+func TestLinkedHashMapIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -141,7 +141,7 @@ func TestHashMapIteratorSet(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorGetAtKey(t *testing.T) {
+func TestLinkedHashMapIteratorGetAtKey(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -181,7 +181,7 @@ func TestHashMapIteratorGetAtKey(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorSetAtKey(t *testing.T) {
+func TestLinkedHashMapIteratorSetAtKey(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -221,7 +221,7 @@ func TestHashMapIteratorSetAtKey(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorDistanceTo(t *testing.T) {
+func TestLinkedHashMapIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -271,7 +271,7 @@ func TestHashMapIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorIsAfter(t *testing.T) {
+func TestLinkedHashMapIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Map[string, int]
@@ -321,7 +321,7 @@ func TestHashMapIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorIsBefore(t *testing.T) {
+func TestLinkedHashMapIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Map[string, int]
@@ -371,7 +371,7 @@ func TestHashMapIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorIsEqual(t *testing.T) {
+func TestLinkedHashMapIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 string
@@ -419,7 +419,7 @@ func TestHashMapIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorIndex(t *testing.T) {
+func TestLinkedHashMapIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Map[string, int]
@@ -483,7 +483,7 @@ func TestHashmapIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorSize(t *testing.T) {
+func TestLinkedHashMapIteratorSize(t *testing.T) {
 	tests := []struct {
 		name string
 		map_ *Map[string, int]
@@ -516,7 +516,7 @@ func TestHashmapIteratorSize(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorNext(t *testing.T) {
+func TestLinkedHashMapIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -595,7 +595,7 @@ func TestHashmapIteratorNext(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorNextN(t *testing.T) {
+func TestLinkedHashMapIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -693,7 +693,7 @@ func TestHashmapIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorPrevious(t *testing.T) {
+func TestLinkedHashMapIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -772,7 +772,7 @@ func TestHashmapIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorPreviousN(t *testing.T) {
+func TestLinkedHashMapIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -867,7 +867,7 @@ func TestHashmapIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestHashmapIteratorMoveBy(t *testing.T) {
+func TestLinkedHashMapIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -979,7 +979,7 @@ func TestHashmapIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHashMapIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestLinkedHashMapIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Map[string, int]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]

@@ -15,7 +15,7 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-func TestRemove(t *testing.T) {
+func TestHashMapRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -62,7 +62,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestPut(t *testing.T) {
+func TestHashMapPut(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -114,7 +114,7 @@ func TestPut(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestHashMapGet(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -165,7 +165,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestHashMapGetKeys(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -202,7 +202,7 @@ func TestGetKeys(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestHashMapGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -239,7 +239,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestGetMap(t *testing.T) {
+func TestHashMapGetMap(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -280,7 +280,7 @@ func TestGetMap(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestHashMapIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -317,7 +317,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestHashMapClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalMap   *Map[string, int]
@@ -362,7 +362,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestHashMapNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -398,7 +398,7 @@ func TestNewFromIterator(t *testing.T) {
 
 }
 
-func TestNewFromIterators(t *testing.T) {
+func TestHashMapNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]

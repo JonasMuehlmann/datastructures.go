@@ -15,7 +15,7 @@ const (
 	NoMoveMagicPosition = 7869543205234798
 )
 
-func TestHeapOrderedIteratorIsValid(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Heap[int]
@@ -65,7 +65,7 @@ func TestHeapOrderedIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorGet(t *testing.T) {
+func TestBinaryHeapOrderedIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Heap[int]
@@ -115,7 +115,7 @@ func TestHeapOrderedIteratorGet(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorSet(t *testing.T) {
+func TestBinaryHeapOrderedIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Heap[int]
@@ -165,7 +165,7 @@ func TestHeapOrderedIteratorSet(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorGetAt(t *testing.T) {
+func TestBinaryHeapOrderedIteratorGetAt(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Heap[int]
@@ -212,7 +212,7 @@ func TestHeapOrderedIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorSetAt(t *testing.T) {
+func TestBinaryHeapOrderedIteratorSetAt(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Heap[int]
@@ -259,7 +259,7 @@ func TestHeapOrderedIteratorSetAt(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorDistanceTo(t *testing.T) {
+func TestBinaryHeapOrderedIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Heap[int]
@@ -309,7 +309,7 @@ func TestHeapOrderedIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorIsAfter(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Heap[int]
@@ -359,7 +359,7 @@ func TestHeapOrderedIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorIsBefore(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Heap[int]
@@ -409,7 +409,7 @@ func TestHeapOrderedIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorIsEqual(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -457,7 +457,7 @@ func TestHeapOrderedIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorIndex(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Heap[int]
@@ -517,7 +517,7 @@ func TestHeapOrderedIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorSize(t *testing.T) {
+func TestBinaryHeapOrderedIteratorSize(t *testing.T) {
 	tests := []struct {
 		name string
 		map_ *Heap[int]
@@ -550,7 +550,7 @@ func TestHeapOrderedIteratorSize(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorNext(t *testing.T) {
+func TestBinaryHeapOrderedIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Heap[int]
@@ -632,7 +632,7 @@ func TestHeapOrderedIteratorNext(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorNextN(t *testing.T) {
+func TestBinaryHeapOrderedIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Heap[int]
@@ -730,7 +730,7 @@ func TestHeapOrderedIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorPrevious(t *testing.T) {
+func TestBinaryHeapOrderedIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Heap[int]
@@ -811,7 +811,7 @@ func TestHeapOrderedIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorPreviousN(t *testing.T) {
+func TestBinaryHeapOrderedIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Heap[int]
@@ -908,7 +908,7 @@ func TestHeapOrderedIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorMoveBy(t *testing.T) {
+func TestBinaryHeapOrderedIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Heap[int]
@@ -1024,7 +1024,7 @@ func TestHeapOrderedIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorMoveTo(t *testing.T) {
+func TestBinaryHeapOrderedIteratorMoveTo(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Heap[int]
@@ -1095,7 +1095,7 @@ func TestHeapOrderedIteratorMoveTo(t *testing.T) {
 	}
 }
 
-func TestHeapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestBinaryHeapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Heap[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]

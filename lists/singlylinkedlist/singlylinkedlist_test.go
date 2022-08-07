@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestArrayListGet(t *testing.T) {
+func TestSinglyLinkedListGet(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -61,7 +61,7 @@ func TestArrayListGet(t *testing.T) {
 	}
 }
 
-func TestArrayListContains(t *testing.T) {
+func TestSinglyLinkedListContains(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -101,7 +101,7 @@ func TestArrayListContains(t *testing.T) {
 	}
 }
 
-func TestArrayListIndexOf(t *testing.T) {
+func TestSinglyLinkedListIndexOf(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -141,7 +141,7 @@ func TestArrayListIndexOf(t *testing.T) {
 	}
 }
 
-func TestArrayListGetValues(t *testing.T) {
+func TestSinglyLinkedListGetValues(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -173,7 +173,7 @@ func TestArrayListGetValues(t *testing.T) {
 	}
 }
 
-func TestArrayListIsEmpty(t *testing.T) {
+func TestSinglyLinkedListIsEmpty(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -204,7 +204,7 @@ func TestArrayListIsEmpty(t *testing.T) {
 	}
 }
 
-func TestArrayListClear(t *testing.T) {
+func TestSinglyLinkedListClear(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -236,7 +236,7 @@ func TestArrayListClear(t *testing.T) {
 	}
 }
 
-func TestArrayListSet(t *testing.T) {
+func TestSinglyLinkedListSet(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -290,7 +290,7 @@ func TestArrayListSet(t *testing.T) {
 	}
 }
 
-func TestArrayListInsert(t *testing.T) {
+func TestSinglyLinkedListInsert(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -371,7 +371,7 @@ func TestArrayListInsert(t *testing.T) {
 	}
 }
 
-func TestArrayListSwap(t *testing.T) {
+func TestSinglyLinkedListSwap(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -427,7 +427,7 @@ func TestArrayListSwap(t *testing.T) {
 	}
 }
 
-func TestArrayListSort(t *testing.T) {
+func TestSinglyLinkedListSort(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -479,7 +479,7 @@ func TestArrayListSort(t *testing.T) {
 	}
 }
 
-func TestArrayListPushFront(t *testing.T) {
+func TestSinglyLinkedListPushFront(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -525,7 +525,7 @@ func TestArrayListPushFront(t *testing.T) {
 	}
 }
 
-func TestArrayListPopBack(t *testing.T) {
+func TestSinglyLinkedListPopBack(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -570,7 +570,7 @@ func TestArrayListPopBack(t *testing.T) {
 	}
 }
 
-func TestArrayListPopFront(t *testing.T) {
+func TestSinglyLinkedListPopFront(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -615,7 +615,7 @@ func TestArrayListPopFront(t *testing.T) {
 	}
 }
 
-func TestArrayListRemove(t *testing.T) {
+func TestSinglyLinkedListRemove(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -679,7 +679,7 @@ func TestArrayListRemove(t *testing.T) {
 	}
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestSinglyLinkedListNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *List[string]
@@ -720,7 +720,7 @@ func TestNewFromIterator(t *testing.T) {
 
 }
 
-func TestNewFromIterators(t *testing.T) {
+func TestSinglyLinkedListNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *List[string]
@@ -780,7 +780,7 @@ func TestNewFromIterators(t *testing.T) {
 
 }
 
-func BenchmarkArrayListGet(b *testing.B) {
+func BenchmarkSinglyLinkedListGet(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -821,7 +821,7 @@ func BenchmarkArrayListGet(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayListPushBack(b *testing.B) {
+func BenchmarkSinglyLinkedListPushBack(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -858,7 +858,7 @@ func BenchmarkArrayListPushBack(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayListPushFront(b *testing.B) {
+func BenchmarkSinglyLinkedListPushFront(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -895,7 +895,7 @@ func BenchmarkArrayListPushFront(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayListRemove(b *testing.B) {
+func BenchmarkSinglyLinkedListRemove(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -940,7 +940,7 @@ func BenchmarkArrayListRemove(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayListPopBack(b *testing.B) {
+func BenchmarkSinglyLinkedListPopBack(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
@@ -983,7 +983,7 @@ func BenchmarkArrayListPopBack(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayListPopFront(b *testing.B) {
+func BenchmarkSinglyLinkedListPopFront(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string

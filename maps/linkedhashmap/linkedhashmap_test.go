@@ -15,7 +15,7 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-func TestRemove(t *testing.T) {
+func TestLinkedHashMapRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -62,7 +62,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestPut(t *testing.T) {
+func TestLinkedHashMapPut(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -114,7 +114,7 @@ func TestPut(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestLinkedHashMapGet(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -165,7 +165,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestLinkedHashMapGetKeys(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -202,7 +202,7 @@ func TestGetKeys(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestLinkedHashMapGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -239,7 +239,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestLinkedHashMapIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -276,7 +276,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestLinkedHashMapClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalMap   *Map[string, int]
@@ -321,7 +321,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestLinkedHashMapNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -357,7 +357,7 @@ func TestNewFromIterator(t *testing.T) {
 
 }
 
-func TestNewFromIterators(t *testing.T) {
+func TestLinkedHashMapNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]

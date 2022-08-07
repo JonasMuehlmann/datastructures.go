@@ -300,7 +300,7 @@ func TestArrayStackPeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestArrayStackNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Stack[string]
@@ -333,7 +333,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestArrayStackNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Stack[string]
@@ -368,7 +368,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestArrayStackNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *Stack[string]

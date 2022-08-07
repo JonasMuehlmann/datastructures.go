@@ -304,7 +304,7 @@ func TestArrayQueuePeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestArrayQueueNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -337,7 +337,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestArrayQueueNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -372,7 +372,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestArrayQueueNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *Queue[string]

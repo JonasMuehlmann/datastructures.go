@@ -14,7 +14,7 @@ const (
 	NoMoveMagicPosition = 7869543205234798
 )
 
-func TestArrayQueueIteratorIsValid(t *testing.T) {
+func TestLinkedListQueueIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Queue[int]
@@ -85,7 +85,7 @@ func TestArrayQueueIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorIndex(t *testing.T) {
+func TestLinkedListQueueIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Queue[int]
@@ -146,7 +146,7 @@ func TestArrayQueueIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorNext(t *testing.T) {
+func TestLinkedListQueueIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Queue[int]
@@ -228,7 +228,7 @@ func TestArrayQueueIteratorNext(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorNextN(t *testing.T) {
+func TestLinkedListQueueIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Queue[int]
@@ -326,7 +326,7 @@ func TestArrayQueueIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorGet(t *testing.T) {
+func TestLinkedListQueueIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *Queue[int]
@@ -375,7 +375,7 @@ func TestArrayQueueIteratorGet(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorSet(t *testing.T) {
+func TestLinkedListQueueIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *Queue[int]
@@ -426,7 +426,7 @@ func TestArrayQueueIteratorSet(t *testing.T) {
 }
 
 // NOTE: Missing test case: other does not implement IndexedIterator
-func TestArrayQueueIteratorDistanceTo(t *testing.T) {
+func TestLinkedListQueueIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -472,7 +472,7 @@ func TestArrayQueueIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorIsAfter(t *testing.T) {
+func TestLinkedListQueueIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -518,7 +518,7 @@ func TestArrayQueueIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorIsBefore(t *testing.T) {
+func TestLinkedListQueueIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -564,7 +564,7 @@ func TestArrayQueueIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorIsEqual(t *testing.T) {
+func TestLinkedListQueueIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -610,7 +610,7 @@ func TestArrayQueueIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestLinkedListQueueIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
@@ -650,7 +650,7 @@ func TestArrayQueueIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIteratorSize(t *testing.T) {
+func TestLinkedListQueueIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Queue[int]

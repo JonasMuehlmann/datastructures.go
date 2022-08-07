@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRemove(t *testing.T) {
+func TestTreeBidiMapRemove(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -61,7 +61,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-func TestPut(t *testing.T) {
+func TestTreeBidiMapPut(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -113,7 +113,7 @@ func TestPut(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestTreeBidiMapGet(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -164,7 +164,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestGetKeys(t *testing.T) {
+func TestTreeBidiMapGetKeys(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -201,7 +201,7 @@ func TestGetKeys(t *testing.T) {
 	}
 }
 
-func TestGetValues(t *testing.T) {
+func TestTreeBidiMapGetValues(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -238,7 +238,7 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
+func TestTreeBidiMapIsEmpty(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -275,7 +275,7 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func TestClear(t *testing.T) {
+func TestTreeBidiMapClear(t *testing.T) {
 	tests := []struct {
 		name          string
 		originalMap   *Map[string, int]
@@ -320,7 +320,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestTreeBidiMapNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]
@@ -356,7 +356,7 @@ func TestNewFromIterator(t *testing.T) {
 
 }
 
-func TestNewFromIterators(t *testing.T) {
+func TestTreeBidiMapNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name        string
 		originalMap *Map[string, int]

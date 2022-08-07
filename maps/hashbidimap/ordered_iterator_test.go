@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHashMapOrderedIteratorIsValid(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Map[string, int]
@@ -55,7 +55,7 @@ func TestHashMapOrderedIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorGet(t *testing.T) {
+func TestHashBidiMapOrderedIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -98,7 +98,7 @@ func TestHashMapOrderedIteratorGet(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorSet(t *testing.T) {
+func TestHashBidiMapOrderedIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -141,7 +141,7 @@ func TestHashMapOrderedIteratorSet(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorGetAt(t *testing.T) {
+func TestHashBidiMapOrderedIteratorGetAt(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -181,7 +181,7 @@ func TestHashMapOrderedIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorSetAt(t *testing.T) {
+func TestHashBidiMapOrderedIteratorSetAt(t *testing.T) {
 	tests := []struct {
 		name        string
 		map_        *Map[string, int]
@@ -221,7 +221,7 @@ func TestHashMapOrderedIteratorSetAt(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorDistanceTo(t *testing.T) {
+func TestHashBidiMapOrderedIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name     string
 		map_     *Map[string, int]
@@ -271,7 +271,7 @@ func TestHashMapOrderedIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorIsAfter(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Map[string, int]
@@ -321,7 +321,7 @@ func TestHashMapOrderedIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorIsBefore(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name    string
 		map_    *Map[string, int]
@@ -371,7 +371,7 @@ func TestHashMapOrderedIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorIsEqual(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 string
@@ -419,7 +419,7 @@ func TestHashMapOrderedIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorIndex(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		map_         *Map[string, int]
@@ -483,7 +483,7 @@ func TestHashmapOrderedIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorSize(t *testing.T) {
+func TestHashBidiMapOrderedIteratorSize(t *testing.T) {
 	tests := []struct {
 		name string
 		map_ *Map[string, int]
@@ -516,7 +516,7 @@ func TestHashmapOrderedIteratorSize(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNext(t *testing.T) {
+func TestHashBidiMapOrderedIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -595,7 +595,7 @@ func TestHashmapOrderedIteratorNext(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorNextN(t *testing.T) {
+func TestHashBidiMapOrderedIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -693,7 +693,7 @@ func TestHashmapOrderedIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPrevious(t *testing.T) {
+func TestHashBidiMapOrderedIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -772,7 +772,7 @@ func TestHashmapOrderedIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
+func TestHashBidiMapOrderedIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -867,7 +867,7 @@ func TestHashmapOrderedIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
+func TestHashBidiMapOrderedIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		map_          *Map[string, int]
@@ -979,7 +979,7 @@ func TestHashmapOrderedIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestHashMapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestHashBidiMapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]

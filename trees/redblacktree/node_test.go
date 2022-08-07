@@ -26,7 +26,7 @@ type Pair[TKey any, TValue any] struct {
 	Value TValue
 }
 
-func TestNodeSize(t *testing.T) {
+func TestRedBlackTreeNodeSize(t *testing.T) {
 	tests := []struct {
 		name  string
 		pairs []Pair[int, string]

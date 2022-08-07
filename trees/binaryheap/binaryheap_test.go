@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestArrayHeapGetValues(t *testing.T) {
+func TestBinaryHeapGetValues(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -49,7 +49,7 @@ func TestArrayHeapGetValues(t *testing.T) {
 	}
 }
 
-func TestArrayHeapIsEmpty(t *testing.T) {
+func TestBinaryHeapIsEmpty(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -80,7 +80,7 @@ func TestArrayHeapIsEmpty(t *testing.T) {
 	}
 }
 
-func TestArrayHeapClear(t *testing.T) {
+func TestBinaryHeapClear(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -112,7 +112,7 @@ func TestArrayHeapClear(t *testing.T) {
 	}
 }
 
-func TestArrayHeapPush(t *testing.T) {
+func TestBinaryHeapPush(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -153,7 +153,7 @@ func TestArrayHeapPush(t *testing.T) {
 	}
 }
 
-func TestArrayHeapPop(t *testing.T) {
+func TestBinaryHeapPop(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -190,7 +190,7 @@ func TestArrayHeapPop(t *testing.T) {
 	}
 }
 
-func TestArrayHeapPeek(t *testing.T) {
+func TestBinaryHeapPeek(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -235,7 +235,7 @@ func TestArrayHeapPeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestBinaryHeapNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -268,7 +268,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestBinaryHeapNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Heap[string]
@@ -303,7 +303,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestBinaryHeapNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name                     string
 		originalList             *Heap[string]
@@ -356,7 +356,7 @@ func TestNewFromIterators(t *testing.T) {
 
 }
 
-func BenchmarkArrayHeapPop(b *testing.B) {
+func BenchmarkBinaryHeapPop(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string

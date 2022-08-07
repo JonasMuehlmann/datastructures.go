@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestArrayQueueGetValues(t *testing.T) {
+func TestPriorityQueueGetValues(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -49,7 +49,7 @@ func TestArrayQueueGetValues(t *testing.T) {
 	}
 }
 
-func TestArrayQueueIsEmpty(t *testing.T) {
+func TestPriorityQueueIsEmpty(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -80,7 +80,7 @@ func TestArrayQueueIsEmpty(t *testing.T) {
 	}
 }
 
-func TestArrayQueueClear(t *testing.T) {
+func TestPriorityQueueClear(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -112,7 +112,7 @@ func TestArrayQueueClear(t *testing.T) {
 	}
 }
 
-func TestArrayQueueEnqueue(t *testing.T) {
+func TestPriorityQueueEnqueue(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -153,7 +153,7 @@ func TestArrayQueueEnqueue(t *testing.T) {
 	}
 }
 
-func TestArrayQueueDequeue(t *testing.T) {
+func TestPriorityQueueDequeue(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -190,7 +190,7 @@ func TestArrayQueueDequeue(t *testing.T) {
 	}
 }
 
-func TestArrayQueuePeek(t *testing.T) {
+func TestPriorityQueuePeek(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -235,7 +235,7 @@ func TestArrayQueuePeek(t *testing.T) {
 	}
 }
 
-func TestNewFromSlice(t *testing.T) {
+func TestPriorityQueueNewFromSlice(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -268,7 +268,7 @@ func TestNewFromSlice(t *testing.T) {
 
 }
 
-func TestNewFromIterator(t *testing.T) {
+func TestPriorityQueueNewFromIterator(t *testing.T) {
 	tests := []struct {
 		name         string
 		originalList *Queue[string]
@@ -303,7 +303,7 @@ func TestNewFromIterator(t *testing.T) {
 }
 
 // NOTE: Missing test case: unordered iterator, which prevents preallocation
-func TestNewFromIterators(t *testing.T) {
+func TestPriorityQueueNewFromIterators(t *testing.T) {
 	tests := []struct {
 		name              string
 		originalList      *Queue[string]
@@ -356,7 +356,7 @@ func TestNewFromIterators(t *testing.T) {
 
 }
 
-func BenchmarkArrayQueueDequeue(b *testing.B) {
+func BenchmarkPriorityQueueDequeue(b *testing.B) {
 	b.StopTimer()
 	variants := []struct {
 		name string
