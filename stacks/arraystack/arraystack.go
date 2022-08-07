@@ -91,9 +91,11 @@ func (stack *Stack[T]) Push(value T) {
 // Pop removes top element on stack and returns it, or nil if stack is empty.
 // Second return parameter is true, unless the stack was empty and there was nothing to pop.
 func (stack *Stack[T]) Pop() (value T, ok bool) {
-	value, ok = stack.list.Get(stack.list.Size() - 1)
-	stack.list.Remove(stack.list.Size() - 1)
-	return
+	if stack.Size() == 0 {
+		return
+	}
+
+	return stack.list.PopBack(1)[0], true
 }
 
 // Peek returns top element on the stack without removing it, or nil if stack is empty.
@@ -119,12 +121,7 @@ func (stack *Stack[T]) Clear() {
 
 // Values returns all elements in the stack (LIFO order).
 func (stack *Stack[T]) GetValues() []T {
-	size := stack.list.Size()
-	elements := make([]T, size, size)
-	for i := 1; i <= size; i++ {
-		elements[size-i], _ = stack.list.Get(i - 1) // in reverse (LIFO)
-	}
-	return elements
+	return stack.list.GetValues()
 }
 
 // String returns a string representation of container
