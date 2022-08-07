@@ -43,6 +43,15 @@ func (list *List[T]) PopBack(n int) (popped []T) {
 
 	e := list.first
 
+	if list.size == 1 {
+		popped = append(popped, e.value)
+		list.first = nil
+		list.last = nil
+		list.size = 0
+
+		return
+	}
+
 	for i := 0; i < list.size-n-1; i++ {
 		e = e.next
 	}
