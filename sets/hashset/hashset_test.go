@@ -57,7 +57,7 @@ func TestHashSetRemove(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
 
-			assert.Equalf(t, test.originalSet, test.newSet, test.name)
+			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
 		})
 	}
 }
@@ -105,7 +105,7 @@ func TestHashSetAdd(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Add(test.keyToAdd)
 
-			assert.Equalf(t, test.originalSet, test.newSet, test.name)
+			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
 		})
 	}
 }

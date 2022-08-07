@@ -142,7 +142,7 @@ func TestLinkedHashSetGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalSet.GetValues()
 
-			assert.ElementsMatchf(t, test.values, values, test.name)
+			assert.Equalf(t, test.values, values, test.name)
 		})
 	}
 }
@@ -298,7 +298,7 @@ func TestLinkedHashSetNewFromIterator(t *testing.T) {
 
 			newSet := NewFromIterator[string](it)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
 		})
 	}
 
@@ -334,7 +334,7 @@ func TestLinkedHashSetNewFromIterators(t *testing.T) {
 
 			newSet := NewFromIterators[string](first, end)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
 		})
 	}
 }

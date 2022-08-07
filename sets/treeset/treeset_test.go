@@ -56,7 +56,7 @@ func TestTreeSetRemove(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Remove(utils.BasicComparator[string], test.toRemove)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
 		})
 	}
 }
@@ -104,7 +104,7 @@ func TestTreeSetAdd(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalSet.Add(test.keyToAdd)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), test.newSet.GetValues(), test.name)
 		})
 	}
 }
@@ -129,7 +129,7 @@ func TestTreeSetGetValues(t *testing.T) {
 		{
 			name:        "3 items",
 			originalSet: NewFromSlice[string](utils.BasicComparator[string], []string{"foo", "bar", "baz"}),
-			values:      []string{"foo", "bar", "baz"},
+			values:      []string{"bar", "baz", "foo"},
 		},
 	}
 
@@ -141,7 +141,7 @@ func TestTreeSetGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalSet.GetValues()
 
-			assert.ElementsMatchf(t, test.values, values, test.name)
+			assert.Equalf(t, test.values, values, test.name)
 		})
 	}
 }
@@ -297,7 +297,7 @@ func TestTreeSetNewFromIterator(t *testing.T) {
 
 			newSet := NewFromIterator[string](utils.BasicComparator[string], it)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
 		})
 	}
 
@@ -333,7 +333,7 @@ func TestTreeSetNewFromIterators(t *testing.T) {
 
 			newSet := NewFromIterators[string](utils.BasicComparator[string], first, end)
 
-			assert.ElementsMatchf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
+			assert.Equalf(t, test.originalSet.GetValues(), newSet.GetValues(), test.name)
 		})
 	}
 }
