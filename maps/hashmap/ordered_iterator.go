@@ -220,7 +220,10 @@ func (it *OrderedIterator[TKey, TValue]) GetAt(i int) (value TValue, found bool)
 		return
 	}
 
-	return it.m.NewOrderedIterator(i, it.comparator).Get()
+	tmp := *it
+	tmp.MoveTo(i)
+
+	return tmp.Get()
 }
 
 func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
@@ -228,7 +231,10 @@ func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
 		return false
 	}
 
-	return it.m.NewOrderedIterator(i, it.comparator).Set(value)
+	tmp := *it
+	tmp.MoveTo(i)
+
+	return tmp.Set(value)
 }
 
 func (it *OrderedIterator[TKey, TValue]) GetAtKey(i TKey) (value TValue, found bool) {

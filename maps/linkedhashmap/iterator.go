@@ -157,6 +157,10 @@ func (it *Iterator[TKey, TValue]) MoveBy(n int) bool {
 	return it.IsValid()
 }
 
+func (it *Iterator[TKey, TValue]) MoveTo(n int) bool {
+	return it.MoveBy(n - it.index)
+}
+
 func (it *Iterator[TKey, TValue]) MoveToKey(key TKey) bool {
 	// PERF: This can be optimized
 	for it.Next() {
@@ -196,8 +200,10 @@ func (it *Iterator[TKey, TValue]) GetAt(i int) (value TValue, found bool) {
 	if !it.IsValid() {
 		return
 	}
+	tmp := *it
+	tmp.MoveTo(i)
 
-	return it.s.NewIterator(i).Get()
+	return tmp.Get()
 }
 
 func (it *Iterator[TKey, TValue]) SetAt(i int, value TValue) bool {
@@ -205,7 +211,10 @@ func (it *Iterator[TKey, TValue]) SetAt(i int, value TValue) bool {
 		return false
 	}
 
-	return it.s.NewIterator(i).Set(value)
+	tmp := *it
+	tmp.MoveTo(i)
+
+	return tmp.Set(value)
 }
 
 func (it *Iterator[TKey, TValue]) GetAtKey(key TKey) (value TValue, found bool) {

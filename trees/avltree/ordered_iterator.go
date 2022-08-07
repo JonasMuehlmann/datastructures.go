@@ -313,8 +313,10 @@ func (it *OrderedIterator[TKey, TValue]) GetAt(i int) (value TValue, found bool)
 	if !it.IsValid() {
 		return
 	}
+	tmp := *it
+	tmp.MoveTo(i)
 
-	return it.tree.NewOrderedIterator(i).Get()
+	return tmp.Get()
 }
 
 func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
@@ -322,7 +324,10 @@ func (it *OrderedIterator[TKey, TValue]) SetAt(i int, value TValue) bool {
 		return false
 	}
 
-	return it.tree.NewOrderedIterator(i).Set(value)
+	tmp := *it
+	tmp.MoveTo(i)
+
+	return tmp.Set(value)
 }
 
 func (it *OrderedIterator[TKey, TValue]) GetAtKey(key TKey) (value TValue, found bool) {

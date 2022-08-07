@@ -209,9 +209,10 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 		return it.Get()
 	}
 
-	iteratorCopy := it.heap.NewOrderedIterator(i)
+	tmp := *it
+	tmp.MoveTo(i)
 
-	return iteratorCopy.Get()
+	return tmp.Get()
 }
 
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
@@ -223,9 +224,11 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 		return it.Set(value)
 	}
 
-	iteratorCopy := it.heap.NewOrderedIterator(i)
-	it.heap.list.Set(iteratorCopy.index, value)
-	it.heap.bubbleDownIndex(iteratorCopy.index)
+	tmp := *it
+	tmp.MoveTo(i)
+	it.heap.list.Set(tmp.index, value)
+
+	it.heap.bubbleDownIndex(tmp.index)
 
 	return true
 }
