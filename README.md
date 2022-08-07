@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/JonasMuehlmann/datastructures.go/branch/main/graph/badge.svg?token=S44uPy0IR8)](https://codecov.io/gh/JonasMuehlmann/datastructures.go)
 # Dastructures.go (Based on https://github.com/emirpasic/gods)
 
 Implementation of various data structures and algorithms in Go.
