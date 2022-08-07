@@ -168,7 +168,7 @@ func TestSinglyLinkedListGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), values, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), values, test.name)
 		})
 	}
 }
@@ -520,7 +520,7 @@ func TestSinglyLinkedListPushFront(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PushFront(test.itemsToAdd...)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -565,7 +565,7 @@ func TestSinglyLinkedListPopBack(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopBack(test.n)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -610,7 +610,7 @@ func TestSinglyLinkedListPopFront(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopFront(test.n)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -674,7 +674,7 @@ func TestSinglyLinkedListRemove(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Remove(test.i)
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), test.newItems, test.name)
+			assert.Equalf(t, test.originalList.GetValues(), test.newItems, test.name)
 		})
 	}
 }
@@ -714,7 +714,7 @@ func TestSinglyLinkedListNewFromIterator(t *testing.T) {
 
 			newList := NewFromIterator[string](originalValues.Begin())
 
-			assert.ElementsMatchf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.originalList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 
@@ -774,7 +774,7 @@ func TestSinglyLinkedListNewFromIterators(t *testing.T) {
 
 			newList := NewFromIterators[string](test.iteratorInitBegin(test.originalList), test.iteratorInitEnd(test.originalList))
 
-			assert.ElementsMatchf(t, test.newList.GetValues(), newList.GetValues(), test.name)
+			assert.Equalf(t, test.newList.GetValues(), newList.GetValues(), test.name)
 		})
 	}
 

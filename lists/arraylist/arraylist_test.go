@@ -167,7 +167,7 @@ func TestArrayListGetValues(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			values := test.originalList.GetValues()
 
-			assert.ElementsMatchf(t, test.originalList.elements, values, test.name)
+			assert.Equalf(t, test.originalList.elements, values, test.name)
 		})
 	}
 }
@@ -195,7 +195,7 @@ func TestArrayListGetSlice(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			slice := test.originalList.GetSlice()
 
-			assert.ElementsMatchf(t, test.originalList.elements, slice, test.name)
+			assert.Equalf(t, test.originalList.elements, slice, test.name)
 		})
 	}
 }
@@ -518,7 +518,7 @@ func TestArrayListPushFront(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PushFront(test.itemsToAdd...)
 
-			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+			assert.Equalf(t, test.originalList.elements, test.newItems, test.name)
 		})
 	}
 }
@@ -563,7 +563,7 @@ func TestArrayListPopBack(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopBack(test.n)
 
-			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+			assert.Equalf(t, test.originalList.elements, test.newItems, test.name)
 		})
 	}
 }
@@ -608,7 +608,7 @@ func TestArrayListPopFront(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.PopFront(test.n)
 
-			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+			assert.Equalf(t, test.originalList.elements, test.newItems, test.name)
 		})
 	}
 }
@@ -706,7 +706,7 @@ func TestArrayListRemoveStable(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.RemoveStable(test.i)
 
-			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+			assert.Equalf(t, test.originalList.elements, test.newItems, test.name)
 		})
 	}
 }
@@ -752,7 +752,7 @@ func TestArrayListRemove(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			test.originalList.Remove(test.i)
 
-			assert.ElementsMatchf(t, test.originalList.elements, test.newItems, test.name)
+			assert.Equalf(t, test.originalList.elements, test.newItems, test.name)
 		})
 	}
 }
@@ -784,7 +784,7 @@ func TestArrayListNewFromSlice(t *testing.T) {
 			defer testCommon.HandlePanic(t, test.name)
 			newList := NewFromSlice[string](test.originalList.elements)
 
-			assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
+			assert.Equalf(t, test.originalList.elements, newList.elements, test.name)
 		})
 	}
 
@@ -818,7 +818,7 @@ func TestArrayListNewFromIterator(t *testing.T) {
 			it := test.originalList.Begin()
 			newList := NewFromIterator[string](it)
 
-			assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
+			assert.Equalf(t, test.originalList.elements, newList.elements, test.name)
 		})
 	}
 
@@ -872,7 +872,7 @@ func TestArrayListNewFromIterators(t *testing.T) {
 			end := test.originalList.End()
 			newList := NewFromIterators[string](first, end)
 
-			assert.ElementsMatchf(t, test.originalList.elements, newList.elements, test.name)
+			assert.Equalf(t, test.originalList.elements, newList.elements, test.name)
 		})
 	}
 
