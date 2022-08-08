@@ -3,6 +3,8 @@
 
 Implementation of various data structures and algorithms in Go.
 
+**Most documentation below is out of date and/or incomplete**
+
 ## Data Structures
 
 - [Containers](#containers)
