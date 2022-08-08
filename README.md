@@ -3,6 +3,10 @@
 
 Implementation of various data structures and algorithms in Go.
 
+For documentation, refer to https://pkg.go.dev/github.com/JonasMuehlmann/datastructures.go.
+
+For algorithms to operate on the containers, refer to https://github.com/JonasMuehlmann/goaoi.
+
 **Most documentation below is out of date and/or incomplete**
 
 ## Data Structures
