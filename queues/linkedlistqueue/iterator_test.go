@@ -20,7 +20,7 @@ func TestLinkedListQueueIteratorIsValid(t *testing.T) {
 		list         *Queue[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
 	}{
 		{
 			name:         "Empty",
@@ -90,7 +90,7 @@ func TestLinkedListQueueIteratorIndex(t *testing.T) {
 		name         string
 		list         *Queue[int]
 		position     int
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
 	}{
 		{
 			name:         "Empty",
@@ -153,7 +153,7 @@ func TestLinkedListQueueIteratorNext(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
 	}{
 		{
 			name:          "Empty",
@@ -236,7 +236,7 @@ func TestLinkedListQueueIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
 	}{
 		{
 			name:          "Empty",
@@ -613,28 +613,28 @@ func TestLinkedListQueueIteratorIsEqual(t *testing.T) {
 func TestLinkedListQueueIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
-		iteratorCheck func(ds.ReadWriteOrdCompForRandCollIterator[int, int]) bool
+		iteratorInit  func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorCheck func(ds.ReadWriteOrdCompForRandCollIterator[int]) bool
 	}{
 		{
 			name:          "Begin",
 			iteratorInit:  (*Queue[int]).Begin,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsBegin,
 		},
 		{
 			name:          "End",
 			iteratorInit:  (*Queue[int]).End,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsEnd,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*Queue[int]).First,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsFirst,
 		},
 		{
 			name:          "Last",
 			iteratorInit:  (*Queue[int]).Last,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsLast,
 		},
 	}
 
@@ -654,7 +654,7 @@ func TestLinkedListQueueIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Queue[int]
-		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorInit func(*Queue[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
 		size         int
 	}{
 		{

@@ -377,8 +377,8 @@ func TestLinkedListStackNewFromIterators(t *testing.T) {
 		name              string
 		originalList      *Stack[string]
 		newList           *Stack[string]
-		iteratorInitFirst func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
-		iteratorInitEnd   func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
+		iteratorInitFirst func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
+		iteratorInitEnd   func(*Stack[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
 	}{
 		{
 			name:              "empty list",

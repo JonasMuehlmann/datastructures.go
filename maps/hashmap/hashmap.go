@@ -65,7 +65,7 @@ func NewFromIterator[TKey comparable, TValue any](begin ds.ReadCompForIndexMapIt
 
 // NewFromIterators instantiates a new list containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[TKey comparable, TValue any](begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Map[TKey, TValue] {
+func NewFromIterators[TKey comparable, TValue any](begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator) *Map[TKey, TValue] {
 	elements := make(map[TKey]TValue)
 
 	for !begin.IsEqual(end) && begin.Next() {

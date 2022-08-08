@@ -375,8 +375,8 @@ func TestLinkedListQueueNewFromIterators(t *testing.T) {
 		name              string
 		originalList      *Queue[string]
 		newList           *Queue[string]
-		iteratorInitFirst func(*Queue[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
-		iteratorInitEnd   func(*Queue[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
+		iteratorInitFirst func(*Queue[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
+		iteratorInitEnd   func(*Queue[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
 	}{
 		{
 			name:              "empty list",

@@ -73,7 +73,7 @@ func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Co
 
 // NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
+func NewFromIterators[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator) *Tree[TKey, TValue] {
 	tree := New[TKey, TValue](order, comparator)
 
 	for !begin.IsEqual(end) && begin.Next() {
