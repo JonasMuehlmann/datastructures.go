@@ -61,7 +61,7 @@ func NewFromSlice[T comparable](slice []T) *Set[T] {
 }
 
 // NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
-func NewFromIterator[T comparable](begin ds.ReadCompForIndexIterator[int, T]) *Set[T] {
+func NewFromIterator[T comparable](begin ds.ReadForIndexIterator[int, T]) *Set[T] {
 	s := &Set[T]{table: make(map[T]struct{}), ordering: doublylinkedlist.New[T]()}
 
 	for begin.Next() {

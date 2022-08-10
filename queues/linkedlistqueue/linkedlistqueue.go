@@ -39,7 +39,7 @@ func NewFromSlice[T any](slice []T) *Queue[T] {
 }
 
 // NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
-func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Queue[T] {
+func NewFromIterator[T any](begin ds.ReadForIterator[T]) *Queue[T] {
 	list := &Queue[T]{list: singlylinkedlist.New[T]()}
 
 	for begin.Next() {

@@ -72,7 +72,7 @@ func NewFromMap[TKey comparable, TValue comparable](keyComparator utils.Comparat
 }
 
 // NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue comparable](keyComparator utils.Comparator[TKey], valueComparator utils.Comparator[TValue], begin ds.ReadForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
 	forwardMap := make(map[TKey]TValue)
 	inverseMap := make(map[TValue]TKey)
 

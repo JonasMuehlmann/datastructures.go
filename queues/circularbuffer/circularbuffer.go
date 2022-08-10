@@ -60,7 +60,7 @@ func NewFromSlice[T any](maxSize int, slice []T) *Queue[T] {
 }
 
 // NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
-func NewFromIterator[T any](maxSize int, begin ds.ReadCompForIterator[T]) *Queue[T] {
+func NewFromIterator[T any](maxSize int, begin ds.ReadForIterator[T]) *Queue[T] {
 	if maxSize < 1 {
 		panic("Invalid maxSize, should be at least 1")
 	}

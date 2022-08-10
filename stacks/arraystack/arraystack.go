@@ -39,7 +39,7 @@ func NewFromSlice[T any](slice []T) *Stack[T] {
 }
 
 // NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
-func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *Stack[T] {
+func NewFromIterator[T any](begin ds.ReadForIterator[T]) *Stack[T] {
 	length := 0
 	sizedIterator, ok := begin.(ds.SizedIterator)
 	if ok {

@@ -109,7 +109,7 @@ func NewFromSlice[T any](slice []T) *List[T] {
 }
 
 // NewFromIterator instantiates a new list containing the elements provided by the passed iterator.
-func NewFromIterator[T any](begin ds.ReadCompForIterator[T]) *List[T] {
+func NewFromIterator[T any](begin ds.ReadForIterator[T]) *List[T] {
 	list := &List[T]{}
 
 	for begin.Next() {

@@ -60,7 +60,7 @@ func NewFromMap[TKey comparable, TValue any](map_ map[TKey]TValue) *Map[TKey, TV
 }
 
 // NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue any](begin ds.ReadCompForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue any](begin ds.ReadForIndexIterator[TKey, TValue]) *Map[TKey, TValue] {
 	s := &Map[TKey, TValue]{table: make(map[TKey]TValue), ordering: doublylinkedlist.New[TKey]()}
 
 	for begin.Next() {

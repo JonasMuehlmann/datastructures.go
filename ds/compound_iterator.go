@@ -54,6 +54,12 @@ type ReadForIterator[TValue any] interface {
 	ForwardIterator
 }
 
+type ReadForIndexIterator[TKey any, TValue any] interface {
+	ReadableIterator[TValue]
+	ForwardIterator
+	IndexedIterator[TKey]
+}
+
 type ReadCompForIterator[TValue any] interface {
 	ReadableIterator[TValue]
 	ComparableIterator

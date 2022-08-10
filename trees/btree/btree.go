@@ -58,7 +58,7 @@ func NewFromMap[TKey comparable, TValue any](order int, comparator utils.Compara
 }
 
 // NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
 	tree := New[TKey, TValue](order, comparator)
 
 	for begin.Next() {

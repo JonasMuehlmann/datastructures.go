@@ -58,7 +58,7 @@ func NewFromSlice[T any](comparator utils.Comparator[T], slice []T) *Queue[T] {
 }
 
 // NewFromIterator instantiates a new queue containing the elements provided by the passed iterator.
-func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T]) *Queue[T] {
+func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadForIterator[T]) *Queue[T] {
 	queue := &Queue[T]{heap: binaryheap.New(comparator), Comparator: comparator}
 
 	for begin.Next() {

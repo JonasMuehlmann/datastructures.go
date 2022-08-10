@@ -56,7 +56,7 @@ func NewFromSlice[T any](comparator utils.Comparator[T], slice []T) *Heap[T] {
 }
 
 // NewFromIterator instantiates a new stack containing the elements provided by the passed iterator.
-func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadCompForIterator[T]) *Heap[T] {
+func NewFromIterator[T any](comparator utils.Comparator[T], begin ds.ReadForIterator[T]) *Heap[T] {
 	heap := &Heap[T]{list: arraylist.New[T](), Comparator: comparator}
 
 	for begin.Next() {
