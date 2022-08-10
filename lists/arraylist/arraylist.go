@@ -55,6 +55,7 @@ func NewFromIterator[T any](begin ds.ReadForIterator[T]) *List[T] {
 		length = sizedIterator.Size()
 	}
 
+	length = utils.Max(length, 0)
 	elements := make([]T, 0, length)
 
 	for begin.Next() {
