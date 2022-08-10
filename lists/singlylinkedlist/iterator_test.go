@@ -20,7 +20,7 @@ func TestSinglyLinkedlistIteratorIsValid(t *testing.T) {
 		list         *List[int]
 		position     int
 		isValid      bool
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -83,7 +83,7 @@ func TestSinglyLinkedlistIteratorIndex(t *testing.T) {
 		name         string
 		list         *List[int]
 		position     int
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:         "Empty",
@@ -140,7 +140,7 @@ func TestSinglyLinkedlistIteratorNext(t *testing.T) {
 		position      int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -215,7 +215,7 @@ func TestSinglyLinkedlistIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -304,7 +304,7 @@ func TestSinglyLinkedlistIteratorMoveTo(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 	}{
 		{
 			name:          "Empty",
@@ -652,24 +652,24 @@ func TestSinglyLinkedlistIteratorIsEqual(t *testing.T) {
 func TestSinglyLinkedListIteratorIsEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
-		iteratorCheck func(ds.ReadWriteOrdCompForRandCollIterator[int]) bool
+		iteratorInit  func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
+		iteratorCheck func(ds.ReadWriteOrdCompForRandCollIterator[int, int]) bool
 	}{
 		{
 			name:          "Last",
 			iteratorInit:  (*List[int]).Last,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsLast,
 		},
 		{
 			name:          "First",
 			iteratorInit:  (*List[int]).First,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsFirst,
 		},
 
 		{
 			name:          "End",
 			iteratorInit:  (*List[int]).End,
-			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompForRandCollIterator[int, int]).IsEnd,
 		},
 	}
 
@@ -690,7 +690,7 @@ func TestSinglyLinkedlistIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *List[int]
-		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int]
+		iteratorInit func(*List[int]) ds.ReadWriteOrdCompForRandCollIterator[int, int]
 		size         int
 	}{
 		{

@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation.
-var _ ds.ReadWriteOrdCompForRandCollIterator[any] = (*Iterator[any])(nil)
+var _ ds.ReadWriteOrdCompForRandCollIterator[int, any] = (*Iterator[any])(nil)
 
 type Iterator[T any] struct {
 	*singlylinkedlist.Iterator[T]

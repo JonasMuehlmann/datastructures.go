@@ -118,6 +118,10 @@ func (it *OrderedIterator[T]) Index() (index int, found bool) {
 	return
 }
 
+func (it *OrderedIterator[T]) GetKey() (index int, found bool) {
+	return it.Index()
+}
+
 func (it *OrderedIterator[T]) Next() bool {
 	it.index = utils.Min(it.index+1, it.size)
 
@@ -179,6 +183,9 @@ func (it *OrderedIterator[T]) MoveBy(n int) bool {
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
+func (it *OrderedIterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
+}
 
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	if !it.IsValid() {
@@ -194,6 +201,10 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	}
 
 	return it.values[i], true
+}
+
+func (it *OrderedIterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
 }
 
 func (it *OrderedIterator[T]) Set(value T) bool {
@@ -218,4 +229,8 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	it.values[i] = value
 
 	return true
+}
+
+func (it *OrderedIterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }

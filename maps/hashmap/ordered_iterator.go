@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollMapIterator[string, any] = (*OrderedIterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*OrderedIterator[string, any])(nil)
 
 type OrderedIterator[TKey comparable, TValue any] struct {
 	m          *Map[TKey, TValue]

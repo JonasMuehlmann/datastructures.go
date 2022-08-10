@@ -104,6 +104,9 @@ func (it *Iterator[T]) Size() int {
 func (it *Iterator[T]) Index() (index int, found bool) {
 	return it.index, it.IsValid()
 }
+func (it *Iterator[T]) GetKey() (index int, found bool) {
+	return it.Index()
+}
 
 func (it *Iterator[T]) Next() bool {
 	it.orderIterator.Next()
@@ -161,12 +164,20 @@ func (it *Iterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
 }
 
+func (it *Iterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
+}
+
 func (it *Iterator[T]) Get() (value T, found bool) {
 	return it.value, it.IsValid()
 }
 
 func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 	return it.orderIterator.GetAt(i)
+}
+
+func (it *Iterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
 }
 
 func (it *Iterator[T]) Set(value T) bool {
@@ -194,4 +205,8 @@ func (it *Iterator[T]) SetAt(i int, value T) bool {
 	it.s.table[value] = itemExists
 
 	return true
+}
+
+func (it *Iterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }

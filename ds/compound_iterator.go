@@ -18,44 +18,35 @@ package ds
 
 // RandomAccessIterator = Rand
 // IndexedIterator = Index
-// MappingIterator = Map
 // CollectionIterator = Coll
 
 const (
 	CanOnlyCompareEqualIteratorTypes = "Can only compare iterators of equal concrete type"
 )
 
-type ReadWriteCompForRandCollIterator[TIndex any, TValue any] interface {
+type ReadWriteCompForRandCollIterator[TKey any, TValue any] interface {
 	ComparableIterator
-	CollectionIterator
+	CollectionIterator[TKey]
 	ForwardIterator
-	RandomAccessReadableIterator[TIndex, TValue]
-	RandomAccessWriteableIterator[TIndex, TValue]
+	RandomAccessReadableIterator[TKey, TValue]
+	RandomAccessWriteableIterator[TKey, TValue]
 }
 
-type ReadWriteOrdCompForRandCollIterator[TValue any] interface {
+type ReadWriteOrdCompForRandCollIterator[TKey any, TValue any] interface {
 	OrderedIterator
 	ComparableIterator
 	ForwardIterator
 	ReadableIterator[TValue]
 	WritableIterator[TValue]
-	RandomAccessIterator
+	RandomAccessIterator[TKey]
 }
 
-type ReadWriteOrdCompBidRandCollIterator[TIndex any, TValue any] interface {
+type ReadWriteOrdCompBidRandCollIterator[TKey any, TValue any] interface {
 	ComparableIterator
 	OrderedIterator
 	BidirectionalIterator
-	RandomAccessReadableIterator[TIndex, TValue]
-	RandomAccessWriteableIterator[TIndex, TValue]
-}
-
-type ReadWriteOrdCompBidRandCollMapIterator[TIndex any, TValue any] interface {
-	ComparableIterator
-	OrderedIterator
-	BidirectionalIterator
-	RandomAccessReadableMappingIterator[TIndex, TValue]
-	RandomAccessWriteableMappingIterator[TIndex, TValue]
+	RandomAccessReadableIterator[TKey, TValue]
+	RandomAccessWriteableIterator[TKey, TValue]
 }
 
 type ReadForIterator[TValue any] interface {
@@ -69,28 +60,15 @@ type ReadCompForIterator[TValue any] interface {
 	ForwardIterator
 }
 
-type ReadCompForIndexIterator[TValue any] interface {
+type ReadCompForIndexIterator[TKey any, TValue any] interface {
 	ReadableIterator[TValue]
-	IndexedIterator
+	IndexedIterator[TKey]
 	ComparableIterator
 	ForwardIterator
 }
 
-type ReadCompForIndexMapIterator[TIndex any, TValue any] interface {
-	ReadableIterator[TValue]
-	IndexedIterator
-	MappingIterator[TIndex]
-	ComparableIterator
-	ForwardIterator
-}
-
-type CompIndexIterator interface {
-	IndexedIterator
-	ComparableIterator
-}
-
-type CompIndexMapIterator interface {
-	IndexedIterator
+type CompIndexIterator[TKey any] interface {
+	IndexedIterator[TKey]
 	ComparableIterator
 }
 

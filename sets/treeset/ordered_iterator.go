@@ -72,6 +72,11 @@ func (it *OrderedIterator[T]) IsEqual(other ds.ComparableIterator) bool {
 func (it *OrderedIterator[T]) Get() (value T, found bool) {
 	return it.OrderedIterator.GetKey()
 }
+
+func (it *OrderedIterator[T]) GetKey() (value int, found bool) {
+	return it.Index()
+}
+
 func (it *OrderedIterator[T]) Set(value T) bool {
 	if !it.IsValid() {
 		return false
@@ -97,6 +102,10 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	return treeIteratorCopy.GetKey()
 }
 
+func (it *OrderedIterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
+}
+
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	treeIteratorCopy := it.set.tree.OrderedFirst()
 	valid := treeIteratorCopy.MoveBy(i)
@@ -111,6 +120,10 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	it.set.tree.Put(value, struct{}{})
 
 	return true
+}
+
+func (it *OrderedIterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }
 
 func (it *OrderedIterator[T]) Index() (value int, found bool) {
@@ -131,4 +144,8 @@ func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	it.OrderedIterator.MoveTo(wantedKey)
 
 	return it.IsValid()
+}
+
+func (it *OrderedIterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
 }

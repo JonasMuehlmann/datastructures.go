@@ -50,7 +50,7 @@ func NewFromSlice[T comparable](slice []T) *Set[T] {
 }
 
 // NewFromIterator instantiates a new set containing the elements provided by the passed iterator.
-func NewFromIterator[T comparable](beign ds.ReadCompForIndexIterator[T]) *Set[T] {
+func NewFromIterator[T comparable](beign ds.ReadCompForIndexIterator[int, T]) *Set[T] {
 	s := &Set[T]{items: make(map[T]struct{})}
 
 	for beign.Next() {
@@ -64,7 +64,7 @@ func NewFromIterator[T comparable](beign ds.ReadCompForIndexIterator[T]) *Set[T]
 
 // NewFromIterators instantiates a new set containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[T comparable](begin ds.ReadCompForIndexIterator[T], end ds.CompIndexIterator) *Set[T] {
+func NewFromIterators[T comparable](begin ds.ReadCompForIndexIterator[int, T], end ds.CompIndexIterator[int]) *Set[T] {
 	s := &Set[T]{items: make(map[T]struct{})}
 
 	for !begin.IsEqual(end) && begin.Next() {

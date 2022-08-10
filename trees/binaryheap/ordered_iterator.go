@@ -184,8 +184,16 @@ func (it *OrderedIterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
 
+func (it *OrderedIterator[T]) GetKey() (int, bool) {
+	return it.Index()
+}
+
 func (it *OrderedIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
+}
+
+func (it *OrderedIterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
 }
 
 func (it *OrderedIterator[T]) IsBegin() bool {
@@ -219,6 +227,10 @@ func (it *OrderedIterator[T]) GetAt(i int) (value T, found bool) {
 	return tmp.Get()
 }
 
+func (it *OrderedIterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
+}
+
 func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	if it.size == 0 || !it.heap.withinRange(i) || i >= it.size {
 		return false
@@ -235,6 +247,10 @@ func (it *OrderedIterator[T]) SetAt(i int, value T) bool {
 	it.heap.bubbleDownIndex(tmp.index)
 
 	return true
+}
+
+func (it *OrderedIterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }
 
 // numOfBits counts the number of bits of an int

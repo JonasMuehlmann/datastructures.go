@@ -156,9 +156,16 @@ func (it *ReverseIterator[T]) Size() int {
 func (it *ReverseIterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
+func (it *ReverseIterator[T]) GetKey() (int, bool) {
+	return it.Index()
+}
 
 func (it *ReverseIterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(it.index - i)
+}
+
+func (it *ReverseIterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
 }
 
 func (it *ReverseIterator[T]) IsBegin() bool {
@@ -192,4 +199,12 @@ func (it *ReverseIterator[T]) SetAt(i int, value T) bool {
 	it.list.elements[i] = value
 
 	return true
+}
+
+func (it *ReverseIterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
+}
+
+func (it *ReverseIterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }

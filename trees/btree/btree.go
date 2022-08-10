@@ -58,7 +58,7 @@ func NewFromMap[TKey comparable, TValue any](order int, comparator utils.Compara
 }
 
 // NewFromIterator instantiates a new tree containing the elements provided by the passed iterator.
-func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue]) *Tree[TKey, TValue] {
+func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue]) *Tree[TKey, TValue] {
 	tree := New[TKey, TValue](order, comparator)
 
 	for begin.Next() {
@@ -73,7 +73,7 @@ func NewFromIterator[TKey comparable, TValue any](order int, comparator utils.Co
 
 // NewFromIterators instantiates a new tree containing the elements provided by first, until it is equal to end.
 // end is a sentinel and not included.
-func NewFromIterators[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexMapIterator[TKey, TValue], end ds.CompIndexIterator) *Tree[TKey, TValue] {
+func NewFromIterators[TKey comparable, TValue any](order int, comparator utils.Comparator[TKey], begin ds.ReadCompForIndexIterator[TKey, TValue], end ds.CompIndexIterator[TKey]) *Tree[TKey, TValue] {
 	tree := New[TKey, TValue](order, comparator)
 
 	for !begin.IsEqual(end) && begin.Next() {
@@ -680,25 +680,25 @@ func (tree *Tree[TKey, TValue]) deleteChild(node *Node[TKey, TValue], index int)
 // Begin returns an initialized iterator, which points to one element before it's first.
 // Unless Next() is called, the iterator is in an invalid state.
 
-func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) OrderedBegin() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
 	return tree.NewOrderedIterator(-1, tree.Size())
 }
 
 // End returns an initialized iterator, which points to one element afrer it's last.
 // Unless Previous() is called, the iterator is in an invalid state.
 
-func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) OrderedEnd() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
 	return tree.NewOrderedIterator(tree.Size(), tree.Size())
 }
 
 // First returns an initialized iterator, which points to it's first element.
 
-func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) OrderedFirst() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
 	return tree.NewOrderedIterator(0, tree.Size())
 }
 
 // Last returns an initialized iterator, which points to it's last element.
 
-func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollMapIterator[TKey, TValue] {
+func (tree *Tree[TKey, TValue]) OrderedLast() ds.ReadWriteOrdCompBidRandCollIterator[TKey, TValue] {
 	return tree.NewOrderedIterator(tree.Size()-1, tree.Size())
 }

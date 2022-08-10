@@ -725,8 +725,8 @@ func TestSinglyLinkedListNewFromIterators(t *testing.T) {
 		name              string
 		originalList      *List[string]
 		newList           *List[string]
-		iteratorInitBegin func(*List[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
-		iteratorInitEnd   func(*List[string]) ds.ReadWriteOrdCompForRandCollIterator[string]
+		iteratorInitBegin func(*List[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
+		iteratorInitEnd   func(*List[string]) ds.ReadWriteOrdCompForRandCollIterator[int, string]
 	}{
 		{
 			name:              "empty list",

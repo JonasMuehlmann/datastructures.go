@@ -160,8 +160,16 @@ func (it *Iterator[T]) Index() (int, bool) {
 	return it.index, it.IsValid()
 }
 
+func (it *Iterator[T]) GetKey() (int, bool) {
+	return it.Index()
+}
+
 func (it *Iterator[T]) MoveTo(i int) bool {
 	return it.MoveBy(i - it.index)
+}
+
+func (it *Iterator[T]) MoveToKey(i int) bool {
+	return it.MoveTo(i)
 }
 
 func (it *Iterator[T]) IsBegin() bool {
@@ -195,4 +203,12 @@ func (it *Iterator[T]) SetAt(i int, value T) bool {
 	it.list.elements[i] = value
 
 	return true
+}
+
+func (it *Iterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
+}
+
+func (it *Iterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }

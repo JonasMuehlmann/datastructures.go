@@ -15,7 +15,7 @@ const (
 	NoMoveMagicPosition = 7869543205234798
 )
 
-func TestTreeMapIteratorIsValid(t *testing.T) {
+func TestTreeIteratorIsValid(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]
@@ -86,7 +86,7 @@ func TestTreeMapIteratorIsValid(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorIndex(t *testing.T) {
+func TestTreeIteratorIndex(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]
@@ -156,7 +156,7 @@ func TestTreeMapIteratorIndex(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorNext(t *testing.T) {
+func TestTreeIteratorNext(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -238,7 +238,7 @@ func TestTreeMapIteratorNext(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorNextN(t *testing.T) {
+func TestTreeIteratorNextN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -336,7 +336,7 @@ func TestTreeMapIteratorNextN(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorPrevious(t *testing.T) {
+func TestTreeIteratorPrevious(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -418,7 +418,7 @@ func TestTreeMapIteratorPrevious(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorPreviousN(t *testing.T) {
+func TestTreeIteratorPreviousN(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -516,7 +516,7 @@ func TestTreeMapIteratorPreviousN(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorMoveBy(t *testing.T) {
+func TestTreeIteratorMoveBy(t *testing.T) {
 	tests := []struct {
 		name          string
 		list          *Set[int]
@@ -631,7 +631,7 @@ func TestTreeMapIteratorMoveBy(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorGet(t *testing.T) {
+func TestTreeIteratorGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *Set[int]
@@ -680,7 +680,7 @@ func TestTreeMapIteratorGet(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorSet(t *testing.T) {
+func TestTreeIteratorSet(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *Set[int]
@@ -730,7 +730,7 @@ func TestTreeMapIteratorSet(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorGetAt(t *testing.T) {
+func TestTreeIteratorGetAt(t *testing.T) {
 	tests := []struct {
 		name     string
 		list     *Set[int]
@@ -775,7 +775,7 @@ func TestTreeMapIteratorGetAt(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorSetAt(t *testing.T) {
+func TestTreeIteratorSetAt(t *testing.T) {
 	tests := []struct {
 		name        string
 		list        *Set[int]
@@ -822,7 +822,7 @@ func TestTreeMapIteratorSetAt(t *testing.T) {
 }
 
 // NOTE: Missing test case: other does not implement IndexedIterator
-func TestTreeMapIteratorDistanceTo(t *testing.T) {
+func TestTreeIteratorDistanceTo(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -868,7 +868,7 @@ func TestTreeMapIteratorDistanceTo(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorIsAfter(t *testing.T) {
+func TestTreeIteratorIsAfter(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -914,7 +914,7 @@ func TestTreeMapIteratorIsAfter(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorIsBefore(t *testing.T) {
+func TestTreeIteratorIsBefore(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -960,7 +960,7 @@ func TestTreeMapIteratorIsBefore(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorIsEqual(t *testing.T) {
+func TestTreeIteratorIsEqual(t *testing.T) {
 	tests := []struct {
 		name      string
 		position1 int
@@ -1006,7 +1006,7 @@ func TestTreeMapIteratorIsEqual(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorIsBeginEndFirstLast(t *testing.T) {
+func TestTreeIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
 		iteratorInit  func(*Set[int], utils.Comparator[int]) ds.ReadWriteOrdCompBidRandCollIterator[int, int]
@@ -1046,7 +1046,7 @@ func TestTreeMapIteratorIsBeginEndFirstLast(t *testing.T) {
 	}
 }
 
-func TestTreeMapIteratorSize(t *testing.T) {
+func TestTreeIteratorSize(t *testing.T) {
 	tests := []struct {
 		name         string
 		list         *Set[int]

@@ -12,7 +12,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompBidRandCollMapIterator[string, any] = (*Iterator[string, any])(nil)
+var _ ds.ReadWriteOrdCompBidRandCollIterator[string, any] = (*Iterator[string, any])(nil)
 
 type Iterator[TKey comparable, TValue any] struct {
 	s             *Map[TKey, TValue]

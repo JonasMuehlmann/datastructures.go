@@ -18,7 +18,7 @@ func TestTreeMapOrderedIteratorIsValid(t *testing.T) {
 		map_         *Map[string, int]
 		position     string
 		isValid      bool
-		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:         "One element, first",
@@ -428,7 +428,7 @@ func TestTreeMapOrderedIteratorIndex(t *testing.T) {
 		map_         *Map[string, int]
 		key          string
 		valid        bool
-		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:         "Empty",
@@ -526,7 +526,7 @@ func TestTreeMapOrderedIteratorNext(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -606,7 +606,7 @@ func TestTreeMapOrderedIteratorNextN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -703,7 +703,7 @@ func TestTreeMapOrderedIteratorPrevious(t *testing.T) {
 		position      string
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -783,7 +783,7 @@ func TestTreeMapOrderedIteratorPreviousN(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -878,7 +878,7 @@ func TestTreeMapOrderedIteratorMoveBy(t *testing.T) {
 		n             int
 		isValidBefore bool
 		isValidAfter  bool
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
 	}{
 		{
 			name:          "Empty",
@@ -985,27 +985,27 @@ func TestTreeMapOrderedIteratorMoveBy(t *testing.T) {
 func TestTreeMapOrderedIteratorIsBeginEndFirstLast(t *testing.T) {
 	tests := []struct {
 		name          string
-		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]
-		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]) bool
+		iteratorInit  func(*Map[string, int], utils.Comparator[string]) ds.ReadWriteOrdCompBidRandCollIterator[string, int]
+		iteratorCheck func(ds.ReadWriteOrdCompBidRandCollIterator[string, int]) bool
 	}{
 		{
 			name:          "OrderedFirst",
 			iteratorInit:  (*Map[string, int]).OrderedFirst,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsFirst,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsFirst,
 		}, {
 			name:          "OrderedLast",
 			iteratorInit:  (*Map[string, int]).OrderedLast,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsLast,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsLast,
 		},
 		{
 			name:          "OrderedBegin",
 			iteratorInit:  (*Map[string, int]).OrderedBegin,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsBegin,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsBegin,
 		},
 		{
 			name:          "OrderedEnd",
 			iteratorInit:  (*Map[string, int]).OrderedEnd,
-			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollMapIterator[string, int]).IsEnd,
+			iteratorCheck: (ds.ReadWriteOrdCompBidRandCollIterator[string, int]).IsEnd,
 		},
 	}
 

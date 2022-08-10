@@ -11,7 +11,7 @@ import (
 )
 
 // Assert Iterator implementation
-var _ ds.ReadWriteOrdCompForRandCollIterator[any] = (*Iterator[any])(nil)
+var _ ds.ReadWriteOrdCompForRandCollIterator[int, any] = (*Iterator[any])(nil)
 
 // Iterator holding the iterator's state
 type Iterator[T any] struct {
@@ -140,12 +140,19 @@ func (it *Iterator[T]) MoveTo(n int) bool {
 	return it.NextN(n - it.index)
 }
 
+func (it *Iterator[T]) MoveToKey(n int) bool {
+	return it.MoveTo(n)
+}
+
 func (it *Iterator[T]) Size() int {
 	return it.list.size
 }
 
 func (it *Iterator[T]) Index() (int, bool) {
 	return it.index, true
+}
+func (it *Iterator[T]) GetKey() (int, bool) {
+	return it.Index()
 }
 
 func (it *Iterator[T]) IsBegin() bool {

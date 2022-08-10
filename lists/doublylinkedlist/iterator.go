@@ -73,6 +73,10 @@ func (it *Iterator[T]) GetAt(i int) (value T, found bool) {
 	return
 }
 
+func (it *Iterator[T]) GetAtKey(i int) (value T, found bool) {
+	return it.GetAt(i)
+}
+
 func (it *Iterator[T]) SetAt(i int, value T) bool {
 	if it.list.size == 0 || !it.list.withinRange(i) {
 		return false
@@ -87,6 +91,10 @@ func (it *Iterator[T]) SetAt(i int, value T) bool {
 	it.MoveTo(oldIndex)
 
 	return true
+}
+
+func (it *Iterator[T]) SetAtKey(i int, value T) bool {
+	return it.SetAt(i, value)
 }
 
 // If other is of type IndexedIterator, IndexedIterator.Index() will be used, possibly executing in O(1)
@@ -214,7 +222,10 @@ func (it *Iterator[T]) PreviousN(n int) bool {
 
 func (it *Iterator[T]) MoveTo(n int) bool {
 	return it.MoveBy(n - it.index)
+}
 
+func (it *Iterator[T]) MoveToKey(n int) bool {
+	return it.MoveTo(n)
 }
 
 func (it *Iterator[T]) MoveBy(n int) bool {
@@ -231,6 +242,9 @@ func (it *Iterator[T]) Size() int {
 
 func (it *Iterator[T]) Index() (int, bool) {
 	return it.index, true
+}
+func (it *Iterator[T]) GetKey() (int, bool) {
+	return it.Index()
 }
 
 func (it *Iterator[T]) IsBegin() bool {
