@@ -80,6 +80,7 @@ func NewFromIterators[T any](begin ds.ReadCompForIterator[T], end ds.ComparableI
 		}
 	}
 
+	length = utils.Max(length, 0)
 	elements := make([]T, 0, length)
 
 	for begin.Next() {
